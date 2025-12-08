@@ -15,13 +15,16 @@ up - optex module for multi-column paged output
 =head1 DESCRIPTION
 
 B<up> is a module for the B<optex> command that pipes the output
-through L<App::ansicolumn> for multi-column formatting and L<less> for
-paging.  The name comes from the printing term "n-up" (2-up, 3-up,
-etc.) which refers to printing multiple pages on a single sheet.
+through L<App::ansicolumn> for multi-column formatting and a pager.
+The name comes from the printing term "n-up" (2-up, 3-up, etc.) which
+refers to printing multiple pages on a single sheet.
 
 The module automatically calculates the number of columns based on the
 terminal width (C<$COLUMNS>) divided by the column width (default 85
 characters).
+
+The pager command is taken from the C<$PAGER> environment variable if
+set, otherwise defaults to C<less +Gg>.
 
 =head1 EXAMPLES
 
@@ -59,6 +62,22 @@ it under the same terms as Perl itself.
 use v5.14;
 use warnings;
 
+my @PAGER_OPT = (
+    [ qr/\bless\b/ => '+Gg' ],
+);
+
+$ENV{UP_PAGER} //= do {
+    my $pager = $ENV{PAGER} // 'less';
+    for (@PAGER_OPT) {
+        my ($re, $opt) = @$_;
+        if ($pager =~ $re) {
+            $pager .= " $opt";
+            last;
+        }
+    }
+    $pager;
+};
+
 1;
 
 __DATA__
@@ -66,7 +85,6 @@ __DATA__
 define WIDTH  85
 define COLS   WIDTH/:DUP:1:GE:EXCH:1:IF
 define COLUMN ansicolumn --bs heavy-box --cm BORDER=L13 -DP -C COLS
-define PAGER  less +Gg
-define FILTER COLUMN|PAGER
+define FILTER COLUMN|$ENV{UP_PAGER}
 
 option default -Mutil::filter --of='FILTER'

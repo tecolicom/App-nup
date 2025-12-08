@@ -9,13 +9,16 @@ up - optex module for multi-column paged output
 # DESCRIPTION
 
 **up** is a module for the **optex** command that pipes the output
-through [App::ansicolumn](https://metacpan.org/pod/App%3A%3Aansicolumn) for multi-column formatting and [less](https://metacpan.org/pod/less) for
-paging.  The name comes from the printing term "n-up" (2-up, 3-up,
-etc.) which refers to printing multiple pages on a single sheet.
+through [App::ansicolumn](https://metacpan.org/pod/App%3A%3Aansicolumn) for multi-column formatting and a pager.
+The name comes from the printing term "n-up" (2-up, 3-up, etc.) which
+refers to printing multiple pages on a single sheet.
 
 The module automatically calculates the number of columns based on the
 terminal width (`$COLUMNS`) divided by the column width (default 85
 characters).
+
+The pager command is taken from the `$PAGER` environment variable if
+set, otherwise defaults to `less +Gg`.
 
 # EXAMPLES
 
