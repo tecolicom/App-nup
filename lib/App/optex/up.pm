@@ -57,6 +57,11 @@ terminal width by this value.
 Set the border style for ansicolumn.  Default is C<heavy-box>.
 See L<App::ansicolumn> for available styles.
 
+=item B<--line-style>=I<STYLE>, B<--ls>=I<STYLE>
+
+Set the line style for ansicolumn.  Available styles are C<none>,
+C<truncate>, C<wrap>, and C<wordwrap>.  Default is C<none>.
+
 =item B<--pager>=I<COMMAND>
 
 Set the pager command.  Default is C<$PAGER> or C<less>.
@@ -140,6 +145,7 @@ my $config = Getopt::EX::Config->new(
     'pane'         => undef,
     'row'          => undef,
     'border-style' => 'heavy-box',
+    'line-style'   => undef,
     'pager'        => $ENV{PAGER} || 'less',
     'no-pager'     => undef,
 );
@@ -148,7 +154,8 @@ sub finalize {
     my($mod, $argv) = @_;
     $config->deal_with($argv,
         'pane-width|S=i', 'pane|C=i', 'row|R=i',
-        'border-style|bs=s', 'pager=s', 'no-pager|nopager');
+        'border-style|bs=s', 'line-style|ls=s',
+        'pager=s', 'no-pager|nopager');
 
     my($term_width, $term_height) = term_size();
     $term_width  ||= $ENV{COLUMNS} || 80;
@@ -159,11 +166,13 @@ sub finalize {
     my $rows         = $config->{row};
     my $height       = defined $rows ? int(($term_height - 1) / $rows) : undef;
     my $border_style = $config->{'border-style'};
+    my $line_style   = $config->{'line-style'};
     my $pager        = $config->{pager};
     $pager .= ' +Gg' if $pager =~ /\bless\b/;
 
     my $column = "ansicolumn --bs $border_style --cm BORDER=L13 -DP -C $cols";
     $column .= " --height=$height" if defined $height;
+    $column .= " --ls $line_style" if defined $line_style;
     my $filter = $config->{'no-pager'} ? $column : "$column|$pager";
     $mod->setopt(default => "-Mutil::filter --of='$filter'");
 }

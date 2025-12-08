@@ -49,6 +49,11 @@ Module options must be specified before `--` separator.
     Set the border style for ansicolumn.  Default is `heavy-box`.
     See [App::ansicolumn](https://metacpan.org/pod/App%3A%3Aansicolumn) for available styles.
 
+- **--line-style**=_STYLE_, **--ls**=_STYLE_
+
+    Set the line style for ansicolumn.  Available styles are `none`,
+    `truncate`, `wrap`, and `wordwrap`.  Default is `none`.
+
 - **--pager**=_COMMAND_
 
     Set the pager command.  Default is `$PAGER` or `less`.
