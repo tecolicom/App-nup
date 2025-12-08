@@ -28,6 +28,12 @@ option is automatically appended.
 
 Module options must be specified before `--` separator.
 
+- **--grid**=_CxR_, **-G** _CxR_
+
+    Set the grid layout.  For example, `--grid=2x3` or `--grid=2,3`
+    creates a 2-column, 3-row layout (6-up).  This is equivalent to
+    `-C2 -R3`.
+
 - **--pane**=_N_, **-C** _N_
 
     Set the number of columns (panes) directly.
@@ -35,8 +41,7 @@ Module options must be specified before `--` separator.
 - **--row**=_N_, **-R** _N_
 
     Set the number of rows.  The page height is calculated by dividing
-    the terminal height by this value.  Combined with **--pane**, you can
-    create grid layouts like 2x2 (4-up) or 3x2 (6-up).
+    the terminal height by this value.
 
 - **--pane-width**=_N_, **-S** _N_
 
@@ -82,7 +87,7 @@ Use 2 rows (upper and lower):
 
 Use 2x2 grid (4-up):
 
-    optex -Mup -C2 -R2 -- ls -l
+    optex -Mup -G2x2 -- ls -l
 
 Use a different border style:
 

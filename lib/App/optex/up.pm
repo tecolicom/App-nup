@@ -36,6 +36,12 @@ Module options must be specified before C<--> separator.
 
 =over 4
 
+=item B<--grid>=I<CxR>, B<-G> I<CxR>
+
+Set the grid layout.  For example, C<--grid=2x3> or C<--grid=2,3>
+creates a 2-column, 3-row layout (6-up).  This is equivalent to
+C<-C2 -R3>.
+
 =item B<--pane>=I<N>, B<-C> I<N>
 
 Set the number of columns (panes) directly.
@@ -43,8 +49,7 @@ Set the number of columns (panes) directly.
 =item B<--row>=I<N>, B<-R> I<N>
 
 Set the number of rows.  The page height is calculated by dividing
-the terminal height by this value.  Combined with B<--pane>, you can
-create grid layouts like 2x2 (4-up) or 3x2 (6-up).
+the terminal height by this value.
 
 =item B<--pane-width>=I<N>, B<-S> I<N>
 
@@ -92,7 +97,7 @@ Use 2 rows (upper and lower):
 
 Use 2x2 grid (4-up):
 
-    optex -Mup -C2 -R2 -- ls -l
+    optex -Mup -G2x2 -- ls -l
 
 Use a different border style:
 
@@ -141,6 +146,7 @@ sub term_size {
 }
 
 my $config = Getopt::EX::Config->new(
+    'grid'         => undef,
     'pane-width'   => 85,
     'pane'         => undef,
     'row'          => undef,
@@ -153,9 +159,16 @@ my $config = Getopt::EX::Config->new(
 sub finalize {
     my($mod, $argv) = @_;
     $config->deal_with($argv,
-        'pane-width|S=i', 'pane|C=i', 'row|R=i',
+        'grid|G=s', 'pane-width|S=i', 'pane|C=i', 'row|R=i',
         'border-style|bs=s', 'line-style|ls=s',
         'pager=s', 'no-pager|nopager');
+
+    if (my $grid = $config->{grid}) {
+        my($c, $r) = $grid =~ /^(\d+)[x,](\d+)$/
+            or die "Invalid grid format: $grid (expected CxR or C,R)\n";
+        $config->{pane} //= $c;
+        $config->{row}  //= $r;
+    }
 
     my($term_width, $term_height) = term_size();
     $term_width  ||= $ENV{COLUMNS} || 80;
