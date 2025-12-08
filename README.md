@@ -1,20 +1,17 @@
 # NAME
 
-column - optex module for columnar output with pager
+up - optex module for multi-column paged output
 
 # SYNOPSIS
 
-    optex -Mcolumn command ...
-
-Short alias:
-
-    optex -MC command ...
+    optex -Mup command ...
 
 # DESCRIPTION
 
-**column** is a module for the **optex** command that pipes the output
-through [App::ansicolumn](https://metacpan.org/pod/App%3A%3Aansicolumn) for columnar formatting and [less](https://metacpan.org/pod/less) for
-paging.
+**up** is a module for the **optex** command that pipes the output
+through [App::ansicolumn](https://metacpan.org/pod/App%3A%3Aansicolumn) for multi-column formatting and [less](https://metacpan.org/pod/less) for
+paging.  The name comes from the printing term "n-up" (2-up, 3-up,
+etc.) which refers to printing multiple pages on a single sheet.
 
 The module automatically calculates the number of columns based on the
 terminal width (`$COLUMNS`) divided by the column width (default 85
@@ -22,25 +19,21 @@ characters).
 
 # EXAMPLES
 
-List files in columns with pager:
+List files in multiple columns with pager:
 
-    optex -Mcolumn ls -l
-
-Using short alias:
-
-    optex -MC ls -l
+    optex -Mup ls -l
 
 # INSTALL
 
 ## CPANMINUS
 
-    cpanm App::optex::column
+    cpanm App::optex::up
 
 # SEE ALSO
 
 [App::optex](https://metacpan.org/pod/App%3A%3Aoptex), [https://github.com/kaz-utashiro/optex](https://github.com/kaz-utashiro/optex)
 
-[App::optex::column](https://metacpan.org/pod/App%3A%3Aoptex%3A%3Acolumn), [https://github.com/kaz-utashiro/optex-column](https://github.com/kaz-utashiro/optex-column)
+[App::optex::up](https://metacpan.org/pod/App%3A%3Aoptex%3A%3Aup), [https://github.com/kaz-utashiro/optex-up](https://github.com/kaz-utashiro/optex-up)
 
 [App::ansicolumn](https://metacpan.org/pod/App%3A%3Aansicolumn)
 

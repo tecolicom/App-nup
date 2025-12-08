@@ -1,4 +1,4 @@
-name = "App-optex-column"
+name = "App-optex-up"
 authority="cpan:UTASHIRO"
 
 module_maker="ModuleBuildTiny"

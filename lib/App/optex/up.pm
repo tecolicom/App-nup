@@ -1,4 +1,4 @@
-package App::optex::column;
+package App::optex::up;
 
 our $VERSION = "0.01";
 
@@ -6,21 +6,18 @@ our $VERSION = "0.01";
 
 =head1 NAME
 
-column - optex module for columnar output with pager
+up - optex module for multi-column paged output
 
 =head1 SYNOPSIS
 
-    optex -Mcolumn command ...
-
-Short alias:
-
-    optex -MC command ...
+    optex -Mup command ...
 
 =head1 DESCRIPTION
 
-B<column> is a module for the B<optex> command that pipes the output
-through L<App::ansicolumn> for columnar formatting and L<less> for
-paging.
+B<up> is a module for the B<optex> command that pipes the output
+through L<App::ansicolumn> for multi-column formatting and L<less> for
+paging.  The name comes from the printing term "n-up" (2-up, 3-up,
+etc.) which refers to printing multiple pages on a single sheet.
 
 The module automatically calculates the number of columns based on the
 terminal width (C<$COLUMNS>) divided by the column width (default 85
@@ -28,25 +25,21 @@ characters).
 
 =head1 EXAMPLES
 
-List files in columns with pager:
+List files in multiple columns with pager:
 
-    optex -Mcolumn ls -l
-
-Using short alias:
-
-    optex -MC ls -l
+    optex -Mup ls -l
 
 =head1 INSTALL
 
 =head2 CPANMINUS
 
-    cpanm App::optex::column
+    cpanm App::optex::up
 
 =head1 SEE ALSO
 
 L<App::optex>, L<https://github.com/kaz-utashiro/optex>
 
-L<App::optex::column>, L<https://github.com/kaz-utashiro/optex-column>
+L<App::optex::up>, L<https://github.com/kaz-utashiro/optex-up>
 
 L<App::ansicolumn>
 

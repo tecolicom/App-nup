@@ -1,5 +1,5 @@
 {
-   "abstract" : "optex module for columnar output with pager",
+   "abstract" : "optex module for multi-column paged output",
    "author" : [
       "Kazumasa Utashiro"
    ],
@@ -12,7 +12,7 @@
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
       "version" : 2
    },
-   "name" : "App-optex-column",
+   "name" : "App-optex-up",
    "no_index" : {
       "directory" : [
          "t",
@@ -57,6 +57,9 @@
    "release_status" : "unstable",
    "version" : "0.01",
    "x_authority" : "cpan:UTASHIRO",
+   "x_contributors" : [
+      "Kazumasa Utashiro <kaz@utashiro.com>"
+   ],
    "x_serialization_backend" : "JSON::PP version 4.16",
    "x_static_install" : 1
 }
