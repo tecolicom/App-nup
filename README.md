@@ -53,6 +53,10 @@ Module options must be specified before `--` separator.
 
     Set the pager command.  Default is `$PAGER` or `less`.
 
+- **--no-pager**
+
+    Disable pager.  Output goes directly to stdout.
+
 # EXAMPLES
 
 List files in multiple columns with pager:

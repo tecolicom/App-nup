@@ -61,6 +61,10 @@ See L<App::ansicolumn> for available styles.
 
 Set the pager command.  Default is C<$PAGER> or C<less>.
 
+=item B<--no-pager>
+
+Disable pager.  Output goes directly to stdout.
+
 =back
 
 =head1 EXAMPLES
@@ -137,13 +141,14 @@ my $config = Getopt::EX::Config->new(
     'row'          => undef,
     'border-style' => 'heavy-box',
     'pager'        => $ENV{PAGER} || 'less',
+    'no-pager'     => undef,
 );
 
 sub finalize {
     my($mod, $argv) = @_;
     $config->deal_with($argv,
         'pane-width|S=i', 'pane|C=i', 'row|R=i',
-        'border-style|bs=s', 'pager=s');
+        'border-style|bs=s', 'pager=s', 'no-pager|nopager');
 
     my($term_width, $term_height) = term_size();
     $term_width  ||= $ENV{COLUMNS} || 80;
@@ -159,7 +164,7 @@ sub finalize {
 
     my $column = "ansicolumn --bs $border_style --cm BORDER=L13 -DP -C $cols";
     $column .= " --height=$height" if defined $height;
-    my $filter = "$column|$pager";
+    my $filter = $config->{'no-pager'} ? $column : "$column|$pager";
     $mod->setopt(default => "-Mutil::filter --of='$filter'");
 }
 
