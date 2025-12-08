@@ -77,6 +77,8 @@ Module options must be specified before `--` separator.
 
 # EXAMPLES
 
+Display perldoc output in multiple columns:
+
     optex -Mup perldoc App::optex::up
 
 <div>

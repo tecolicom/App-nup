@@ -87,6 +87,8 @@ Disable pager.  Output goes directly to stdout.
 
 =head1 EXAMPLES
 
+Display perldoc output in multiple columns:
+
     optex -Mup perldoc App::optex::up
 
 =begin html
