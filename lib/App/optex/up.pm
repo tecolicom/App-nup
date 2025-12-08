@@ -27,10 +27,11 @@ The module automatically calculates the number of columns based on the
 terminal width divided by the pane width (default 85 characters).
 
 The pager command is taken from the C<$PAGER> environment variable if
-set, otherwise defaults to C<less>.  When using C<less>, the C<+Gg>
-option is automatically appended.  This causes C<less> to read all
-input before displaying, which may take time for large output, but
-prevents empty trailing pages from being shown.
+set, otherwise defaults to C<less>.  When using C<less>, C<-F +Gg>
+options are automatically appended.  C<-F> causes C<less> to exit
+immediately if the output fits on one screen.  C<+Gg> causes C<less>
+to read all input before displaying, which may take time for large
+output, but prevents empty trailing pages from being shown.
 
 =head1 OPTIONS
 
@@ -52,6 +53,10 @@ Set the number of columns (panes) directly.
 
 Set the number of rows.  The page height is calculated by dividing
 the terminal height by this value.
+
+=item B<--height>=I<N>
+
+Set the page height directly in lines.
 
 =item B<--pane-width>=I<N>, B<-S> I<N>
 
@@ -161,6 +166,7 @@ my $config = Getopt::EX::Config->new(
     'pane-width'   => 85,
     'pane'         => undef,
     'row'          => undef,
+    'height'       => undef,
     'border-style' => 'heavy-box',
     'line-style'   => undef,
     'pager'        => $ENV{PAGER} || 'less',
@@ -170,7 +176,7 @@ my $config = Getopt::EX::Config->new(
 sub finalize {
     my($mod, $argv) = @_;
     $config->deal_with($argv,
-        'grid|G=s', 'pane-width|S=i', 'pane|C=i', 'row|R=i',
+        'grid|G=s', 'pane-width|S=i', 'pane|C=i', 'row|R=i', 'height=i',
         'border-style|bs=s', 'line-style|ls=s',
         'pager=s', 'no-pager|nopager');
 
@@ -188,11 +194,12 @@ sub finalize {
     my $pane_width   = $config->{'pane-width'};
     my $cols         = $config->{pane} // max(1, int($term_width / $pane_width));
     my $rows         = $config->{row};
-    my $height       = defined $rows ? int(($term_height - 1) / $rows) : undef;
+    my $height       = $config->{height} //
+                       (defined $rows ? int(($term_height - 1) / $rows) : undef);
     my $border_style = $config->{'border-style'};
     my $line_style   = $config->{'line-style'};
     my $pager        = $config->{pager};
-    $pager .= ' +Gg' if $pager =~ /\bless\b/;
+    $pager .= ' -F +Gg' if $pager =~ /\bless\b/;
 
     my $column = "ansicolumn --bs $border_style --cm BORDER=L13 -DP -C $cols";
     $column .= " --height=$height" if defined $height;

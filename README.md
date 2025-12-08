@@ -21,10 +21,11 @@ The module automatically calculates the number of columns based on the
 terminal width divided by the pane width (default 85 characters).
 
 The pager command is taken from the `$PAGER` environment variable if
-set, otherwise defaults to `less`.  When using `less`, the `+Gg`
-option is automatically appended.  This causes `less` to read all
-input before displaying, which may take time for large output, but
-prevents empty trailing pages from being shown.
+set, otherwise defaults to `less`.  When using `less`, `-F +Gg`
+options are automatically appended.  `-F` causes `less` to exit
+immediately if the output fits on one screen.  `+Gg` causes `less`
+to read all input before displaying, which may take time for large
+output, but prevents empty trailing pages from being shown.
 
 # OPTIONS
 
@@ -44,6 +45,10 @@ Module options must be specified before `--` separator.
 
     Set the number of rows.  The page height is calculated by dividing
     the terminal height by this value.
+
+- **--height**=_N_
+
+    Set the page height directly in lines.
 
 - **--pane-width**=_N_, **-S** _N_
 
