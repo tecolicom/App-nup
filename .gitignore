@@ -28,4 +28,5 @@ cover_db/
 
 MYMETA.*
 
-/App-optex-column-*
+/App-optex-up-*
+/.claude/
