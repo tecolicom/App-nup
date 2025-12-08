@@ -45,6 +45,8 @@
             "App::ansicolumn" : "0",
             "App::optex" : "1.00",
             "Getopt::EX" : "v2.1.6",
+            "Getopt::EX::Config" : "1.00",
+            "Term::ReadKey" : "0",
             "perl" : "v5.14.0"
          }
       },
@@ -55,6 +57,17 @@
       }
    },
    "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/kaz-utashiro/optex-up/issues"
+      },
+      "homepage" : "https://github.com/kaz-utashiro/optex-up",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/kaz-utashiro/optex-up.git",
+         "web" : "https://github.com/kaz-utashiro/optex-up"
+      }
+   },
    "version" : "0.01",
    "x_authority" : "cpan:UTASHIRO",
    "x_contributors" : [
