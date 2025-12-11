@@ -30,3 +30,4 @@ MYMETA.*
 
 /App-optex-up-*
 /.claude/
+.DS_Store
