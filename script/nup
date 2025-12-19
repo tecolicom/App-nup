@@ -19,10 +19,21 @@ nup - N-up output wrapper for optex -Mup
 
 nup [ options ] command ...
 
-    -h, --help         show help
-        --version      show version
-    -d, --debug        debug mode
-    -n, --dryrun       dry-run mode
+    -h, --help             show help
+        --version          show version
+    -d, --debug            debug mode
+    -n, --dryrun           dry-run mode
+
+    -G, --grid=#           grid layout (e.g., 2x3)
+    -C, --pane=#           number of columns
+    -R, --row=#            number of rows
+        --height=#         page height in lines
+    -S, --pane-width=#     pane width (default: 85)
+        --border-style=#   border style (default: heavy-box)
+        --bs=#
+        --line-style=#     line style (none/truncate/wrap/wordwrap)
+        --ls=#
+        --pager=#          pager command (empty to disable)
 
 =head1 VERSION
 
@@ -93,11 +104,19 @@ Usage: $myname [ options ] command ...
 END
 
 declare -A OPTS=(
-    [&USAGE]="$USAGE" [&PERMUTE]= [&REQUIRE]=0.2
-    [   help | h ! # show help    ]=
-    [version |   ! # show version ]=
-    [  debug | d   # debug mode   ]=
-    [ dryrun | n   # dry-run mode ]=
+    [&REQUIRE]=0.2 [&USAGE]="$USAGE" [&PERMUTE]=
+    [         help | h  ! # show help         ]=
+    [      version |    ! # show version      ]=
+    [        debug | d    # debug mode        ]=
+    [       dryrun | n    # dry-run mode      ]=
+    [         grid | G  : # grid layout       ]=
+    [         pane | C  : # number of columns ]=
+    [          row | R  : # number of rows    ]=
+    [       height |    : # page height       ]=
+    [   pane-width | S  : # pane width        ]=
+    [ border-style | bs : # border style      ]=
+    [   line-style | ls : # line style        ]=
+    [        pager |    : # pager command     ]=
 )
 
 ##############################################################################
@@ -107,10 +126,25 @@ declare -A OPTS=(
 . getoptlong.sh OPTS "$@"
 
 ##############################################################################
+# Build module options
+##############################################################################
+
+declare -a up_opts=()
+
+[[ ${grid:-}         ]] && up_opts+=("--grid=$grid")
+[[ ${pane:-}         ]] && up_opts+=("--pane=$pane")
+[[ ${row:-}          ]] && up_opts+=("--row=$row")
+[[ ${height:-}       ]] && up_opts+=("--height=$height")
+[[ ${pane_width:-}   ]] && up_opts+=("--pane-width=$pane_width")
+[[ ${border_style:-} ]] && up_opts+=("--border-style=$border_style")
+[[ ${line_style:-}   ]] && up_opts+=("--line-style=$line_style")
+[[ ${pager+set}      ]] && up_opts+=("--pager=$pager")
+
+##############################################################################
 # Main
 ##############################################################################
 
-declare -a cmd=(optex -Mup "$@")
+declare -a cmd=(optex -Mup "${up_opts[@]}" "$@")
 
 debug "command: ${cmd[*]}"
 
@@ -128,6 +162,89 @@ exec "${cmd[@]}"
 B<nup> is a simple wrapper script for C<optex -Mup>.  It provides a
 convenient way to run commands with N-up output formatting using the
 L<App::optex::up> module.
+
+=head1 OPTIONS
+
+=head2 General Options
+
+=over 4
+
+=item B<-h>, B<--help>
+
+Show help message.
+
+=item B<--version>
+
+Show version.
+
+=item B<-d>, B<--debug>
+
+Enable debug mode.
+
+=item B<-n>, B<--dryrun>
+
+Dry-run mode. Show the command without executing.
+
+=back
+
+=head2 Layout Options
+
+=over 4
+
+=item B<-G> I<CxR>, B<--grid>=I<CxR>
+
+Set grid layout. For example, C<-G2x3> creates 2 columns and 3 rows.
+
+=item B<-C> I<N>, B<--pane>=I<N>
+
+Set the number of columns (panes).
+
+=item B<-R> I<N>, B<--row>=I<N>
+
+Set the number of rows.
+
+=item B<--height>=I<N>
+
+Set the page height in lines.
+
+=item B<-S> I<N>, B<--pane-width>=I<N>
+
+Set the pane width in characters. Default is 85.
+
+=back
+
+=head2 Style Options
+
+=over 4
+
+=item B<--border-style>=I<STYLE>, B<--bs>=I<STYLE>
+
+Set the border style. Default is C<heavy-box>.
+
+=item B<--line-style>=I<STYLE>, B<--ls>=I<STYLE>
+
+Set the line style. Available: C<none>, C<truncate>, C<wrap>, C<wordwrap>.
+
+=back
+
+=head2 Pager Options
+
+=over 4
+
+=item B<--pager>=I<COMMAND>
+
+Set the pager command. Default is C<$PAGER> or C<less>.
+Use C<--pager=> (empty) to disable pager.
+
+=back
+
+=head1 EXAMPLES
+
+    nup ls -l                  # basic usage
+    nup -C2 ls -l              # 2 columns
+    nup -G2x2 ls -l            # 2x2 grid (4-up)
+    nup -S100 ls -l            # pane width 100
+    nup --pager= ls -l         # without pager
 
 =head1 INSTALLATION
 
