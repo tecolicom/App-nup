@@ -21,6 +21,8 @@ nup [ options ] command ...
 
     -h, --help         show help
         --version      show version
+    -d, --debug        debug mode
+    -n, --dryrun       dry-run mode
 
 =head1 VERSION
 
@@ -48,25 +50,76 @@ version() {
 }
 
 ##############################################################################
+# Utility functions
+##############################################################################
+
+debug() {
+    [[ ${debug:-} ]] && echo "debug: $*" >&2 || true
+}
+
+die() {
+    echo "$myname: $*" >&2
+    exit 1
+}
+
+# Check bash version (4.3+ required for getoptlong.sh)
+if ((BASH_VERSINFO[0] < 4 || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] < 3))); then
+    die "bash 4.3+ required (found $BASH_VERSION)"
+fi
+
+##############################################################################
+# Setup PATH for getoptlong.sh
+##############################################################################
+
+dist_dir() {
+    perl -MFile::Share=:all -E "say dist_dir '$1'" 2>/dev/null || true
+}
+share=$(dist_dir App-nup)
+PATH="${share:+$share/getoptlong:}$PATH"
+command -v getoptlong.sh > /dev/null || {
+    basedir="${0%/*/*}"
+    [[ -f $basedir/share/getoptlong/getoptlong.sh ]] &&
+        PATH="$basedir/share/getoptlong:$PATH"
+}
+
+##############################################################################
 # Option definitions
 ##############################################################################
 
-while [[ $# -gt 0 ]]; do
-    case "$1" in
-        -h|--help) help ;;
-        --version) version ;;
-        --) shift; break ;;
-        -*) break ;;
-        *) break ;;
-    esac
-    shift
-done
+define USAGE <<END
+nup - N-up output wrapper for optex -Mup
+
+Usage: $myname [ options ] command ...
+END
+
+declare -A OPTS=(
+    [&USAGE]="$USAGE" [&PERMUTE]= [&REQUIRE]=0.2
+    [   help | h ! # show help    ]=
+    [version |   ! # show version ]=
+    [  debug | d   # debug mode   ]=
+    [ dryrun | n   # dry-run mode ]=
+)
+
+##############################################################################
+# Parse options
+##############################################################################
+
+. getoptlong.sh OPTS "$@"
 
 ##############################################################################
 # Main
 ##############################################################################
 
-exec optex -Mup "$@"
+declare -a cmd=(optex -Mup "$@")
+
+debug "command: ${cmd[*]}"
+
+if [[ ${dryrun:-} ]]; then
+    echo "${cmd[@]}"
+    exit 0
+fi
+
+exec "${cmd[@]}"
 
 : <<'=cut'
 

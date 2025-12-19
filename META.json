@@ -44,6 +44,7 @@
          "requires" : {
             "App::optex" : "0",
             "App::optex::up" : "0",
+            "File::Share" : "0",
             "perl" : "5.014"
          }
       },
@@ -54,7 +55,21 @@
       }
    },
    "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/tecolicom/App-nup/issues"
+      },
+      "homepage" : "https://github.com/tecolicom/App-nup",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/tecolicom/App-nup.git",
+         "web" : "https://github.com/tecolicom/App-nup"
+      }
+   },
    "version" : "0.01",
+   "x_contributors" : [
+      "Kazumasa Utashiro <kaz@utashiro.com>"
+   ],
    "x_serialization_backend" : "JSON::PP version 4.16",
    "x_static_install" : 0
 }

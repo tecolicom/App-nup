@@ -1,4 +1,4 @@
-
+[![Actions Status](https://github.com/tecolicom/App-nup/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/tecolicom/App-nup/actions?workflow=test) [![MetaCPAN Release](https://badge.fury.io/pl/App-nup.svg)](https://metacpan.org/release/App-nup)
 # NAME
 
 nup - N-up output wrapper for optex -Mup
@@ -9,6 +9,8 @@ nup \[ options \] command ...
 
     -h, --help         show help
         --version      show version
+    -d, --debug        debug mode
+    -n, --dryrun       dry-run mode
 
 # VERSION
 

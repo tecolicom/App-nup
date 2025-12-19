@@ -15,3 +15,6 @@ hooks = [
 
 [unsupported]
 os = [ "MSWin32" ]
+
+[FileGatherer]
+exclude_match = [ '^share/getoptlong/(?!getoptlong\.sh)' ]
