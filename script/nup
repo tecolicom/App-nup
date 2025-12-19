@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+# vim: filetype=bash :  -*- mode: sh; sh-shell: bash; -*-
+
+set -euo pipefail
+
+define() { IFS='\n' read -r -d '' ${1} || true ; }
+
+myname="${0##*/}"
+
+define pod <<"=cut"
+
+=encoding utf-8
+
+=head1 NAME
+
+nup - N-up output wrapper for optex -Mup
+
+=head1 SYNOPSIS
+
+nup [ options ] command ...
+
+    -h, --help         show help
+        --version      show version
+
+=head1 VERSION
+
+Version 0.01
+
+=cut
+
+[[ $pod =~ Version\ +([0-9.]+) ]] && my_version=${BASH_REMATCH[1]}
+
+# -h callback: show help from POD
+help() {
+    sed -E \
+        -e '/^$/N' \
+        -e 's/^(\n*)=head[0-9]* */\1/' \
+        -e '/^\n*[#=]/d' \
+        -e '/Version/q' \
+        <<< "$pod"
+    exit 0
+}
+
+# -v callback: show version
+version() {
+    echo "$my_version"
+    exit 0
+}
+
+##############################################################################
+# Option definitions
+##############################################################################
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -h|--help) help ;;
+        --version) version ;;
+        --) shift; break ;;
+        -*) break ;;
+        *) break ;;
+    esac
+    shift
+done
+
+##############################################################################
+# Main
+##############################################################################
+
+exec optex -Mup "$@"
+
+: <<'=cut'
+
+=head1 DESCRIPTION
+
+B<nup> is a simple wrapper script for C<optex -Mup>.  It provides a
+convenient way to run commands with N-up output formatting using the
+L<App::optex::up> module.
+
+=head1 INSTALLATION
+
+Using L<cpanminus|https://metacpan.org/pod/App::cpanminus>:
+
+    cpanm -n App::nup
+
+=head1 SEE ALSO
+
+L<App::optex::up>, L<optex>
+
+=head1 AUTHOR
+
+Kazumasa Utashiro
+
+=head1 LICENSE
+
+Copyright 2025 Kazumasa Utashiro.
+
+This software is released under the MIT License.
+L<https://opensource.org/licenses/MIT>
+
+=cut
