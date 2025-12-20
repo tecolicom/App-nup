@@ -188,7 +188,7 @@ sub finalize {
     $config->deal_with($argv,
         'grid|G=s', 'pane-width|S=i', 'pane|C=i', 'row|R=i', 'height=i',
         'border-style|bs=s', 'line-style|ls=s',
-        'pager=s', 'no-pager|nopager');
+        'pager:s', 'no-pager|nopager');
 
     if (my $grid = $config->{grid}) {
         my($c, $r) = $grid =~ /^(\d+)[x,](\d+)$/
@@ -211,10 +211,24 @@ sub finalize {
     my $pager        = $config->{pager};
     $pager .= ' -F +Gg' if $pager =~ /\bless\b/;
 
-    my $column = "ansicolumn --bs $border_style --cm BORDER=L13 -DP -C $cols";
-    $column .= " --height=$height" if defined $height;
-    $column .= " --ls $line_style" if defined $line_style;
-    my $filter = $config->{'no-pager'} ? $column : "$column|$pager";
+    # Build default ansicolumn options
+    my @ac_opts = ("--bs=$border_style", "--cm=BORDER=L13", "-DP", "-C$cols");
+    push @ac_opts, "--height=$height" if defined $height;
+    push @ac_opts, "--ls=$line_style" if defined $line_style;
+
+    # If command is ansicolumn, apply default options and pager
+    if (@$argv && $argv->[0] eq 'ansicolumn') {
+        # Insert defaults after 'ansicolumn', so user options take precedence
+        splice @$argv, 1, 0, @ac_opts;
+        if ($config->{'no-pager'} || $pager eq '') {
+            return;  # No filter needed
+        }
+        $mod->setopt(default => "-Mutil::filter --of='$pager'");
+        return;
+    }
+
+    my $column = join ' ', 'ansicolumn', @ac_opts;
+    my $filter = ($config->{'no-pager'} || $pager eq '') ? $column : "$column|$pager";
     $mod->setopt(default => "-Mutil::filter --of='$filter'");
 }
 
