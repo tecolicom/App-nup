@@ -66,9 +66,9 @@ subtest 'parallel option' => sub {
     like $out, qr/ansicolumn --parallel --filename/, '-V adds parallel mode';
 };
 
-subtest 'no-page option' => sub {
-    my $out = nup('--no-page script/nup');
-    like $out, qr/ansicolumn --no-page --filename/, '--no-page disables page mode';
+subtest 'fold option' => sub {
+    my $out = nup('-F script/nup');
+    like $out, qr/ansicolumn --no-page --filename/, '-F enables fold mode';
 };
 
 subtest 'auto command mode' => sub {

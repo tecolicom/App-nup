@@ -5,8 +5,8 @@ nup - N-up output wrapper for optex -Mup
 
 # SYNOPSIS
 
-nup \[ options \] file ...
-nup -e \[ options \] command ...
+    nup [ options ] file ...
+    nup -e [ options ] command ...
 
     -h, --help             show help
         --version          show version
@@ -14,8 +14,7 @@ nup -e \[ options \] command ...
     -n, --dryrun           dry-run mode
     -e, --exec             execute command mode
     -V, --parallel         parallel view mode
-    -P, --page             page mode (default: on)
-        --no-page          disable page mode
+    -F, --fold             fold mode (disable page mode)
     -H, --header           show file headers (default: on)
 
     -G, --grid=#           grid layout (e.g., 2x3)
@@ -72,15 +71,17 @@ force command mode when needed.
 
 - **-V**, **--parallel**
 
-    Enable parallel view mode for ansicolumn.  In this mode, multiple
-    files are displayed side by side.  Single file or stdin input
-    results in single column output.
+    Enable parallel view mode for ansicolumn.  In this mode, each file
+    is displayed in its own column without pagination, similar to
+    `--fold`.  Automatically enabled when multiple files are
+    specified.  Single file or stdin input results in single column
+    output.
 
-- **-P**, **--page**, **--no-page**
+- **-F**, **--fold**
 
-    Enable or disable page mode.  Page mode is enabled by default.
-    Use `--no-page` to disable page mode and display the entire
-    content split evenly across columns.
+    Enable fold mode (disable page mode).  In fold mode, the entire
+    content is split evenly across columns without pagination.  Page
+    mode is the default.
 
 - **-H**, **--header**
 
@@ -132,14 +133,12 @@ force command mode when needed.
 
 # EXAMPLES
 
+    nup man nup                # view manual in multi-column
+    nup -C2 man perl           # 2 columns
+    nup -G2x2 man perl         # 2x2 grid (4-up)
+    nup -F man perl            # fold mode (no pagination)
     nup file1.txt file2.txt    # view files side by side
-    nup -C2 *.txt              # 2 columns
-    nup -G2x2 *.log            # 2x2 grid (4-up)
-    nup -S100 file.txt         # pane width 100
-    nup ls -l                  # execute command (auto-detected)
-    nup -C2 ps aux             # execute command with 2 columns
     nup -e ./script.sh         # force command mode for a file
-    nup -V file1 file2 file3   # parallel view (side by side)
 
 # INSTALLATION
 
