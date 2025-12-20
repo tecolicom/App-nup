@@ -159,6 +159,11 @@ fi
 # Main
 ##############################################################################
 
+# Show help if no arguments and stdin is a terminal
+if (( $# == 0 )) && [[ -t 0 ]]; then
+    help
+fi
+
 # Determine mode: command or file view
 # Command mode if: -e specified, OR ($1 is not a file AND $1 is a command)
 is_command_mode() {
