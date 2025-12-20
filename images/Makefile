@@ -2,8 +2,8 @@
 
 all: perldoc.png
 
-perldoc.png:
-	./capture.sh -s -o $@ -- 'perldoc App::optex::up | ansicolumn -DP -C2 --bs heavy-box | less -R'
+perldoc.png: Makefile capture.sh
+	./capture.sh -o $@ -- 'perldoc App::optex::up | ansicolumn -DP -C2 --bs heavy-box | less -R'
 
 clean:
 	rm -f perldoc.png
