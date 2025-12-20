@@ -25,6 +25,9 @@ nup -e [ options ] command ...
     -d, --debug            debug mode
     -n, --dryrun           dry-run mode
     -e, --exec             execute command mode
+    -V, --parallel         parallel view mode
+    -P, --page             page mode (default: on)
+        --no-page          disable page mode
     -H, --header           show file headers (default: on)
 
     -G, --grid=#           grid layout (e.g., 2x3)
@@ -41,7 +44,7 @@ nup -e [ options ] command ...
 
 =head1 VERSION
 
-Version 1.00
+Version 0.01
 
 =cut
 
@@ -115,6 +118,8 @@ declare -A OPTS=(
     [        debug | d    # debug mode        ]=
     [       dryrun | n    # dry-run mode      ]=
     [         exec | e    # execute command   ]=
+    [     parallel | V    # parallel view     ]=
+    [         page | P    # page mode         ]=1
     [       header | H    # show file headers ]=1
     [         grid | G  : # grid layout       ]=
     [         pane | C  : # number of columns ]=
@@ -152,6 +157,7 @@ if [[ $pager != 1 ]]; then
         up_opts+=("--pager=$pager")
     fi
 fi
+[[ ! $page ]] && up_opts+=("--no-page")
 
 ##############################################################################
 # Main
@@ -173,9 +179,11 @@ else
     # up.pm adds default options (--bs, -DP, -C, etc.)
     # User-specified options are added here to override defaults
     declare -a ac_opts=()
-    [[ $header ]] && ac_opts+=(-H)
-    [[ ${border_style:-} ]] && ac_opts+=("--bs=$border_style")
-    [[ ${line_style:-}   ]] && ac_opts+=("--ls=$line_style")
+    [[ ${parallel:-} ]] && ac_opts+=(--parallel)
+    [[ ! $page ]] && ac_opts+=(--no-page)
+    [[ $header ]] && ac_opts+=(--filename)
+    [[ ${border_style:-} ]] && ac_opts+=("--border-style=$border_style")
+    [[ ${line_style:-}   ]] && ac_opts+=("--line-style=$line_style")
     declare -a cmd=(optex -Mup "${up_opts[@]}" -- ansicolumn "${ac_opts[@]}" "$@")
 fi
 
@@ -227,6 +235,18 @@ Dry-run mode. Show the command without executing.
 
 Force command execution mode. Normally the mode is auto-detected,
 but use this option when you want to execute a file as a command.
+
+=item B<-V>, B<--parallel>
+
+Enable parallel view mode for ansicolumn.  In this mode, multiple
+files are displayed side by side.  Single file or stdin input
+results in single column output.
+
+=item B<-P>, B<--page>, B<--no-page>
+
+Enable or disable page mode.  Page mode is enabled by default.
+Use C<--no-page> to disable page mode and display the entire
+content split evenly across columns.
 
 =item B<-H>, B<--header>
 
@@ -299,6 +319,7 @@ Disable pager.
     nup ls -l                  # execute command (auto-detected)
     nup -C2 ps aux             # execute command with 2 columns
     nup -e ./script.sh         # force command mode for a file
+    nup -V file1 file2 file3   # parallel view (side by side)
 
 =head1 INSTALLATION
 

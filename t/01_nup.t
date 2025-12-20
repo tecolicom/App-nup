@@ -37,7 +37,7 @@ sub nup {
 subtest 'file view mode (default)' => sub {
     my $out = nup('script/nup cpanfile');
     like $out, qr/optex -Mup/, 'uses optex -Mup';
-    like $out, qr/ansicolumn -H/, 'runs ansicolumn with -H';
+    like $out, qr/ansicolumn --filename/, 'runs ansicolumn with --filename';
     like $out, qr/script\/nup/, 'includes first file';
     like $out, qr/cpanfile/, 'includes second file';
 };
@@ -45,20 +45,30 @@ subtest 'file view mode (default)' => sub {
 subtest 'single file uses file view' => sub {
     my $out = nup('script/nup');
     like $out, qr/optex -Mup/, 'single file uses optex -Mup';
-    like $out, qr/ansicolumn -H/, 'single file runs ansicolumn with -H';
+    like $out, qr/ansicolumn --filename/, 'single file runs ansicolumn with --filename';
 };
 
 subtest 'file view with options' => sub {
     my $out = nup('-S 60 --bs=round-box script/nup cpanfile');
     like $out, qr/--pane-width=60/, 'pane-width passed to optex';
     like $out, qr/--border-style=round-box/, 'border-style passed to optex';
-    like $out, qr/ansicolumn .* --bs=round-box/, 'border-style passed to ansicolumn';
+    like $out, qr/ansicolumn .* --border-style=round-box/, 'border-style passed to ansicolumn';
 };
 
 subtest 'no-header option' => sub {
     my $out = nup('--no-header script/nup');
-    like $out, qr/ansicolumn script\/nup/, '--no-header omits -H';
-    unlike $out, qr/-H/, 'no -H flag';
+    like $out, qr/ansicolumn script\/nup/, '--no-header omits --filename';
+    unlike $out, qr/--filename/, 'no --filename flag';
+};
+
+subtest 'parallel option' => sub {
+    my $out = nup('-V script/nup');
+    like $out, qr/ansicolumn --parallel --filename/, '-V adds parallel mode';
+};
+
+subtest 'no-page option' => sub {
+    my $out = nup('--no-page script/nup');
+    like $out, qr/ansicolumn --no-page --filename/, '--no-page disables page mode';
 };
 
 subtest 'auto command mode' => sub {

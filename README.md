@@ -13,6 +13,9 @@ nup -e \[ options \] command ...
     -d, --debug            debug mode
     -n, --dryrun           dry-run mode
     -e, --exec             execute command mode
+    -V, --parallel         parallel view mode
+    -P, --page             page mode (default: on)
+        --no-page          disable page mode
     -H, --header           show file headers (default: on)
 
     -G, --grid=#           grid layout (e.g., 2x3)
@@ -29,7 +32,7 @@ nup -e \[ options \] command ...
 
 # VERSION
 
-Version 1.00
+Version 0.01
 
 # DESCRIPTION
 
@@ -66,6 +69,18 @@ force command mode when needed.
 
     Force command execution mode. Normally the mode is auto-detected,
     but use this option when you want to execute a file as a command.
+
+- **-V**, **--parallel**
+
+    Enable parallel view mode for ansicolumn.  In this mode, multiple
+    files are displayed side by side.  Single file or stdin input
+    results in single column output.
+
+- **-P**, **--page**, **--no-page**
+
+    Enable or disable page mode.  Page mode is enabled by default.
+    Use `--no-page` to disable page mode and display the entire
+    content split evenly across columns.
 
 - **-H**, **--header**
 
@@ -124,6 +139,7 @@ force command mode when needed.
     nup ls -l                  # execute command (auto-detected)
     nup -C2 ps aux             # execute command with 2 columns
     nup -e ./script.sh         # force command mode for a file
+    nup -V file1 file2 file3   # parallel view (side by side)
 
 # INSTALLATION
 
