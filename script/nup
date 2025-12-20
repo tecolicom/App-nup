@@ -116,7 +116,7 @@ declare -A OPTS=(
     [   pane-width | S  : # pane width        ]=
     [ border-style | bs : # border style      ]=
     [   line-style | ls : # line style        ]=
-    [        pager |    : # pager command     ]=
+    [        pager |    : # pager command     ]=1
 )
 
 ##############################################################################
@@ -138,7 +138,7 @@ declare -a up_opts=()
 [[ ${pane_width:-}   ]] && up_opts+=("--pane-width=$pane_width")
 [[ ${border_style:-} ]] && up_opts+=("--border-style=$border_style")
 [[ ${line_style:-}   ]] && up_opts+=("--line-style=$line_style")
-[[ ${pager+set}      ]] && up_opts+=("--pager=$pager")
+[[ $pager != 1       ]] && up_opts+=("--pager=$pager")
 
 ##############################################################################
 # Main
