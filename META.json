@@ -45,7 +45,7 @@
             "App::optex" : "0",
             "App::optex::up" : "0",
             "File::Share" : "0",
-            "perl" : "5.014"
+            "perl" : "5.016"
          }
       },
       "test" : {

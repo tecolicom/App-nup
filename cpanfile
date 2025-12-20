@@ -1,4 +1,4 @@
-requires 'perl', '5.014';
+requires 'perl', '5.016';
 requires 'File::Share';
 requires 'App::optex';
 requires 'App::optex::up';
