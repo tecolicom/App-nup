@@ -17,12 +17,15 @@ nup - N-up output wrapper for optex -Mup
 
 =head1 SYNOPSIS
 
-nup [ options ] command ...
+nup [ options ] file ...
+nup -e [ options ] command ...
 
     -h, --help             show help
         --version          show version
     -d, --debug            debug mode
     -n, --dryrun           dry-run mode
+    -e, --exec             execute command mode
+    -H, --header           show file headers (default: on)
 
     -G, --grid=#           grid layout (e.g., 2x3)
     -C, --pane=#           number of columns
@@ -34,10 +37,11 @@ nup [ options ] command ...
         --line-style=#     line style (none/truncate/wrap/wordwrap)
         --ls=#
         --pager=#          pager command (empty to disable)
+        --no-pager         disable pager
 
 =head1 VERSION
 
-Version 0.01
+Version 1.00
 
 =cut
 
@@ -100,7 +104,8 @@ fi
 define USAGE <<END
 nup - N-up output wrapper for optex -Mup
 
-Usage: $myname [ options ] command ...
+Usage: $myname [ options ] file ...
+       $myname -e [ options ] command ...
 END
 
 declare -A OPTS=(
@@ -109,6 +114,8 @@ declare -A OPTS=(
     [      version |    ! # show version      ]=
     [        debug | d    # debug mode        ]=
     [       dryrun | n    # dry-run mode      ]=
+    [         exec | e    # execute command   ]=
+    [       header | H    # show file headers ]=1
     [         grid | G  : # grid layout       ]=
     [         pane | C  : # number of columns ]=
     [          row | R  : # number of rows    ]=
@@ -138,13 +145,39 @@ declare -a up_opts=()
 [[ ${pane_width:-}   ]] && up_opts+=("--pane-width=$pane_width")
 [[ ${border_style:-} ]] && up_opts+=("--border-style=$border_style")
 [[ ${line_style:-}   ]] && up_opts+=("--line-style=$line_style")
-[[ $pager != 1       ]] && up_opts+=("--pager=$pager")
+if [[ $pager != 1 ]]; then
+    if [[ -z $pager ]]; then
+        up_opts+=("--no-pager")
+    else
+        up_opts+=("--pager=$pager")
+    fi
+fi
 
 ##############################################################################
 # Main
 ##############################################################################
 
-declare -a cmd=(optex -Mup "${up_opts[@]}" -- "$@")
+# Determine mode: command or file view
+# Command mode if: -e specified, OR ($1 is not a file AND $1 is a command)
+is_command_mode() {
+    [[ ${exec:-} ]] && return 0
+    [[ -f ${1:-} ]] && return 1
+    command -v "${1:-}" >/dev/null 2>&1
+}
+
+if is_command_mode "$@"; then
+    # Command mode: use optex -Mup
+    declare -a cmd=(optex -Mup "${up_opts[@]}" -- "$@")
+else
+    # File view mode: use ansicolumn via optex -Mup
+    # up.pm adds default options (--bs, -DP, -C, etc.)
+    # User-specified options are added here to override defaults
+    declare -a ac_opts=()
+    [[ $header ]] && ac_opts+=(-H)
+    [[ ${border_style:-} ]] && ac_opts+=("--bs=$border_style")
+    [[ ${line_style:-}   ]] && ac_opts+=("--ls=$line_style")
+    declare -a cmd=(optex -Mup "${up_opts[@]}" -- ansicolumn "${ac_opts[@]}" "$@")
+fi
 
 debug "command: ${cmd[*]}"
 
@@ -160,8 +193,13 @@ exec "${cmd[@]}"
 =head1 DESCRIPTION
 
 B<nup> is a simple wrapper script for C<optex -Mup>.  It provides a
-convenient way to run commands with N-up output formatting using the
-L<App::optex::up> module.
+convenient way to view files or run commands with N-up output
+formatting using the L<App::optex::up> module.
+
+B<nup> automatically detects the mode based on the first argument:
+if it is an existing file, file view mode is used; if it is an
+executable command, command mode is used.  Use C<-e> option to
+force command mode when needed.
 
 =head1 OPTIONS
 
@@ -184,6 +222,16 @@ Enable debug mode.
 =item B<-n>, B<--dryrun>
 
 Dry-run mode. Show the command without executing.
+
+=item B<-e>, B<--exec>
+
+Force command execution mode. Normally the mode is auto-detected,
+but use this option when you want to execute a file as a command.
+
+=item B<-H>, B<--header>
+
+Show filename headers in file view mode. Enabled by default.
+Use C<--no-header> to disable.
 
 =back
 
@@ -234,17 +282,23 @@ Set the line style. Available: C<none>, C<truncate>, C<wrap>, C<wordwrap>.
 =item B<--pager>=I<COMMAND>
 
 Set the pager command. Default is C<$PAGER> or C<less>.
-Use C<--pager=> (empty) to disable pager.
+Use C<--pager=> (empty) or C<--no-pager> to disable pager.
+
+=item B<--no-pager>
+
+Disable pager.
 
 =back
 
 =head1 EXAMPLES
 
-    nup ls -l                  # basic usage
-    nup -C2 ls -l              # 2 columns
-    nup -G2x2 ls -l            # 2x2 grid (4-up)
-    nup -S100 ls -l            # pane width 100
-    nup --pager= ls -l         # without pager
+    nup file1.txt file2.txt    # view files side by side
+    nup -C2 *.txt              # 2 columns
+    nup -G2x2 *.log            # 2x2 grid (4-up)
+    nup -S100 file.txt         # pane width 100
+    nup ls -l                  # execute command (auto-detected)
+    nup -C2 ps aux             # execute command with 2 columns
+    nup -e ./script.sh         # force command mode for a file
 
 =head1 INSTALLATION
 

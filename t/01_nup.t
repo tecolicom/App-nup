@@ -34,9 +34,43 @@ sub nup {
     $out;
 }
 
-subtest 'basic command' => sub {
+subtest 'file view mode (default)' => sub {
+    my $out = nup('script/nup cpanfile');
+    like $out, qr/optex -Mup/, 'uses optex -Mup';
+    like $out, qr/ansicolumn -H/, 'runs ansicolumn with -H';
+    like $out, qr/script\/nup/, 'includes first file';
+    like $out, qr/cpanfile/, 'includes second file';
+};
+
+subtest 'single file uses file view' => sub {
+    my $out = nup('script/nup');
+    like $out, qr/optex -Mup/, 'single file uses optex -Mup';
+    like $out, qr/ansicolumn -H/, 'single file runs ansicolumn with -H';
+};
+
+subtest 'file view with options' => sub {
+    my $out = nup('-S 60 --bs=round-box script/nup cpanfile');
+    like $out, qr/--pane-width=60/, 'pane-width passed to optex';
+    like $out, qr/--border-style=round-box/, 'border-style passed to optex';
+    like $out, qr/ansicolumn .* --bs=round-box/, 'border-style passed to ansicolumn';
+};
+
+subtest 'no-header option' => sub {
+    my $out = nup('--no-header script/nup');
+    like $out, qr/ansicolumn script\/nup/, '--no-header omits -H';
+    unlike $out, qr/-H/, 'no -H flag';
+};
+
+subtest 'auto command mode' => sub {
     my $out = nup('date');
-    like $out, qr/^optex -Mup -- date$/, 'basic command with --';
+    like $out, qr/optex -Mup -- date$/, 'command auto-detected';
+    unlike $out, qr/ansicolumn/, 'command does not use ansicolumn';
+};
+
+subtest 'exec option forces command mode' => sub {
+    my $out = nup('-e script/nup');
+    like $out, qr/optex -Mup -- script\/nup$/, '-e forces command mode for file';
+    unlike $out, qr/ansicolumn/, '-e does not use ansicolumn';
 };
 
 subtest 'grid option' => sub {
@@ -75,10 +109,10 @@ subtest 'pager option' => sub {
     like $out, qr/--pager=less/, 'pager with value';
 
     $out = nup('--pager= date');
-    like $out, qr/--pager= --/, 'pager empty (disable)';
+    like $out, qr/--no-pager/, 'pager empty (disable)';
 
     $out = nup('--no-pager date');
-    like $out, qr/--pager= --/, '--no-pager';
+    like $out, qr/--no-pager/, '--no-pager';
 };
 
 subtest 'no pager option' => sub {

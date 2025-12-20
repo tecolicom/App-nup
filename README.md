@@ -5,12 +5,15 @@ nup - N-up output wrapper for optex -Mup
 
 # SYNOPSIS
 
-nup \[ options \] command ...
+nup \[ options \] file ...
+nup -e \[ options \] command ...
 
     -h, --help             show help
         --version          show version
     -d, --debug            debug mode
     -n, --dryrun           dry-run mode
+    -e, --exec             execute command mode
+    -H, --header           show file headers (default: on)
 
     -G, --grid=#           grid layout (e.g., 2x3)
     -C, --pane=#           number of columns
@@ -22,16 +25,22 @@ nup \[ options \] command ...
         --line-style=#     line style (none/truncate/wrap/wordwrap)
         --ls=#
         --pager=#          pager command (empty to disable)
+        --no-pager         disable pager
 
 # VERSION
 
-Version 0.01
+Version 1.00
 
 # DESCRIPTION
 
 **nup** is a simple wrapper script for `optex -Mup`.  It provides a
-convenient way to run commands with N-up output formatting using the
-[App::optex::up](https://metacpan.org/pod/App%3A%3Aoptex%3A%3Aup) module.
+convenient way to view files or run commands with N-up output
+formatting using the [App::optex::up](https://metacpan.org/pod/App%3A%3Aoptex%3A%3Aup) module.
+
+**nup** automatically detects the mode based on the first argument:
+if it is an existing file, file view mode is used; if it is an
+executable command, command mode is used.  Use `-e` option to
+force command mode when needed.
 
 # OPTIONS
 
@@ -52,6 +61,16 @@ convenient way to run commands with N-up output formatting using the
 - **-n**, **--dryrun**
 
     Dry-run mode. Show the command without executing.
+
+- **-e**, **--exec**
+
+    Force command execution mode. Normally the mode is auto-detected,
+    but use this option when you want to execute a file as a command.
+
+- **-H**, **--header**
+
+    Show filename headers in file view mode. Enabled by default.
+    Use `--no-header` to disable.
 
 ## Layout Options
 
@@ -90,15 +109,21 @@ convenient way to run commands with N-up output formatting using the
 - **--pager**=_COMMAND_
 
     Set the pager command. Default is `$PAGER` or `less`.
-    Use `--pager=` (empty) to disable pager.
+    Use `--pager=` (empty) or `--no-pager` to disable pager.
+
+- **--no-pager**
+
+    Disable pager.
 
 # EXAMPLES
 
-    nup ls -l                  # basic usage
-    nup -C2 ls -l              # 2 columns
-    nup -G2x2 ls -l            # 2x2 grid (4-up)
-    nup -S100 ls -l            # pane width 100
-    nup --pager= ls -l         # without pager
+    nup file1.txt file2.txt    # view files side by side
+    nup -C2 *.txt              # 2 columns
+    nup -G2x2 *.log            # 2x2 grid (4-up)
+    nup -S100 file.txt         # pane width 100
+    nup ls -l                  # execute command (auto-detected)
+    nup -C2 ps aux             # execute command with 2 columns
+    nup -e ./script.sh         # force command mode for a file
 
 # INSTALLATION
 
