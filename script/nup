@@ -82,16 +82,16 @@ fi
 # Setup PATH for getoptlong.sh
 ##############################################################################
 
-dist_dir() {
-    perl -MFile::Share=:all -E "say dist_dir '$1'" 2>/dev/null || true
-}
-share=$(dist_dir App-nup)
-PATH="${share:+$share/getoptlong:}$PATH"
-command -v getoptlong.sh > /dev/null || {
-    basedir="${0%/*/*}"
-    [[ -f $basedir/share/getoptlong/getoptlong.sh ]] &&
-        PATH="$basedir/share/getoptlong:$PATH"
-}
+basedir="${0%/*/*}"
+if [[ -f $basedir/share/getoptlong/getoptlong.sh ]]; then
+    PATH="$basedir/share/getoptlong:$PATH"
+else
+    dist_dir() {
+        perl -MFile::Share=:all -E "say dist_dir '$1'" 2>/dev/null || true
+    }
+    share=$(dist_dir App-nup)
+    PATH="${share:+$share/getoptlong:}$PATH"
+fi
 
 ##############################################################################
 # Option definitions
@@ -104,7 +104,7 @@ Usage: $myname [ options ] command ...
 END
 
 declare -A OPTS=(
-    [&REQUIRE]=0.2 [&USAGE]="$USAGE" [&PERMUTE]=
+    [&REQUIRE]=0.4 [&USAGE]="$USAGE" [&PERMUTE]=
     [         help | h  ! # show help         ]=
     [      version |    ! # show version      ]=
     [        debug | d    # debug mode        ]=
