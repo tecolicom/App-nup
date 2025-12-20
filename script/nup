@@ -20,26 +20,23 @@ nup - N-up output wrapper for optex -Mup
     nup [ options ] file ...
     nup -e [ options ] command ...
 
-    -h, --help             show help
-        --version          show version
-    -d, --debug            debug mode
-    -n, --dryrun           dry-run mode
-    -e, --exec             execute command mode
-    -V, --parallel         parallel view mode
-    -F, --fold             fold mode (disable page mode)
-    -H, --header           show file headers (default: on)
-
-    -G, --grid=#           grid layout (e.g., 2x3)
-    -C, --pane=#           number of columns
-    -R, --row=#            number of rows
-        --height=#         page height in lines
-    -S, --pane-width=#     pane width (default: 85)
-        --border-style=#   border style (default: heavy-box)
-        --bs=#
-        --line-style=#     line style (none/truncate/wrap/wordwrap)
-        --ls=#
-        --pager=#          pager command (empty to disable)
-        --no-pager         disable pager
+    -h,   --help             show help
+          --version          show version
+    -d,   --debug            debug mode
+    -n,   --dryrun           dry-run mode
+    -e,   --exec             execute command mode
+    -V,   --parallel         parallel view mode
+    -F,   --fold             fold mode (disable page mode)
+    -H,   --header           show file headers (default: on)
+    -G,   --grid=#           grid layout (e.g., 2x3)
+    -C,   --pane=#           number of columns
+    -R,   --row=#            number of rows
+          --height=#         page height in lines
+    -S,   --pane-width=#     pane width (default: 85)
+    --bs, --border-style=#   border style (default: heavy-box)
+    --ls, --line-style=#     line style (none/truncate/wrap/wordwrap)
+          --pager=#          pager command (empty to disable)
+          --no-pager         disable pager
 
 =head1 VERSION
 
