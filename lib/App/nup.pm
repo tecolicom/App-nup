@@ -1,6 +1,6 @@
 package App::nup;
 
-our $VERSION = "0.01";
+our $VERSION = "0.99";
 
 1;
 =encoding utf-8
@@ -34,7 +34,7 @@ nup - N-up output wrapper for optex -Mup
 
 =head1 VERSION
 
-Version 0.01
+Version 0.99
 
 =cut
 =head1 DESCRIPTION

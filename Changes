@@ -2,6 +2,8 @@ Revision history for Perl extension App-nup
 
 {{$NEXT}}
 
+0.99 2025-12-20T15:07:37Z
+
     - Initial release
     - Wrapper script for optex -Mup
     - File view mode with auto command detection
