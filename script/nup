@@ -156,7 +156,7 @@ if [[ $pager != 1 ]]; then
         up_opts+=("--pager=$pager")
     fi
 fi
-[[ $fold ]] && up_opts+=("--no-page")
+[[ $fold ]] && up_opts+=("--fold")
 
 ##############################################################################
 # Main
