@@ -34,12 +34,6 @@ output, but prevents empty trailing pages from being shown.
 
 Module options must be specified before `--` separator.
 
-- **--grid**=_CxR_, **-G** _CxR_
-
-    Set the grid layout.  For example, `--grid=2x3` or `--grid=2,3`
-    creates a 2-column, 3-row layout (6-up).  This is equivalent to
-    `-C2 -R3`.
-
 - **--pane**=_N_, **-C** _N_
 
     Set the number of columns (panes) directly.
@@ -48,6 +42,12 @@ Module options must be specified before `--` separator.
 
     Set the number of rows.  The page height is calculated by dividing
     the terminal height by this value.
+
+- **--grid**=_CxR_, **-G** _CxR_
+
+    Set the grid layout.  For example, `--grid=2x3` or `--grid=2,3`
+    creates a 2-column, 3-row layout (6-up).  This is equivalent to
+    `-C2 -R3`.
 
 - **--height**=_N_
 

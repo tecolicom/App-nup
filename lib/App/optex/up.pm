@@ -42,12 +42,6 @@ Module options must be specified before C<--> separator.
 
 =over 4
 
-=item B<--grid>=I<CxR>, B<-G> I<CxR>
-
-Set the grid layout.  For example, C<--grid=2x3> or C<--grid=2,3>
-creates a 2-column, 3-row layout (6-up).  This is equivalent to
-C<-C2 -R3>.
-
 =item B<--pane>=I<N>, B<-C> I<N>
 
 Set the number of columns (panes) directly.
@@ -56,6 +50,12 @@ Set the number of columns (panes) directly.
 
 Set the number of rows.  The page height is calculated by dividing
 the terminal height by this value.
+
+=item B<--grid>=I<CxR>, B<-G> I<CxR>
+
+Set the grid layout.  For example, C<--grid=2x3> or C<--grid=2,3>
+creates a 2-column, 3-row layout (6-up).  This is equivalent to
+C<-C2 -R3>.
 
 =item B<--height>=I<N>
 
