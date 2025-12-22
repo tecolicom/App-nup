@@ -34,16 +34,16 @@ output, but prevents empty trailing pages from being shown.
 
 Module options must be specified before `--` separator.
 
-- **--pane**=_N_, **-C** _N_
+- **-C** _N_, **--pane**=_N_
 
     Set the number of columns (panes) directly.
 
-- **--row**=_N_, **-R** _N_
+- **-R** _N_, **--row**=_N_
 
     Set the number of rows.  The page height is calculated by dividing
     the terminal height by this value.
 
-- **--grid**=_CxR_, **-G** _CxR_
+- **-G** _CxR_, **--grid**=_CxR_
 
     Set the grid layout.  For example, `--grid=2x3` or `--grid=2,3`
     creates a 2-column, 3-row layout (6-up).  This is equivalent to
@@ -53,24 +53,24 @@ Module options must be specified before `--` separator.
 
     Set the page height directly in lines.
 
-- **--pane-width**=_N_, **-S** _N_
+- **-S** _N_, **--pane-width**=_N_
 
     Set the pane width in characters.  Default is 85.  When **--pane** is
     not specified, the number of panes is calculated by dividing the
     terminal width by this value.
 
-- **--border-style**=_STYLE_, **--bs**=_STYLE_
+- **--bs**=_STYLE_, **--border-style**=_STYLE_
 
     Set the border style for ansicolumn.  Default is `heavy-box`.
     See [App::ansicolumn](https://metacpan.org/pod/App%3A%3Aansicolumn) for available styles.
 
-- **--line-style**=_STYLE_, **--ls**=_STYLE_
+- **--ls**=_STYLE_, **--line-style**=_STYLE_
 
     Set the line style for ansicolumn.  Available styles are `none`,
     `truncate`, `wrap`, and `wordwrap`.  Default is `wrap` (inherited
     from ansicolumn's document mode).
 
-- **--fold**, **-F**
+- **-F**, **--fold**
 
     Enable fold mode (disable page mode).  In fold mode, the entire
     content is split evenly across columns without pagination.  Page

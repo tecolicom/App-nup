@@ -42,16 +42,16 @@ Module options must be specified before C<--> separator.
 
 =over 4
 
-=item B<--pane>=I<N>, B<-C> I<N>
+=item B<-C> I<N>, B<--pane>=I<N>
 
 Set the number of columns (panes) directly.
 
-=item B<--row>=I<N>, B<-R> I<N>
+=item B<-R> I<N>, B<--row>=I<N>
 
 Set the number of rows.  The page height is calculated by dividing
 the terminal height by this value.
 
-=item B<--grid>=I<CxR>, B<-G> I<CxR>
+=item B<-G> I<CxR>, B<--grid>=I<CxR>
 
 Set the grid layout.  For example, C<--grid=2x3> or C<--grid=2,3>
 creates a 2-column, 3-row layout (6-up).  This is equivalent to
@@ -61,24 +61,24 @@ C<-C2 -R3>.
 
 Set the page height directly in lines.
 
-=item B<--pane-width>=I<N>, B<-S> I<N>
+=item B<-S> I<N>, B<--pane-width>=I<N>
 
 Set the pane width in characters.  Default is 85.  When B<--pane> is
 not specified, the number of panes is calculated by dividing the
 terminal width by this value.
 
-=item B<--border-style>=I<STYLE>, B<--bs>=I<STYLE>
+=item B<--bs>=I<STYLE>, B<--border-style>=I<STYLE>
 
 Set the border style for ansicolumn.  Default is C<heavy-box>.
 See L<App::ansicolumn> for available styles.
 
-=item B<--line-style>=I<STYLE>, B<--ls>=I<STYLE>
+=item B<--ls>=I<STYLE>, B<--line-style>=I<STYLE>
 
 Set the line style for ansicolumn.  Available styles are C<none>,
 C<truncate>, C<wrap>, and C<wordwrap>.  Default is C<wrap> (inherited
 from ansicolumn's document mode).
 
-=item B<--fold>, B<-F>
+=item B<-F>, B<--fold>
 
 Enable fold mode (disable page mode).  In fold mode, the entire
 content is split evenly across columns without pagination.  Page
