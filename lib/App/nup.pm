@@ -1,6 +1,6 @@
 package App::nup;
 
-our $VERSION = "0.99";
+our $VERSION = "0.9901";
 
 1;
 =encoding utf-8
@@ -34,7 +34,7 @@ nup - N-up output wrapper for optex -Mup
 
 =head1 VERSION
 
-Version 0.99
+Version 0.9901
 
 =cut
 =head1 DESCRIPTION
@@ -165,6 +165,16 @@ Disable pager.
 Using L<cpanminus|https://metacpan.org/pod/App::cpanminus>:
 
     cpanm -n App::nup
+
+=head1 DIAGNOSTICS
+
+Both stdout and stderr of the command are merged and passed through
+the output filter.  Error messages will appear in the paged output.
+
+=head1 EXIT STATUS
+
+The exit status of the executed command is not preserved because
+the output is passed through a filter pipeline.
 
 =head1 SEE ALSO
 

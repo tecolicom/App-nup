@@ -28,7 +28,7 @@ nup - N-up output wrapper for optex -Mup
 
 # VERSION
 
-Version 0.99
+Version 0.9901
 
 # DESCRIPTION
 

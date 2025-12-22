@@ -2,6 +2,12 @@ Revision history for Perl extension App-nup
 
 {{$NEXT}}
 
+0.9901 2025-12-22T02:54:37Z
+
+    - Require App::optex::up 1.02
+      - stderr is now merged to stdout, so error messages appear in paged output
+    - Add DIAGNOSTICS and EXIT STATUS sections to documentation
+
 0.99 2025-12-20T15:07:37Z
 
     - Initial release
