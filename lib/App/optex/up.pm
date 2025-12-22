@@ -226,7 +226,7 @@ sub finalize {
     $pager .= ' -F +Gg' if $pager =~ /\bless\b/;
 
     # Build default ansicolumn options
-    my @ac_opts = ("--bs=$border_style", "--cm=BORDER=L13", "-DBP", "-C$cols");
+    my @ac_opts = ("-w$term_width", "--bs=$border_style", "--cm=BORDER=L13", "-DBP", "-C$cols");
     push @ac_opts, "--height=$height" if defined $height;
     push @ac_opts, "--ls=$line_style" if defined $line_style;
     push @ac_opts, "--no-page" if $config->{fold};
