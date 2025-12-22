@@ -15,7 +15,7 @@ nup - N-up multi-column paged output for commands and files
     -e,   --exec             execute command mode
     -V,   --parallel         parallel view mode
     -F,   --fold             fold mode (disable page mode)
-    -H,   --header           show file headers (default: on)
+    -H,   --filename         show filename headers (default: on)
     -G,   --grid=#           grid layout (e.g., 2x3)
     -C,   --pane=#           number of columns
     -R,   --row=#            number of rows
@@ -80,10 +80,10 @@ force command mode when needed.
     content is split evenly across columns without pagination.  Page
     mode is the default.
 
-- **-H**, **--header**
+- **-H**, **--filename**
 
     Show filename headers in file view mode. Enabled by default.
-    Use `--no-header` to disable.
+    Use `--no-filename` to disable.
 
 ## Layout Options
 
