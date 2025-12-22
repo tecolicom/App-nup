@@ -43,7 +43,7 @@
       "runtime" : {
          "requires" : {
             "App::optex" : "0",
-            "App::optex::up" : "1.02",
+            "App::optex::up" : "1.03",
             "File::Share" : "0",
             "perl" : "5.016"
          }
@@ -66,7 +66,7 @@
          "web" : "https://github.com/tecolicom/App-nup"
       }
    },
-   "version" : "0.9901",
+   "version" : "0.9902",
    "x_contributors" : [
       "Kazumasa Utashiro <kaz@utashiro.com>"
    ],
