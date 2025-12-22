@@ -1,5 +1,5 @@
 requires 'perl', '5.016';
-requires 'App::optex', '1.00';
+requires 'App::optex', '1.04';
 requires 'Getopt::EX', '3.02';
 requires 'Getopt::EX::Config', '1.00';
 requires 'App::ansicolumn', '1.47';

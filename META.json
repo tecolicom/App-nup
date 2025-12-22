@@ -43,7 +43,7 @@
       "runtime" : {
          "requires" : {
             "App::ansicolumn" : "1.47",
-            "App::optex" : "1.00",
+            "App::optex" : "1.04",
             "Getopt::EX" : "3.02",
             "Getopt::EX::Config" : "1.00",
             "Term::ReadKey" : "0",
