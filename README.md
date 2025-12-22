@@ -143,6 +143,16 @@ Using [cpanminus](https://metacpan.org/pod/App::cpanminus):
 
     cpanm -n App::nup
 
+# DIAGNOSTICS
+
+Both stdout and stderr of the command are merged and passed through
+the output filter.  Error messages will appear in the paged output.
+
+# EXIT STATUS
+
+The exit status of the executed command is not preserved because
+the output is passed through a filter pipeline.
+
 # SEE ALSO
 
 [App::optex::up](https://metacpan.org/pod/App%3A%3Aoptex%3A%3Aup), [optex](https://metacpan.org/pod/optex)

@@ -43,7 +43,7 @@
       "runtime" : {
          "requires" : {
             "App::optex" : "0",
-            "App::optex::up" : "1.01",
+            "App::optex::up" : "1.02",
             "File::Share" : "0",
             "perl" : "5.016"
          }
