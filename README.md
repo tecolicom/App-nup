@@ -76,6 +76,14 @@ Module options must be specified before `--` separator.
     content is split evenly across columns without pagination.  Page
     mode is the default.
 
+- **-H**, **--filename**
+
+    Show filename headers.  This is passed to ansicolumn.
+
+- **-V**, **--parallel**
+
+    Enable parallel view mode.  This is passed to ansicolumn.
+
 - **--pager**=_COMMAND_
 
     Set the pager command.  Default is `$PAGER` or `less`.

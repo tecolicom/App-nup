@@ -84,6 +84,14 @@ Enable fold mode (disable page mode).  In fold mode, the entire
 content is split evenly across columns without pagination.  Page
 mode is the default.
 
+=item B<-H>, B<--filename>
+
+Show filename headers.  This is passed to ansicolumn.
+
+=item B<-V>, B<--parallel>
+
+Enable parallel view mode.  This is passed to ansicolumn.
+
 =item B<--pager>=I<COMMAND>
 
 Set the pager command.  Default is C<$PAGER> or C<less>.
@@ -193,6 +201,8 @@ my $config = Getopt::EX::Config->new(
     'border-style' => 'heavy-box',
     'line-style'   => undef,
     'fold'         => undef,
+    'filename'     => undef,
+    'parallel'     => undef,
     'pager'        => $ENV{PAGER} || 'less',
     'no-pager'     => undef,
 );
@@ -202,7 +212,8 @@ sub finalize {
     $config->deal_with($argv,
         'grid|G=s', 'pane-width|S=i', 'pane|C=i', 'row|R=i', 'height=i',
         'border-style|bs=s', 'line-style|ls=s',
-        'fold|F', 'pager:s', 'no-pager|nopager');
+        'fold|F', 'filename|H!', 'parallel|V!',
+        'pager:s', 'no-pager|nopager');
 
     if (my $grid = $config->{grid}) {
         my($c, $r) = $grid =~ /^(\d+)[x,](\d+)$/
@@ -229,7 +240,9 @@ sub finalize {
     my @ac_opts = ("-w$term_width", "--bs=$border_style", "--cm=BORDER=L13", "-DBP", "-C$cols");
     push @ac_opts, "--height=$height" if defined $height;
     push @ac_opts, "--ls=$line_style" if defined $line_style;
-    push @ac_opts, "--no-page" if $config->{fold};
+    push @ac_opts, "--no-page"  if $config->{fold};
+    push @ac_opts, "--filename" if $config->{filename};
+    push @ac_opts, "--parallel" if $config->{parallel};
 
     # If command is ansicolumn, apply default options and pager
     if (@$argv && $argv->[0] eq 'ansicolumn') {
