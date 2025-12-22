@@ -31,7 +31,7 @@ nup - N-up multi-column paged output for commands and files
     -G,   --grid=#           grid layout (e.g., 2x3)
     -C,   --pane=#           number of columns
     -R,   --row=#            number of rows
-          --height=#         page height in lines
+    -P,   --page=#           page height in lines
     -S,   --pane-width=#     pane width (default: 85)
     --bs, --border-style=#   border style (default: heavy-box)
     --ls, --line-style=#     line style (none/truncate/wrap/wordwrap)
@@ -106,7 +106,7 @@ declare -A OPTS=(
     [         grid | G  :>up_opts # grid layout       ]=
     [         pane | C  :>up_opts # number of columns ]=
     [          row | R  :>up_opts # number of rows    ]=
-    [       height |    :>up_opts # page height       ]=
+    [         page | P  :>up_opts # page height       ]=
     [   pane-width | S  :>up_opts # pane width        ]=
     [ border-style | bs :>up_opts # border style      ]=
     [   line-style | ls :>up_opts # line style        ]=
@@ -256,7 +256,7 @@ Set the number of rows.
 
 Set grid layout. For example, C<-G2x3> creates 2 columns and 3 rows.
 
-=item B<--height>=I<N>
+=item B<-P> I<N>, B<--page>=I<N>
 
 Set the page height in lines.
 
@@ -270,11 +270,11 @@ Set the pane width in characters. Default is 85.
 
 =over 4
 
-=item B<--border-style>=I<STYLE>, B<--bs>=I<STYLE>
+=item B<--bs>=I<STYLE>, B<--border-style>=I<STYLE>
 
 Set the border style. Default is C<heavy-box>.
 
-=item B<--line-style>=I<STYLE>, B<--ls>=I<STYLE>
+=item B<--ls>=I<STYLE>, B<--line-style>=I<STYLE>
 
 Set the line style. Available: C<none>, C<truncate>, C<wrap>, C<wordwrap>.
 

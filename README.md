@@ -19,7 +19,7 @@ nup - N-up multi-column paged output for commands and files
     -G,   --grid=#           grid layout (e.g., 2x3)
     -C,   --pane=#           number of columns
     -R,   --row=#            number of rows
-          --height=#         page height in lines
+    -P,   --page=#           page height in lines
     -S,   --pane-width=#     pane width (default: 85)
     --bs, --border-style=#   border style (default: heavy-box)
     --ls, --line-style=#     line style (none/truncate/wrap/wordwrap)
@@ -99,7 +99,7 @@ force command mode when needed.
 
     Set grid layout. For example, `-G2x3` creates 2 columns and 3 rows.
 
-- **--height**=_N_
+- **-P** _N_, **--page**=_N_
 
     Set the page height in lines.
 
@@ -109,11 +109,11 @@ force command mode when needed.
 
 ## Style Options
 
-- **--border-style**=_STYLE_, **--bs**=_STYLE_
+- **--bs**=_STYLE_, **--border-style**=_STYLE_
 
     Set the border style. Default is `heavy-box`.
 
-- **--line-style**=_STYLE_, **--ls**=_STYLE_
+- **--ls**=_STYLE_, **--line-style**=_STYLE_
 
     Set the line style. Available: `none`, `truncate`, `wrap`, `wordwrap`.
 
