@@ -1,5 +1,5 @@
 {
-   "abstract" : "N-up output wrapper for optex -Mup",
+   "abstract" : "N-up multi-column paged output for commands and files",
    "author" : [
       "Kazumasa Utashiro"
    ],

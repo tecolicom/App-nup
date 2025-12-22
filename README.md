@@ -1,7 +1,7 @@
 [![Actions Status](https://github.com/tecolicom/App-nup/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/tecolicom/App-nup/actions?workflow=test) [![MetaCPAN Release](https://badge.fury.io/pl/App-nup.svg)](https://metacpan.org/release/App-nup)
 # NAME
 
-nup - N-up output wrapper for optex -Mup
+nup - N-up multi-column paged output for commands and files
 
 # SYNOPSIS
 
@@ -87,10 +87,6 @@ force command mode when needed.
 
 ## Layout Options
 
-- **-G** _CxR_, **--grid**=_CxR_
-
-    Set grid layout. For example, `-G2x3` creates 2 columns and 3 rows.
-
 - **-C** _N_, **--pane**=_N_
 
     Set the number of columns (panes).
@@ -98,6 +94,10 @@ force command mode when needed.
 - **-R** _N_, **--row**=_N_
 
     Set the number of rows.
+
+- **-G** _CxR_, **--grid**=_CxR_
+
+    Set grid layout. For example, `-G2x3` creates 2 columns and 3 rows.
 
 - **--height**=_N_
 

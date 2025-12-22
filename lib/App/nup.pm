@@ -7,7 +7,7 @@ our $VERSION = "0.9901";
 
 =head1 NAME
 
-nup - N-up output wrapper for optex -Mup
+nup - N-up multi-column paged output for commands and files
 
 =head1 SYNOPSIS
 
@@ -100,10 +100,6 @@ Use C<--no-header> to disable.
 
 =over 4
 
-=item B<-G> I<CxR>, B<--grid>=I<CxR>
-
-Set grid layout. For example, C<-G2x3> creates 2 columns and 3 rows.
-
 =item B<-C> I<N>, B<--pane>=I<N>
 
 Set the number of columns (panes).
@@ -111,6 +107,10 @@ Set the number of columns (panes).
 =item B<-R> I<N>, B<--row>=I<N>
 
 Set the number of rows.
+
+=item B<-G> I<CxR>, B<--grid>=I<CxR>
+
+Set grid layout. For example, C<-G2x3> creates 2 columns and 3 rows.
 
 =item B<--height>=I<N>
 
