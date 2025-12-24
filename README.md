@@ -8,19 +8,19 @@ nup - N-up multi-column paged output for commands and files
     nup [ options ] file ...
     nup -e [ options ] command ...
 
-    -h,   --help             show help
+      -h, --help             show help
           --version          show version
-    -d,   --debug            debug mode
-    -n,   --dryrun           dry-run mode
-    -e,   --exec             execute command mode
-    -V,   --parallel         parallel view mode
-    -F,   --fold             fold mode (disable page mode)
-    -H,   --filename         show filename headers (default: on)
-    -G,   --grid=#           grid layout (e.g., 2x3)
-    -C,   --pane=#           number of columns
-    -R,   --row=#            number of rows
-    -P,   --page=#           page height in lines
-    -S,   --pane-width=#     pane width (default: 85)
+      -d, --debug            debug mode
+      -n, --dryrun           dry-run mode
+      -e, --exec             execute command mode
+      -V, --parallel         parallel view mode
+      -F, --fold             fold mode (disable page mode)
+      -H, --filename         show filename headers (default: on)
+      -G, --grid=#           grid layout (e.g., 2x3)
+      -C, --pane=#           number of columns
+      -R, --row=#            number of rows
+      -P, --page=#           page height in lines
+      -S, --pane-width=#     pane width (default: 85)
     --bs, --border-style=#   border style (default: heavy-box)
     --ls, --line-style=#     line style (none/truncate/wrap/wordwrap)
     --cm, --colormap=#       color mapping (LABEL=COLOR)
@@ -33,7 +33,7 @@ nup - N-up multi-column paged output for commands and files
 
 # VERSION
 
-Version 0.9902
+Version 0.9903
 
 # DESCRIPTION
 
