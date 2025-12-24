@@ -20,21 +20,26 @@ nup - N-up multi-column paged output for commands and files
     nup [ options ] file ...
     nup -e [ options ] command ...
 
-    -h,   --help             show help
+      -h, --help             show help
           --version          show version
-    -d,   --debug            debug mode
-    -n,   --dryrun           dry-run mode
-    -e,   --exec             execute command mode
-    -V,   --parallel         parallel view mode
-    -F,   --fold             fold mode (disable page mode)
-    -H,   --filename         show filename headers (default: on)
-    -G,   --grid=#           grid layout (e.g., 2x3)
-    -C,   --pane=#           number of columns
-    -R,   --row=#            number of rows
-    -P,   --page=#           page height in lines
-    -S,   --pane-width=#     pane width (default: 85)
+      -d, --debug            debug mode
+      -n, --dryrun           dry-run mode
+      -e, --exec             execute command mode
+      -V, --parallel         parallel view mode
+      -F, --fold             fold mode (disable page mode)
+      -H, --filename         show filename headers (default: on)
+      -G, --grid=#           grid layout (e.g., 2x3)
+      -C, --pane=#           number of columns
+      -R, --row=#            number of rows
+      -P, --page=#           page height in lines
+      -S, --pane-width=#     pane width (default: 85)
     --bs, --border-style=#   border style (default: heavy-box)
     --ls, --line-style=#     line style (none/truncate/wrap/wordwrap)
+    --cm, --colormap=#       color mapping (LABEL=COLOR)
+          --white-board      black on white board
+          --black-board      white on black board
+          --green-board      white on green board
+          --slate-board      white on dark slate board
           --pager=#          pager command (empty to disable)
           --no-pager         disable pager
 
@@ -79,12 +84,12 @@ declare -a up_opts=(--filename)  # up.pm options
 
 declare -A OPTS=(
     [&REQUIRE]=0.4 [&USAGE]="$USAGE" [&PERMUTE]=
-    [         help | h  ! # show help         ]=
-    [      version |    ! # show version      ]=
-    [        debug | d    # debug mode        ]=
-    [       dryrun | n    # dry-run mode      ]=
-    [         exec | e    # execute command   ]=
-    [        pager |   :! # pager command     ]=
+    [         help | h   !        # show help         ]=
+    [      version |     !        # show version      ]=
+    [        debug | d            # debug mode        ]=
+    [       dryrun | n            # dry-run mode      ]=
+    [         exec | e            # execute command   ]=
+    [        pager |    :!        # pager command     ]=
     [     parallel | V   >up_opts # parallel view     ]=
     [         fold | F   >up_opts # fold mode         ]=
     [     filename | H   >up_opts # show file headers ]=
@@ -95,6 +100,11 @@ declare -A OPTS=(
     [   pane-width | S  :>up_opts # pane width        ]=
     [ border-style | bs :>up_opts # border style      ]=
     [   line-style | ls :>up_opts # line style        ]=
+    [     colormap | cm :>up_opts # color mapping     ]=
+    [  white-board |     >up_opts # black on white    ]=
+    [  black-board |     >up_opts # white on black    ]=
+    [  green-board |     >up_opts # white on green    ]=
+    [  slate-board |     >up_opts # white on slate    ]=
 )
 
 ##############################################################################
@@ -262,6 +272,15 @@ Set the border style. Default is C<heavy-box>.
 =item B<--ls>=I<STYLE>, B<--line-style>=I<STYLE>
 
 Set the line style. Available: C<none>, C<truncate>, C<wrap>, C<wordwrap>.
+
+=item B<--cm>=I<SPEC>, B<--colormap>=I<SPEC>
+
+Set color mapping. Specify as C<LABEL=COLOR> (e.g., C<--cm=BORDER=R>).
+Available labels: C<TEXT>, C<BORDER>.
+
+=item B<--white-board>, B<--black-board>, B<--green-board>, B<--slate-board>
+
+Predefined color schemes for board-style display.
 
 =back
 

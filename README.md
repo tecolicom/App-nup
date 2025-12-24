@@ -23,6 +23,11 @@ nup - N-up multi-column paged output for commands and files
     -S,   --pane-width=#     pane width (default: 85)
     --bs, --border-style=#   border style (default: heavy-box)
     --ls, --line-style=#     line style (none/truncate/wrap/wordwrap)
+    --cm, --colormap=#       color mapping (LABEL=COLOR)
+          --white-board      black on white board
+          --black-board      white on black board
+          --green-board      white on green board
+          --slate-board      white on dark slate board
           --pager=#          pager command (empty to disable)
           --no-pager         disable pager
 
@@ -116,6 +121,15 @@ force command mode when needed.
 - **--ls**=_STYLE_, **--line-style**=_STYLE_
 
     Set the line style. Available: `none`, `truncate`, `wrap`, `wordwrap`.
+
+- **--cm**=_SPEC_, **--colormap**=_SPEC_
+
+    Set color mapping. Specify as `LABEL=COLOR` (e.g., `--cm=BORDER=R`).
+    Available labels: `TEXT`, `BORDER`.
+
+- **--white-board**, **--black-board**, **--green-board**, **--slate-board**
+
+    Predefined color schemes for board-style display.
 
 ## Pager Options
 
