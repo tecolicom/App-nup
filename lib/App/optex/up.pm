@@ -183,6 +183,10 @@ sub term_size {
     @size;
 }
 
+sub shell_escape {
+    $_[0] =~ s/([<>&|;'"\$`\\ ])/\\$1/gr;
+}
+
 my $config = Getopt::EX::Config->new(
     'grid'         => undef,
     'pane-width'   => 85,
@@ -237,7 +241,7 @@ sub finalize {
         return;
     }
 
-    my $column = join ' ', 'ansicolumn', @ac_opts;
+    my $column = join ' ', 'ansicolumn', map { shell_escape($_) } @ac_opts;
     my $filter = ($config->{'no-pager'} || $pager eq '') ? $column : "$column|$pager";
     $mod->setopt(default => "-Mutil::filter --of='$filter' --ef='>&1'");
 }
