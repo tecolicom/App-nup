@@ -2,6 +2,11 @@ Revision history for Perl extension App-optex-up
 
 {{$NEXT}}
 
+1.04 2025-12-24T16:06:43Z
+
+    - Use pass_through for unknown options to ansicolumn
+    - Add shell_escape for special characters in filter command options
+
 1.03 2025-12-22T06:31:53Z
 
     - Add -H/--filename and -V/--parallel options for ansicolumn
