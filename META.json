@@ -44,7 +44,7 @@
          "requires" : {
             "App::optex" : "0",
             "App::optex::up" : "1.03",
-            "File::Share" : "0",
+            "Getopt::Long::Bash" : "v0.6.0",
             "perl" : "5.016"
          }
       },

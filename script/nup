@@ -65,21 +65,6 @@ if ((BASH_VERSINFO[0] < 4 || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] < 3))); 
 fi
 
 ##############################################################################
-# Setup PATH for getoptlong.sh
-##############################################################################
-
-basedir="${0%/*/*}"
-if [[ -f $basedir/share/getoptlong/getoptlong.sh ]]; then
-    PATH="$basedir/share/getoptlong:$PATH"
-else
-    dist_dir() {
-        perl -MFile::Share=:all -E "say dist_dir '$1'" 2>/dev/null || true
-    }
-    share=$(dist_dir App-nup)
-    PATH="${share:+$share/getoptlong:}$PATH"
-fi
-
-##############################################################################
 # Option definitions
 ##############################################################################
 
