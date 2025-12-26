@@ -41,6 +41,10 @@ Version 0.9903
 convenient way to view files or run commands with N-up output
 formatting using the [App::optex::up](https://metacpan.org/pod/App%3A%3Aoptex%3A%3Aup) module.
 
+<div>
+    <p><img width="750" src="https://raw.githubusercontent.com/tecolicom/App-nup/main/images/nup.png"></p>
+</div>
+
 **nup** automatically detects the mode based on the first argument:
 if it is an existing file, file view mode is used; if it is an
 executable command, command mode is used.  Use `-e` option to
