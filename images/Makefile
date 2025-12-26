@@ -3,7 +3,7 @@
 all: perldoc.png
 
 perldoc.png: Makefile capture.sh
-	./capture.sh -o $@ -- 'perldoc App::optex::up | ansicolumn -DP -C2 --bs heavy-box | less -R'
+	./capture.sh -o $@ -- 'nup man App::optex::up'
 
 clean:
 	rm -f perldoc.png

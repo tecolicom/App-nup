@@ -8,7 +8,7 @@ set -e
 declare -A OPTS=(
     [ output |o: # output filename            ]=screenshot.png
     [ width  |w: # terminal width             ]=180
-    [ shadow |s! # capture with window shadow ]=1
+    [ shadow |s  # capture with window shadow ]=1
     [ keys   |k: # send keys after command    ]=
     [ help   |h  # show help                  ]=
 )
