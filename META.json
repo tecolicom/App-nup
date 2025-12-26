@@ -43,7 +43,7 @@
       "runtime" : {
          "requires" : {
             "App::optex" : "0",
-            "App::optex::up" : "1.04",
+            "App::optex::up" : "1.05",
             "Getopt::Long::Bash" : "v0.6.0",
             "perl" : "5.016"
          }
