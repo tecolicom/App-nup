@@ -135,7 +135,9 @@ force command mode when needed.
 
 - **--pager**=_COMMAND_
 
-    Set the pager command. Default is `$PAGER` or `less`.
+    Set the pager command. Default is `NUP_PAGER` or `less -F +Gg`.
+    The `PAGER` variable is not used to avoid an infinite loop when
+    `PAGER` is set to `nup`.
     Use `--pager=` (empty) or `--no-pager` to disable pager.
 
 - **--no-pager**
