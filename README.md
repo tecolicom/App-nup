@@ -8,28 +8,28 @@ nup - N-up multi-column paged output for commands and files
     nup [ options ] file ...
     nup -e [ options ] command ...
 
-      -h, --help             show help
-          --version          show version
-      -d, --debug            debug mode
-      -n, --dryrun           dry-run mode
-      -e, --exec             execute command mode
-      -V, --parallel         parallel view mode
-      -F, --fold             fold mode (disable page mode)
-      -H, --filename         show filename headers (default: on)
-      -G, --grid=#           grid layout (e.g., 2x3)
-      -C, --pane=#           number of columns
-      -R, --row=#            number of rows
-      -P, --page=#           page height in lines
-      -S, --pane-width=#     pane width (default: 85)
-    --bs, --border-style=#   border style (default: heavy-box)
-    --ls, --line-style=#     line style (none/truncate/wrap/wordwrap)
-    --cm, --colormap=#       color mapping (LABEL=COLOR)
-          --white-board      black on white board
-          --black-board      white on black board
-          --green-board      white on green board
-          --slate-board      white on dark slate board
-          --pager=#          pager command (empty to disable)
-          --no-pager         disable pager
+     -h  --help             show help
+         --version          show version
+     -d  --debug            debug mode
+     -n  --dryrun           dry-run mode
+     -e  --exec             execute command mode
+     -V  --parallel         parallel view mode
+     -F  --fold             fold mode (disable page mode)
+     -H  --filename         show filename headers (default: on)
+     -G  --grid=#           grid layout (e.g., 2x3)
+     -C  --pane=#           number of columns
+     -R  --row=#            number of rows
+     -P  --page=#           page height in lines
+     -S  --pane-width=#     pane width (default: 85)
+    --bs --border-style=#   border style (default: heavy-box)
+    --ls --line-style=#     line style (none/truncate/wrap/wordwrap)
+    --cm --colormap=#       color mapping (LABEL=COLOR)
+         --pager=#          pager command (empty to disable)
+         --no-pager         disable pager
+         --white-board      black on white board
+         --black-board      white on black board
+         --green-board      white on green board
+         --slate-board      white on dark slate board
 
 # VERSION
 
