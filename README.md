@@ -13,6 +13,7 @@ nup - N-up multi-column paged output for commands and files
      -d  --debug            debug mode
      -n  --dryrun           dry-run mode
      -e  --exec             execute command mode
+         --alias=CMD=OPTS   set command alias
      -V  --parallel         parallel view mode
      -F  --fold             fold mode (disable page mode)
      -H  --filename         show filename headers (default: on)
@@ -74,6 +75,22 @@ force command mode when needed.
 
     Force command execution mode. Normally the mode is auto-detected,
     but use this option when you want to execute a file as a command.
+
+- **--alias**=_CMD_=_OPTS_
+
+    Set command-specific options. When a command matches _CMD_, the
+    specified _OPTS_ are automatically added to the command line.
+    Multiple `--alias` options can be specified.
+
+    Default aliases:
+
+        bat    --style=plain --color=always
+        rg     --color=always
+        tree   -C
+
+    Example:
+
+        nup --alias='grep=--color=always' grep pattern file
 
 - **-V**, **--parallel**
 
