@@ -154,6 +154,8 @@ Truncate long lines:
 
 =head1 SEE ALSO
 
+L<App::nup>, L<https://github.com/tecolicom/App-nup>
+
 L<App::optex>, L<https://github.com/kaz-utashiro/optex>
 
 L<App::optex::up>, L<https://github.com/kaz-utashiro/optex-up>

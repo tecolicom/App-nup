@@ -142,6 +142,8 @@ Truncate long lines:
 
 # SEE ALSO
 
+[App::nup](https://metacpan.org/pod/App%3A%3Anup), [https://github.com/tecolicom/App-nup](https://github.com/tecolicom/App-nup)
+
 [App::optex](https://metacpan.org/pod/App%3A%3Aoptex), [https://github.com/kaz-utashiro/optex](https://github.com/kaz-utashiro/optex)
 
 [App::optex::up](https://metacpan.org/pod/App%3A%3Aoptex%3A%3Aup), [https://github.com/kaz-utashiro/optex-up](https://github.com/kaz-utashiro/optex-up)
