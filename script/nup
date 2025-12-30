@@ -27,6 +27,7 @@ nup - N-up multi-column paged output for commands and files
      -e  --exec             execute command mode
          --alias=CMD=OPTS   set command alias
      -V  --parallel         parallel view mode
+     -D  --document         document mode (default: on)
      -F  --fold             fold mode (disable page mode)
      -H  --filename         show filename headers (default: on)
      -G  --grid=#           grid layout (e.g., 2x3)
@@ -101,6 +102,7 @@ declare -A OPTS=(
     [        alias | %            # command aliases   ]=
     [        pager |    :!        # pager command     ]=
     [     parallel | V   >up_opts # parallel view     ]=
+    [     document | D   >up_opts # document mode     ]=
     [         fold | F   >up_opts # fold mode         ]=
     [     filename | H   >up_opts # show file headers ]=
     [         grid | G  :>up_opts # grid layout       ]=
@@ -268,6 +270,12 @@ is displayed in its own column without pagination, similar to
 C<--fold>.  Automatically enabled when multiple files are
 specified.  Single file or stdin input results in single column
 output.
+
+=item B<-D>, B<--document>
+
+Enable document mode for ansicolumn.  This mode is optimized for
+viewing documents with page-based layout.  Enabled by default.
+Use C<--no-document> to disable.
 
 =item B<-F>, B<--fold>
 
