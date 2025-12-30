@@ -76,21 +76,23 @@ force command mode when needed.
     Force command execution mode. Normally the mode is auto-detected,
     but use this option when you want to execute a file as a command.
 
-- **--alias**=_CMD_=_OPTS_
+- **--alias**=_NAME_=_CMD_ _OPTS_...
 
-    Set command-specific options. When a command matches _CMD_, the
-    specified _OPTS_ are automatically added to the command line.
+    Define command alias. When a command matches _NAME_, it is replaced
+    by _CMD_ with specified _OPTS_.  This can be used to add default
+    options or to substitute a different command.
     Multiple `--alias` options can be specified.
 
     Default aliases:
 
-        bat    --style=plain --color=always
-        rg     --color=always
-        tree   -C
+        bat     bat --style=plain --color=always
+        batcat  batcat --style=plain --color=always
+        rg      rg --color=always
+        tree    tree -C
 
     Example:
 
-        nup --alias='grep=--color=always' grep pattern file
+        nup --alias='grep=ggrep --color=always' grep pattern file
 
 - **-V**, **--parallel**
 
