@@ -93,7 +93,7 @@ declare -A alias=(
 )
 
 declare -A OPTS=(
-    [&REQUIRE]=0.6 [&USAGE]="$USAGE" [&PERMUTE]= [&DELIM]=
+    [&REQUIRE]=0.7 [&USAGE]="$USAGE" [&PERMUTE]= [&DELIM]=
     [         help | h   !        # show help         ]=
     [      version |     !        # show version      ]=
     [        debug | d            # debug mode        ]=

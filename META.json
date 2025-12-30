@@ -45,7 +45,7 @@
             "App::ansicolumn" : "1.48",
             "App::optex" : "1.05",
             "App::optex::up" : "1.05",
-            "Getopt::Long::Bash" : "v0.6.0",
+            "Getopt::Long::Bash" : "v0.7.0",
             "perl" : "5.016"
          }
       },
