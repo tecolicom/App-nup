@@ -159,6 +159,10 @@ pager() {
 # Main
 ##############################################################################
 
+# Set defaults for less environment
+export LESS="${LESS:--R}"
+export LESSANSIENDCHARS="${LESSANSIENDCHARS:-mK}"
+
 # Show help if no arguments and stdin is a terminal
 if (( $# == 0 )) && [[ -t 0 ]]; then
     help
@@ -353,6 +357,24 @@ Use C<--pager=> (empty) or C<--no-pager> to disable pager.
 =item B<--no-pager>
 
 Disable pager.
+
+=back
+
+=head2 Less Environment Variables
+
+C<nup> sets the following environment variables when they are not
+already defined, to ensure proper display with C<less>:
+
+=over 4
+
+=item C<LESS>
+
+Default: C<-R>.  Required for ANSI color sequences.
+
+=item C<LESSANSIENDCHARS>
+
+Default: C<mK>.  Recognizes SGR (C<m>) and erase line (C<K>)
+sequences.
 
 =back
 

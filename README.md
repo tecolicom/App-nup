@@ -174,6 +174,20 @@ force command mode when needed.
 
     Disable pager.
 
+## Less Environment Variables
+
+`nup` sets the following environment variables when they are not
+already defined, to ensure proper display with `less`:
+
+- `LESS`
+
+    Default: `-R`.  Required for ANSI color sequences.
+
+- `LESSANSIENDCHARS`
+
+    Default: `mK`.  Recognizes SGR (`m`) and erase line (`K`)
+    sequences.
+
 # EXAMPLES
 
 Typical n-up usage:
