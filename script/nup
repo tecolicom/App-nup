@@ -38,6 +38,7 @@ nup - n-up, multi-column paged output for commands and files
     --bs --border-style=#   border style (default: heavy-box)
     --ls --line-style=#     line style (none/truncate/wrap/wordwrap)
     --cm --colormap=#       color mapping (LABEL=COLOR)
+         --[no-]page-number page number on border (default: on)
          --pager=#          pager command (empty to disable)
          --no-pager         disable pager
          --white-board      black on white board
@@ -113,6 +114,7 @@ declare -A OPTS=(
     [ border-style | bs :>up_opts # border style      ]=
     [   line-style | ls :>up_opts # line style        ]=
     [     colormap | cm :>up_opts # color mapping     ]=
+    [  page-number |              # page number       ]=1
     [  white-board |     >up_opts # black on white    ]=
     [  black-board |     >up_opts # white on black    ]=
     [  green-board |     >up_opts # white on green    ]=
@@ -159,6 +161,9 @@ pager() {
 # Main
 ##############################################################################
 
+# --page-number: show page number on border
+[[ ${page_number:-} ]] && up_opts+=(--label S=" %n ")
+
 # Set defaults for less environment
 export LESS="${LESS:--R}"
 export LESSANSIENDCHARS="${LESSANSIENDCHARS:-mK}"
@@ -199,7 +204,7 @@ fi
 
 debug "command: ${cmd[*]}"
 
-[[ ${dryrun:-} ]] && cmd=(echo "${cmd[@]}")
+[[ ${dryrun:-} ]] && { echo "${cmd[@]}"; exit; }
 
 exec "${cmd[@]}"
 
@@ -336,6 +341,11 @@ Set the line style. Available: C<none>, C<truncate>, C<wrap>, C<wordwrap>.
 
 Set color mapping. Specify as C<LABEL=COLOR> (e.g., C<--cm=BORDER=R>).
 Available labels: C<TEXT>, C<BORDER>.
+
+=item B<-->[B<no->]B<page-number>
+
+Show page number on the bottom border of each column.  Enabled by
+default.  Use C<--no-page-number> to disable.
 
 =item B<--white-board>, B<--black-board>, B<--green-board>, B<--slate-board>
 

@@ -42,7 +42,7 @@
       },
       "runtime" : {
          "requires" : {
-            "App::ansicolumn" : "1.48",
+            "App::ansicolumn" : "1.5701",
             "App::optex" : "1.05",
             "App::optex::up" : "1.05",
             "Getopt::Long::Bash" : "v0.7.0",

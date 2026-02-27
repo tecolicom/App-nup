@@ -26,6 +26,7 @@ nup - n-up, multi-column paged output for commands and files
     --bs --border-style=#   border style (default: heavy-box)
     --ls --line-style=#     line style (none/truncate/wrap/wordwrap)
     --cm --colormap=#       color mapping (LABEL=COLOR)
+         --[no-]page-number page number on border (default: on)
          --pager=#          pager command (empty to disable)
          --no-pager         disable pager
          --white-board      black on white board
@@ -156,6 +157,11 @@ force command mode when needed.
 
     Set color mapping. Specify as `LABEL=COLOR` (e.g., `--cm=BORDER=R`).
     Available labels: `TEXT`, `BORDER`.
+
+- **--**\[**no-**\]**page-number**
+
+    Show page number on the bottom border of each column.  Enabled by
+    default.  Use `--no-page-number` to disable.
 
 - **--white-board**, **--black-board**, **--green-board**, **--slate-board**
 
