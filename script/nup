@@ -39,6 +39,7 @@ nup - n-up, multi-column paged output for commands and files
     --ls --line-style=#     line style (none/truncate/wrap/wordwrap)
     --cm --colormap=#       color mapping (LABEL=COLOR)
          --[no-]page-number page number on border (default: on)
+         --textconv[=EXT]   textconv for non-text files
          --pager=#          pager command (empty to disable)
          --no-pager         disable pager
          --white-board      black on white board
@@ -101,6 +102,7 @@ declare -A OPTS=(
     [       dryrun | n            # dry-run mode      ]=
     [         exec | e            # execute command   ]=
     [        alias | %            # command aliases   ]=
+    [     textconv |    :         # textconv          ]=pdf,docx,docm,pptx,pptm,xlsx,xlsm,jpg,jpeg
     [        pager |    :!        # pager command     ]=
     [     parallel | V   >up_opts # parallel view     ]=
     [     document | D   >up_opts # document mode     ]=
@@ -191,15 +193,34 @@ expand_alias() {
     fi
 }
 
+# Check if any file matches comma-separated extension list
+# Usage: match_ext "pdf,docx,xlsx" file1.pdf file2.txt
+match_ext() {
+    local ext_list="$1"; shift
+    local ext
+    for f in "$@"; do
+        ext="${f##*.}"
+        ext="${ext,,}"  # lowercase
+        [[ ",$ext_list," == *,"$ext",* ]] && return 0
+    done
+    return 1
+}
+
+# Additional optex modules
+declare -a optex_mod=()
+if [[ -n $textconv && $textconv != none ]] && match_ext "$textconv" "$@"; then
+    optex_mod+=(-Mtextconv)
+fi
+
 if is_command_mode "$@"; then
     # Command mode: use optex -Mup
     local_cmd="$1"; shift
     declare -a expanded_cmd
     read -ra expanded_cmd <<< "$(expand_alias "$local_cmd")"
-    declare -a cmd=(optex -Mup "${up_opts[@]}" -- "${expanded_cmd[@]}" "$@")
+    declare -a cmd=(optex "${optex_mod[@]}" -Mup "${up_opts[@]}" -- "${expanded_cmd[@]}" "$@")
 else
     # File view mode: use ansicolumn via optex -Mup
-    declare -a cmd=(optex -Mup "${up_opts[@]}" -- ansicolumn "$@")
+    declare -a cmd=(optex "${optex_mod[@]}" -Mup "${up_opts[@]}" -- ansicolumn "$@")
 fi
 
 debug "command: ${cmd[*]}"
@@ -350,6 +371,24 @@ default.  Use C<--no-page-number> to disable.
 =item B<--white-board>, B<--black-board>, B<--green-board>, B<--slate-board>
 
 Predefined color schemes for board-style display.
+
+=back
+
+=head2 Text Conversion
+
+=over 4
+
+=item B<--textconv>[=I<EXT,...>]
+
+Enable text conversion for non-text files using
+L<App::optex::textconv>.  When any of the specified file extensions
+are found in the arguments, the C<textconv> module is loaded to
+convert them to text before display.
+
+Default extensions:
+C<pdf,docx,docm,pptx,pptm,xlsx,xlsm,jpg,jpeg>.
+
+Use C<--textconv=none> to disable.
 
 =back
 

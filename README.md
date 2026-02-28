@@ -27,6 +27,7 @@ nup - n-up, multi-column paged output for commands and files
     --ls --line-style=#     line style (none/truncate/wrap/wordwrap)
     --cm --colormap=#       color mapping (LABEL=COLOR)
          --[no-]page-number page number on border (default: on)
+         --textconv[=EXT]   textconv for non-text files
          --pager=#          pager command (empty to disable)
          --no-pager         disable pager
          --white-board      black on white board
@@ -166,6 +167,20 @@ force command mode when needed.
 - **--white-board**, **--black-board**, **--green-board**, **--slate-board**
 
     Predefined color schemes for board-style display.
+
+## Text Conversion
+
+- **--textconv**\[=_EXT,..._\]
+
+    Enable text conversion for non-text files using
+    [App::optex::textconv](https://metacpan.org/pod/App%3A%3Aoptex%3A%3Atextconv).  When any of the specified file extensions
+    are found in the arguments, the `textconv` module is loaded to
+    convert them to text before display.
+
+    Default extensions:
+    `pdf,docx,docm,pptx,pptm,xlsx,xlsm,jpg,jpeg`.
+
+    Use `--textconv=none` to disable.
 
 ## Pager Options
 
