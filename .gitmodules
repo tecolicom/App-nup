@@ -1,6 +1,3 @@
-[submodule "App-nup"]
-	path = App-nup
-	url = https://github.com/tecolicom/App-nup.git
 [submodule "t/runner"]
 	path = t/runner
 	url = https://github.com/kaz-utashiro/p5-script-runner.git
