@@ -456,7 +456,7 @@ the output is passed through a filter pipeline.
 
 =head1 SEE ALSO
 
-L<App::optex::up>, L<optex>
+L<App::optex::up> (bundled), L<optex>
 
 =head1 AUTHOR
 

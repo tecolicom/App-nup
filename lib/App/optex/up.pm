@@ -106,7 +106,7 @@ Display perldoc output in multiple columns:
 
 =begin html
 
-<p><img width="750" src="https://raw.githubusercontent.com/kaz-utashiro/optex-up/main/images/perldoc.png">
+<p><img width="750" src="https://raw.githubusercontent.com/tecolicom/App-nup/main/images/nup.png">
 
 =end html
 
@@ -150,15 +150,13 @@ Truncate long lines:
 
 =head2 CPANMINUS
 
-    cpanm App::optex::up
+    cpanm App::nup
 
 =head1 SEE ALSO
 
 L<App::nup>, L<https://github.com/tecolicom/App-nup>
 
 L<App::optex>, L<https://github.com/kaz-utashiro/optex>
-
-L<App::optex::up>, L<https://github.com/kaz-utashiro/optex-up>
 
 L<App::ansicolumn>
 

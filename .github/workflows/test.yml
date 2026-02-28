@@ -25,6 +25,8 @@ jobs:
     name: Perl ${{ matrix.perl }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
       - name: Setup perl
         uses: shogo82148/actions-setup-perl@v1
         with:

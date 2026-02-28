@@ -238,7 +238,7 @@ the output is passed through a filter pipeline.
 
 # SEE ALSO
 
-[App::optex::up](https://metacpan.org/pod/App%3A%3Aoptex%3A%3Aup), [optex](https://metacpan.org/pod/optex)
+[App::optex::up](https://metacpan.org/pod/App%3A%3Aoptex%3A%3Aup) (bundled), [optex](https://metacpan.org/pod/optex)
 
 # AUTHOR
 
