@@ -2,6 +2,11 @@ Revision history for Perl extension App-nup
 
 {{$NEXT}}
 
+1.06 2026-02-28T11:41:39Z
+
+    - Bundle App::optex::up module (merged from optex-up repository)
+    - Rewrite capture.sh to use iTerm directly without tmux
+
 0.9908 2026-02-28T06:11:37Z
 
     - Add --textconv option for automatic non-text file conversion

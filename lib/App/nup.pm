@@ -1,6 +1,6 @@
 package App::nup;
 
-our $VERSION = "0.9908";
+our $VERSION = "1.06";
 
 1;
 =encoding utf-8
@@ -43,7 +43,7 @@ nup - n-up, multi-column paged output for commands and files
 
 =head1 VERSION
 
-Version 0.9908
+Version 1.06
 
 =cut
 =head1 DESCRIPTION
@@ -271,7 +271,7 @@ the output is passed through a filter pipeline.
 
 =head1 SEE ALSO
 
-L<App::optex::up>, L<optex>
+L<App::optex::up> (bundled), L<optex>
 
 =head1 AUTHOR
 
