@@ -1,6 +1,6 @@
 package App::nup;
 
-our $VERSION = "0.9907";
+our $VERSION = "0.9908";
 
 1;
 =encoding utf-8
@@ -33,6 +33,7 @@ nup - n-up, multi-column paged output for commands and files
     --ls --line-style=#     line style (none/truncate/wrap/wordwrap)
     --cm --colormap=#       color mapping (LABEL=COLOR)
          --[no-]page-number page number on border (default: on)
+         --textconv[=EXT]   textconv for non-text files
          --pager=#          pager command (empty to disable)
          --no-pager         disable pager
          --white-board      black on white board
@@ -42,7 +43,7 @@ nup - n-up, multi-column paged output for commands and files
 
 =head1 VERSION
 
-Version 0.9907
+Version 0.9908
 
 =cut
 =head1 DESCRIPTION
@@ -185,6 +186,24 @@ default.  Use C<--no-page-number> to disable.
 =item B<--white-board>, B<--black-board>, B<--green-board>, B<--slate-board>
 
 Predefined color schemes for board-style display.
+
+=back
+
+=head2 Text Conversion
+
+=over 4
+
+=item B<--textconv>[=I<EXT,...>]
+
+Enable text conversion for non-text files using
+L<App::optex::textconv>.  When any of the specified file extensions
+are found in the arguments, the C<textconv> module is loaded to
+convert them to text before display.
+
+Default extensions:
+C<pdf,docx,docm,pptx,pptm,xlsx,xlsm,jpg,jpeg>.
+
+Use C<--textconv=none> to disable.
 
 =back
 

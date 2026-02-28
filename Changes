@@ -2,6 +2,11 @@ Revision history for Perl extension App-nup
 
 {{$NEXT}}
 
+0.9908 2026-02-28T06:11:37Z
+
+    - Add --textconv option for automatic non-text file conversion
+    - Require App::optex::textconv 1.07
+
 0.9907 2026-02-27T14:10:54Z
 
     - Add --page-number option to show page number on border (default on)
