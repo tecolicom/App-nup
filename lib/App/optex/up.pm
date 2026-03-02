@@ -73,11 +73,15 @@ terminal width by this value.
 Set the border style for ansicolumn.  Default is C<heavy-box>.
 See L<App::ansicolumn> for available styles.
 
-=item B<-F>, B<--fold>
+=item B<--no-paginate>
 
-Enable fold mode (disable page mode).  In fold mode, the entire
-content is split evenly across columns without pagination.  Page
-mode is the default.
+Disable page mode.  Without pagination, the entire content is
+split evenly across columns.  Page mode is the default.
+
+=item B<-A>, B<--auto-paginate>
+
+Automatically disable page mode when only one column fits the
+terminal.
 
 =item B<--pager>=I<COMMAND>
 
@@ -130,9 +134,9 @@ Use 2x2 grid (4-up):
 
     optex -Mup -G2x2 -- ls -l
 
-Fold mode (no pagination):
+No pagination:
 
-    optex -Mup -F -- man perl
+    optex -Mup --no-paginate -- man perl
 
 Use a different border style:
 
@@ -198,7 +202,8 @@ my $config = Getopt::EX::Config->new(
     'pane'         => undef,
     'row'          => undef,
     'border-style' => 'heavy-box',
-    'fold'         => undef,
+    'paginate'     => 1,
+    'auto-paginate' => undef,
     'pager'        => $ENV{NUP_PAGER} || 'less -F +Gg',
     'no-pager'     => undef,
 );
@@ -207,7 +212,9 @@ sub finalize {
     my($mod, $argv) = @_;
     $config->configure('pass_through')->deal_with($argv,
         'grid|G=s', 'pane-width|S=i', 'pane|C=i', 'row|R=i',
-        'border-style|bs=s', 'fold|F', 'pager:s', 'no-pager|nopager');
+        'border-style|bs=s', 'paginate!',
+        'auto-paginate|autopaginate|A',
+        'pager:s', 'no-pager|nopager');
     my @passthru = $config->argv;
 
     if (my $grid = $config->{grid}) {
@@ -231,7 +238,9 @@ sub finalize {
     # Build default ansicolumn options
     my @ac_opts = ("-w$term_width", "--bs=$border_style", "--cm=BORDER=L13", "-DBP", "-C$cols");
     push @ac_opts, "--height=$height" if defined $height;
-    push @ac_opts, "--no-page"        if $config->{fold};
+    my $no_page = !$config->{paginate}
+        || ($config->{'auto-paginate'} && $cols <= 1);
+    push @ac_opts, "--no-page"        if $no_page;
     push @ac_opts, @passthru;
 
     # If command is ansicolumn, apply default options and pager
