@@ -2,6 +2,12 @@ Revision history for Perl extension App-nup
 
 {{$NEXT}}
 
+1.07 2026-03-02T06:26:15Z
+
+    - Rename --fold/-F to --no-paginate/-F for clarity
+    - Add --auto-paginate/-A option to auto-disable page mode for
+      single column layout
+
 1.06 2026-02-28T11:41:39Z
 
     - Bundle App::optex::up module (merged from optex-up repository)

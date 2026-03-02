@@ -17,7 +17,7 @@ nup - n-up, multi-column paged output for commands and files
      -V  --parallel         parallel view mode
      -D  --document         document mode (default: on)
      -F  --no-paginate      disable page mode
-     -A  --auto-paginate   auto disable page mode for single column
+     -A  --auto-paginate    auto disable page mode for single column
      -H  --filename         show filename headers (default: on)
      -G  --grid=#           grid layout (e.g., 2x3)
      -C  --pane=#           number of columns
@@ -38,7 +38,7 @@ nup - n-up, multi-column paged output for commands and files
 
 # VERSION
 
-Version 1.06
+Version 1.07
 
 # DESCRIPTION
 
