@@ -161,6 +161,13 @@ Truncate long lines:
 
 =head1 INSTALL
 
+=head2 Homebrew
+
+Use L<tecolicom/tap|https://github.com/tecolicom/homebrew-tap>:
+
+    brew tap tecolicom/tap
+    brew install app-nup
+
 =head2 CPANMINUS
 
     cpanm App::nup

@@ -238,6 +238,15 @@ Using `nup` as a `MANPAGER`:
 
 # INSTALLATION
 
+## Homebrew
+
+Use [tecolicom/tap](https://github.com/tecolicom/homebrew-tap):
+
+    brew tap tecolicom/tap
+    brew install app-nup
+
+## CPAN
+
 Using [cpanminus](https://metacpan.org/pod/App::cpanminus):
 
     cpanm -n App::nup

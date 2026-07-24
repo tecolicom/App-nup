@@ -477,6 +477,15 @@ Using C<nup> as a C<MANPAGER>:
 
 =head1 INSTALLATION
 
+=head2 Homebrew
+
+Use L<tecolicom/tap|https://github.com/tecolicom/homebrew-tap>:
+
+    brew tap tecolicom/tap
+    brew install app-nup
+
+=head2 CPAN
+
 Using L<cpanminus|https://metacpan.org/pod/App::cpanminus>:
 
     cpanm -n App::nup
