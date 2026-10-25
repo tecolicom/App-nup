@@ -55,6 +55,17 @@ if it is an existing file, n-up file view mode is used; if it is an
 executable command, n-up command mode is used.  Use `-e` option to
 force command mode when needed.
 
+In file view mode, `nup` stops parsing its own options at the first
+file name and hands the file names and everything after them to
+[ansicolumn](https://metacpan.org/pod/ansicolumn) unchanged.  Options of `ansicolumn` that `nup` does
+not provide can therefore be given after the file names:
+
+    nup -C2 file1.txt file2.txt -w 170
+
+Here `-w 170` sets the output width for `ansicolumn`.  To set the
+width when no terminal is available, the `COLUMNS` environment
+variable works in both modes; see ["Terminal Size"](#terminal-size).
+
 # OPTIONS
 
 ## General Options
@@ -207,6 +218,17 @@ force command mode when needed.
 
     Disable pager.
 
+## Terminal Size
+
+The terminal size is taken from the controlling terminal
+(`/dev/tty`).  When it is not available, as when `nup` is run
+without a terminal, the `COLUMNS` environment variable gives the
+width (default 80), and `LINES` gives the height (default 24) used
+to split the screen when the number of rows is set with `-R` or
+`-G`:
+
+    COLUMNS=170 nup -C2 file1.txt file2.txt
+
 ## Less Environment Variables
 
 `nup` sets the following environment variables when they are not
@@ -230,6 +252,7 @@ Typical n-up usage:
     nup -G2x2 man perl         # 2x2 grid (4-up layout)
     nup -F man perl            # no pagination
     nup file1.txt file2.txt    # view files side by side
+    nup -C2 a.txt b.txt -w 170 # 2 columns, width 170 (ansicolumn -w)
     nup -e ./script.sh         # force command mode for a file
 
 Using `nup` as a `MANPAGER`:

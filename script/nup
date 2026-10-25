@@ -267,6 +267,17 @@ if it is an existing file, n-up file view mode is used; if it is an
 executable command, n-up command mode is used.  Use C<-e> option to
 force command mode when needed.
 
+In file view mode, C<nup> stops parsing its own options at the first
+file name and hands the file names and everything after them to
+L<ansicolumn> unchanged.  Options of C<ansicolumn> that C<nup> does
+not provide can therefore be given after the file names:
+
+    nup -C2 file1.txt file2.txt -w 170
+
+Here C<-w 170> sets the output width for C<ansicolumn>.  To set the
+width when no terminal is available, the C<COLUMNS> environment
+variable works in both modes; see L</Terminal Size>.
+
 =head1 OPTIONS
 
 =head2 General Options
@@ -442,6 +453,17 @@ Disable pager.
 
 =back
 
+=head2 Terminal Size
+
+The terminal size is taken from the controlling terminal
+(C</dev/tty>).  When it is not available, as when C<nup> is run
+without a terminal, the C<COLUMNS> environment variable gives the
+width (default 80), and C<LINES> gives the height (default 24) used
+to split the screen when the number of rows is set with C<-R> or
+C<-G>:
+
+    COLUMNS=170 nup -C2 file1.txt file2.txt
+
 =head2 Less Environment Variables
 
 C<nup> sets the following environment variables when they are not
@@ -469,6 +491,7 @@ Typical n-up usage:
     nup -G2x2 man perl         # 2x2 grid (4-up layout)
     nup -F man perl            # no pagination
     nup file1.txt file2.txt    # view files side by side
+    nup -C2 a.txt b.txt -w 170 # 2 columns, width 170 (ansicolumn -w)
     nup -e ./script.sh         # force command mode for a file
 
 Using C<nup> as a C<MANPAGER>:

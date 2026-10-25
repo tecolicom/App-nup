@@ -25,6 +25,10 @@ refers to printing multiple pages on a single sheet.
 
 The module automatically calculates the number of columns based on the
 terminal width divided by the pane width (default 85 characters).
+The terminal size is taken from the controlling terminal (C</dev/tty>);
+when it is not available, the C<COLUMNS> environment variable gives the
+width (default 80), and C<LINES> gives the height (default 24) used
+when the number of rows is set with C<-R> or C<-G>.
 
 Both stdout and stderr are merged and passed through the filter, so
 error messages are also displayed in the multi-column paged output.
