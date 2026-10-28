@@ -91,6 +91,7 @@ declare -a up_opts=(--filename)  # up.pm options
 declare -A alias=(
     [bat]="bat --style=plain --color=always"
     [batcat]="batcat --style=plain --color=always"
+    [mdcat]="mdcat --ansi"
     [rg]="rg --color=always"
     [tree]="tree -C"
 )
@@ -316,6 +317,7 @@ Default aliases:
 
     bat     bat --style=plain --color=always
     batcat  batcat --style=plain --color=always
+    mdcat   mdcat --ansi
     rg      rg --color=always
     tree    tree -C
 

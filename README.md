@@ -102,6 +102,7 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
 
         bat     bat --style=plain --color=always
         batcat  batcat --style=plain --color=always
+        mdcat   mdcat --ansi
         rg      rg --color=always
         tree    tree -C
 
