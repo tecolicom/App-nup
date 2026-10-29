@@ -26,6 +26,9 @@ nup - n-up, multi-column paged output for commands and files
      -S  --pane-width=#     pane width (default: 85)
     --bs --border-style=#   border style (default: heavy-box)
     --ls --line-style=#     line style (none/truncate/wrap/wordwrap)
+         --runin=#          run-in width for line breaking
+         --runout=#         run-out width for line breaking
+         --runlen=#         set both run-in and run-out
     --cm --colormap=#       color mapping (LABEL=COLOR)
          --[no-]page-number page number on border (default: on)
          --textconv[=EXT]   textconv for non-text files
@@ -172,6 +175,14 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
 - **--ls**=_STYLE_, **--line-style**=_STYLE_
 
     Set the line style. Available: `none`, `truncate`, `wrap`, `wordwrap`.
+
+- **--runin**=_N_, **--runout**=_N_, **--runlen**=_N_
+
+    Set the run-in and run-out widths that [ansicolumn](https://metacpan.org/pod/ansicolumn) uses for line
+    breaking (kinsoku) when it folds long lines.  `--runlen` sets both.
+    They are given to ansicolumn after the values in `~/.ansicolumnrc`,
+    so they take precedence.  Without them, ansicolumn uses the values in
+    `~/.ansicolumnrc`, or 2.
 
 - **--cm**=_SPEC_, **--colormap**=_SPEC_
 
