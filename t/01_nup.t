@@ -153,6 +153,7 @@ subtest 'line-style option' => sub {
 subtest 'run-in options' => sub {
     like nup('--runlen=4 date'), qr/--runlen 4/, 'runlen option';
     like nup('--runin=3 --runout=1 date'), qr/--runin 3 --runout 1/, 'runin and runout options';
+    like nup('--boundary=none date'), qr/--boundary none/, 'boundary option';
 };
 
 subtest 'pager option' => sub {

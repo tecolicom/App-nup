@@ -29,6 +29,7 @@ nup - n-up, multi-column paged output for commands and files
          --runin=#          run-in width for line breaking
          --runout=#         run-out width for line breaking
          --runlen=#         set both run-in and run-out
+         --boundary=#       fold boundary: word, space or none
     --cm --colormap=#       color mapping (LABEL=COLOR)
          --[no-]page-number page number on border (default: on)
          --textconv[=EXT]   textconv for non-text files
@@ -183,6 +184,15 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
     They are given to ansicolumn after the values in `~/.ansicolumnrc`,
     so they take precedence.  Without them, ansicolumn uses the values in
     `~/.ansicolumnrc`, or 2.
+
+- **--boundary**=`word`|`space`|`none`
+
+    Set where [ansicolumn](https://metacpan.org/pod/ansicolumn) may break a line when it folds long lines, as
+    its `--boundary` option: `word` does not break inside an
+    alphanumeric word, `space` not inside a sequence of non-space
+    characters, and `none` breaks anywhere.  Like `--runin`, it is
+    given to ansicolumn after `~/.ansicolumnrc`.  Without it, ansicolumn
+    uses the value in the rc file, or `word` in document mode.
 
 - **--cm**=_SPEC_, **--colormap**=_SPEC_
 
