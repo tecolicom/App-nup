@@ -80,6 +80,12 @@ subtest 'page mode disabled for parallel layout' => sub {
     like $out, qr/--no-paginate/, 'multiple files disable page mode';
     $out = nup('script/nup');
     unlike $out, qr/--no-paginate/, 'single file keeps page mode';
+    $out = nup('script/nup -w 100');
+    unlike $out, qr/--no-paginate/, 'options after the file are not files';
+    $out = nup('- --boundary=word');
+    unlike $out, qr/--no-paginate/, 'options after - are not files';
+    $out = nup('script/nup cpanfile -w 100');
+    like $out, qr/--no-paginate/, 'two files and options disable page mode';
     $out = nup('date');
     unlike $out, qr/--no-paginate/, 'command mode keeps page mode';
     $out = nup('-V date');

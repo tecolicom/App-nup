@@ -238,8 +238,12 @@ if is_command_mode "$@"; then
     read -ra expanded_cmd <<< "$(expand_alias "$local_cmd")"
     declare -a target=("${expanded_cmd[@]}" "$@")
 else
-    # File view mode: use ansicolumn via optex -Mup
-    [[ ${parallel:-} ]] || (( $# > 1 )) && paginate=
+    # File view mode: use ansicolumn via optex -Mup.  Only the
+    # arguments before the first option are files; the options after
+    # them are for ansicolumn (nup FILE -w 100).
+    nfiles=0
+    for arg; do [[ $arg == -?* ]] && break; (( ++nfiles )); done
+    [[ ${parallel:-} ]] || (( nfiles > 1 )) && paginate=
     declare -a target=(ansicolumn "$@")
 fi
 
