@@ -476,6 +476,13 @@ layout which has no page structure, so C<nup> disables page mode
 and C<NUP_PAGE_PAGER> is not used there.
 The C<PAGER> variable is not used to avoid an infinite loop when
 C<PAGER> is set to C<nup>.
+C<+Gg> makes C<less> read all input before displaying, so that C<-F>
+and the percentage work; C<--file-size> of C<less> 590 and later does
+the same, but the C<less> 581 of macOS does not have it, so C<+Gg>
+is the default.  Set C<NUP_PAGER> to use it:
+
+    export NUP_PAGER="less --file-size"
+
 Use C<--pager=> (empty) or C<--no-pager> to disable pager.
 
 =item B<--no-pager>

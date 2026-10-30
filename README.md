@@ -234,6 +234,13 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
     and `NUP_PAGE_PAGER` is not used there.
     The `PAGER` variable is not used to avoid an infinite loop when
     `PAGER` is set to `nup`.
+    `+Gg` makes `less` read all input before displaying, so that `-F`
+    and the percentage work; `--file-size` of `less` 590 and later does
+    the same, but the `less` 581 of macOS does not have it, so `+Gg`
+    is the default.  Set `NUP_PAGER` to use it:
+
+        export NUP_PAGER="less --file-size"
+
     Use `--pager=` (empty) or `--no-pager` to disable pager.
 
 - **--no-pager**
