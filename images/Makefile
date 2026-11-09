@@ -35,3 +35,16 @@ mdee.png:
 
 clean:
 	rm -f $(IMAGES)
+
+# a2ps images (not in "all"): man nup printed 2-up on A4, rendered
+# at 150dpi.  The GNU a2ps footer date is garbled under ja_JP.UTF-8,
+# which is intended.  a2ps-perl.png was made the same way with the old
+# Perl a2ps (1.45.1.1), patched to run on current Perl.
+A2PS_DPI = 150
+
+a2ps-gnu.png:
+	env -u MANPAGER MANPAGER=cat man nup > $(CURDIR)/man-nup.txt
+	cd $(CURDIR) && /opt/homebrew/bin/a2ps -o a2ps-gnu.ps man-nup.txt
+	cd $(CURDIR) && ps2pdf -sPAPERSIZE=a4 a2ps-gnu.ps a2ps-gnu.pdf
+	cd $(CURDIR) && magick -density $(A2PS_DPI) "a2ps-gnu.pdf[0]" -background white -flatten $@
+	cd $(CURDIR) && rm -f man-nup.txt a2ps-gnu.ps a2ps-gnu.pdf
