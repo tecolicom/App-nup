@@ -62,6 +62,21 @@ subtest 'pager options' => sub {
 };
 
 # Test term_size function exists
+subtest 'take_page' => sub {
+    my $take = \&App::optex::up::take_page;
+    for my $t ([ [qw(-P 60 -w 100)],   60, [qw(-w 100)] ],
+               [ [qw(--page 40)],      40, [] ],
+               [ [qw(--page=80 -V)],   80, [qw(-V)] ],
+               [ [qw(-w 100 -P50)],    50, [qw(-w 100)] ],
+               [ [qw(-w 100)],      undef, [qw(-w 100)] ],
+               [ [qw(-P)],          undef, [qw(-P)] ]) {
+        my($argv, $page, $rest) = @$t;
+        my $name = "@$argv";
+        is $take->($argv), $page, "page of $name";
+        is_deeply $argv, $rest, "rest of $name";
+    }
+};
+
 subtest 'term_size' => sub {
     can_ok 'App::optex::up', 'term_size';
 };

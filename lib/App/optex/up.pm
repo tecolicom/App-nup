@@ -124,6 +124,10 @@ in columns and lines, which C<ansi2pdf --geometry> tells, is used in
 place of the terminal size, and C<ansi2pdf> is used in place of the
 pager.  Each screen is printed on a landscape sheet as it is.
 
+The page height given by C<-P> (C<--page>) is the number of lines of
+a page here too: a sheet has that many lines for each row, and the
+font size follows it.  The default is 60 lines on a sheet.
+
 =item B<--pdf-opts>=I<OPTIONS>
 
 Give options to C<ansi2pdf>, such as C<-p a3> for the paper size,
@@ -237,6 +241,24 @@ sub shell_escape {
     $_[0] =~ s/([<>&|;'"\$`\\ ])/\\$1/gr;
 }
 
+# Take the page height (-P N, -PN, --page N, --page=N) out of the options
+# for ansicolumn, and return it.
+sub take_page {
+    my $argv = shift;
+    my $page;
+    for (my $i = 0; $i < @$argv; $i++) {
+        if ($argv->[$i] =~ /^(?:-P|--page)$/
+            and $i < $#$argv and $argv->[$i + 1] =~ /^\d+$/) {
+            (undef, $page) = splice @$argv, $i--, 2;
+        }
+        elsif ($argv->[$i] =~ /^(?:-P|--page=)(\d+)$/) {
+            $page = $1;
+            splice @$argv, $i--, 1;
+        }
+    }
+    $page;
+}
+
 my $config = Getopt::EX::Config->new(
     'grid'         => undef,
     'pane-width'   => 85,
@@ -289,8 +311,15 @@ sub finalize {
     # ansi2pdf takes the place of the pager.  Each screen is printed on
     # a landscape sheet as it is.
     my $pdf = $config->{pdf};
-    my $ansi2pdf = defined $pdf
-        ? join(' ', 'ansi2pdf -C1 --no-border -L', $config->{'pdf-opts'}) : undef;
+    my $ansi2pdf;
+    if (defined $pdf) {
+        $ansi2pdf = join ' ', 'ansi2pdf -C1 --no-border -L', $config->{'pdf-opts'};
+        # -P gives the lines of a page, and a sheet has as many pages
+        # as the rows
+        if (my $page = take_page(\@passthru)) {
+            $ansi2pdf .= ' -l ' . $page * ($config->{row} || 1);
+        }
+    }
 
     my($term_width, $term_height) = $ansi2pdf ? pdf_size($ansi2pdf) : term_size();
     $term_width  ||= $ENV{COLUMNS} || 80;

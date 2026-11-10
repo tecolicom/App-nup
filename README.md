@@ -278,8 +278,12 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
         nup --pdf=nup.pdf --pdf-opts='-p a3 -l 80' man nup   # A3, 80 lines
         nup --pdf=nup.pdf --pdf-opts=-P -C1 man nup          # portrait
 
-The page height is the number of lines on a sheet divided by the
-number of rows, and the `-P` option is not used.
+The `-P` option sets the number of lines of a page for PDF as well,
+and the font size follows it.  A sheet has that many lines for each
+row; without `-P`, it has 60 lines in all.
+
+    nup --pdf=nup.pdf -P 80 man nup         # 80 lines on a sheet
+    nup --pdf=nup.pdf -C2,2 -P 40 man nup   # 2x2 pages of 40 lines
 
 ## Terminal Size
 
