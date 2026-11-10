@@ -528,12 +528,16 @@ and the number of lines on a sheet, which decides the font size.
 
 =back
 
-The C<-P> option sets the number of lines of a page for PDF as well,
-and the font size follows it.  A sheet has that many lines for each
-row; without C<-P>, it has 60 lines in all.
+The C<-P> option sets the number of lines of a page for PDF as well:
+a sheet has that many lines for each row.  The C<-w> option of
+C<ansicolumn>, given after the files or the command, sets the number
+of columns of a sheet.  The font size follows them, and the one that
+is not given is decided to fill the sheet.  With neither of them, a
+sheet has 60 lines.
 
     nup --pdf=nup.pdf -P 80 man nup         # 80 lines on a sheet
     nup --pdf=nup.pdf -C2,2 -P 40 man nup   # 2x2 pages of 40 lines
+    nup --pdf=nup.pdf -C3 file -w 300       # 300 columns on a sheet
 
 =head2 Terminal Size
 

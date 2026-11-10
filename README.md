@@ -278,12 +278,16 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
         nup --pdf=nup.pdf --pdf-opts='-p a3 -l 80' man nup   # A3, 80 lines
         nup --pdf=nup.pdf --pdf-opts=-P -C1 man nup          # portrait
 
-The `-P` option sets the number of lines of a page for PDF as well,
-and the font size follows it.  A sheet has that many lines for each
-row; without `-P`, it has 60 lines in all.
+The `-P` option sets the number of lines of a page for PDF as well:
+a sheet has that many lines for each row.  The `-w` option of
+`ansicolumn`, given after the files or the command, sets the number
+of columns of a sheet.  The font size follows them, and the one that
+is not given is decided to fill the sheet.  With neither of them, a
+sheet has 60 lines.
 
     nup --pdf=nup.pdf -P 80 man nup         # 80 lines on a sheet
     nup --pdf=nup.pdf -C2,2 -P 40 man nup   # 2x2 pages of 40 lines
+    nup --pdf=nup.pdf -C3 file -w 300       # 300 columns on a sheet
 
 ## Terminal Size
 

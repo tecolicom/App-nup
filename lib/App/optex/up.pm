@@ -125,8 +125,10 @@ place of the terminal size, and C<ansi2pdf> is used in place of the
 pager.  Each screen is printed on a landscape sheet as it is.
 
 The page height given by C<-P> (C<--page>) is the number of lines of
-a page here too: a sheet has that many lines for each row, and the
-font size follows it.  The default is 60 lines on a sheet.
+a page here too: a sheet has that many lines for each row.  The width
+given by C<-w> (C<--width>) is the number of columns of a sheet.  The
+font size follows them, and the one that is not given is decided to
+fill the sheet.  The default is 60 lines on a sheet.
 
 =item B<--pdf-opts>=I<OPTIONS>
 
@@ -241,22 +243,22 @@ sub shell_escape {
     $_[0] =~ s/([<>&|;'"\$`\\ ])/\\$1/gr;
 }
 
-# Take the page height (-P N, -PN, --page N, --page=N) out of the options
-# for ansicolumn, and return it.
-sub take_page {
-    my $argv = shift;
-    my $page;
+# Take the number given to an option (-X N, -XN, --name N, --name=N) out
+# of the options for ansicolumn, and return it.
+sub take_option {
+    my($argv, $short, $long) = @_;
+    my $value;
     for (my $i = 0; $i < @$argv; $i++) {
-        if ($argv->[$i] =~ /^(?:-P|--page)$/
+        if ($argv->[$i] =~ /^(?:-$short|--$long)$/
             and $i < $#$argv and $argv->[$i + 1] =~ /^\d+$/) {
-            (undef, $page) = splice @$argv, $i--, 2;
+            (undef, $value) = splice @$argv, $i--, 2;
         }
-        elsif ($argv->[$i] =~ /^(?:-P|--page=)(\d+)$/) {
-            $page = $1;
+        elsif ($argv->[$i] =~ /^(?:-$short|--$long=)(\d+)$/) {
+            $value = $1;
             splice @$argv, $i--, 1;
         }
     }
-    $page;
+    $value;
 }
 
 my $config = Getopt::EX::Config->new(
@@ -315,10 +317,16 @@ sub finalize {
     if (defined $pdf) {
         $ansi2pdf = join ' ', 'ansi2pdf -C1 --no-border -L', $config->{'pdf-opts'};
         # -P gives the lines of a page, and a sheet has as many pages
-        # as the rows
-        if (my $page = take_page(\@passthru)) {
-            $ansi2pdf .= ' -l ' . $page * ($config->{row} || 1);
-        }
+        # as the rows.  -w gives the columns of a sheet.  ansi2pdf
+        # decides the one that is not given, to fill the sheet.
+        # They are among the options of this module, or among the
+        # arguments of ansicolumn in file view mode (nup FILE -w 100).
+        my @lists = (\@passthru,
+                     @$argv && $argv->[0] eq 'ansicolumn' ? $argv : ());
+        my($page)  = grep defined, reverse map take_option($_, 'P', 'page'),  @lists;
+        my($width) = grep defined, reverse map take_option($_, 'w', 'width'), @lists;
+        $ansi2pdf .= ' -l ' . $page * ($config->{row} || 1) if $page;
+        $ansi2pdf .= " -w $width" if $width;
     }
 
     my($term_width, $term_height) = $ansi2pdf ? pdf_size($ansi2pdf) : term_size();
