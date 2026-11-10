@@ -180,4 +180,11 @@ subtest 'combined options' => sub {
     like $out, qr/-- date$/, 'command at end';
 };
 
+subtest 'pdf options' => sub {
+    like nup('--pdf=out.pdf date'), qr/--pdf=out\.pdf /, 'pdf with file';
+    like nup('--pdf date'), qr/--pdf --/, 'pdf without file';
+    like nup(q(--pdf=out.pdf --pdf-opts="-p a3 -l 80" date)),
+        qr/--pdf-opts -p a3 -l 80 /, 'pdf-opts';
+};
+
 done_testing;

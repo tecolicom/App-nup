@@ -47,7 +47,7 @@
             "App::optex::textconv" : "1.07",
             "Getopt::EX" : "3.02",
             "Getopt::EX::Config" : "1.01",
-            "Getopt::Long::Bash" : "v0.7.0",
+            "Getopt::Long::Bash" : "v1.1.1",
             "Term::ReadKey" : "0",
             "perl" : "5.016"
          }

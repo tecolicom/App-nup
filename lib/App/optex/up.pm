@@ -14,7 +14,7 @@ up - optex module for multi-column paged output
 
     optex -Mup -C2 -- command ...
 
-    optex -Mup -G2x2 -- command ...
+    optex -Mup -C2.2 -- command ...
 
 =head1 DESCRIPTION
 
@@ -28,7 +28,7 @@ terminal width divided by the pane width (default 85 characters).
 The terminal size is taken from the controlling terminal (C</dev/tty>);
 when it is not available, the C<COLUMNS> environment variable gives the
 width (default 80), and C<LINES> gives the height (default 24) used
-when the number of rows is set with C<-R> or C<-G>.
+when the number of rows is set, as in C<-C2.2>.
 
 Both stdout and stderr are merged and passed through the filter, so
 error messages are also displayed in the multi-column paged output.
@@ -59,20 +59,26 @@ Module options must be specified before C<--> separator.
 
 =over 4
 
-=item B<-C> I<N>, B<--pane>=I<N>
+=item B<-C> I<C>[.I<R>], B<--pane>=I<C>[.I<R>]
 
-Set the number of columns (panes) directly.
+Set the number of columns (panes) directly, and the number of rows
+when it is given after a period.  For example, C<-C2> creates 2
+columns, and C<-C2.3> creates a 2-column, 3-row layout (6-up).  The
+page height is calculated by dividing the terminal height by the
+number of rows.
 
 =item B<-R> I<N>, B<--row>=I<N>
 
-Set the number of rows.  The page height is calculated by dividing
-the terminal height by this value.
+Set the number of rows.
+This option is kept for compatibility and may be removed in the
+future.
 
 =item B<-G> I<CxR>, B<--grid>=I<CxR>
 
-Set the grid layout.  For example, C<--grid=2x3> or C<--grid=2,3>
-creates a 2-column, 3-row layout (6-up).  This is equivalent to
-C<-C2 -R3>.
+Set the grid layout.  C<--grid=2x3> or C<--grid=2,3> is equivalent to
+C<-C2.3>.
+This option is kept for compatibility and may be removed in the
+future.
 
 =item B<-S> I<N>, B<--pane-width>=I<N>
 
@@ -110,6 +116,19 @@ C<less -F +Gg>.
 
 Disable pager.  Output goes directly to stdout.
 
+=item B<--pdf>[=I<FILE>]
+
+Print the output to a PDF file by C<ansi2pdf>.  Without I<FILE>, the
+PDF is written to the standard output.  The size of a sheet of paper
+in columns and lines, which C<ansi2pdf --geometry> tells, is used in
+place of the terminal size, and C<ansi2pdf> is used in place of the
+pager.  Each screen is printed on a landscape sheet as it is.
+
+=item B<--pdf-opts>=I<OPTIONS>
+
+Give options to C<ansi2pdf>, such as C<-p a3> for the paper size,
+C<-P> for portrait and C<-l 80> for the number of lines on a sheet.
+
 =item Other options
 
 Any unrecognized options are passed through to L<App::ansicolumn>.
@@ -145,13 +164,9 @@ Set pane width to 100:
 
     optex -Mup -S100 -- ls -l
 
-Use 2 rows (upper and lower):
-
-    optex -Mup -R2 -- ls -l
-
 Use 2x2 grid (4-up):
 
-    optex -Mup -G2x2 -- ls -l
+    optex -Mup -C2.2 -- ls -l
 
 No pagination:
 
@@ -232,16 +247,36 @@ my $config = Getopt::EX::Config->new(
     'auto-paginate' => undef,
     'pager'        => undef,
     'no-pager'     => undef,
+    'pdf'          => undef,
+    'pdf-opts'     => '',
 );
+
+# Size of a sheet of paper in columns and lines, asked to ansi2pdf.
+sub pdf_size {
+    my $command = shift;
+    my $geometry = qx($command --geometry) // '';
+    $geometry =~ /^(\d+) (\d+)$/
+        or die "Failed to get the page geometry from ansi2pdf.\n";
+    ($1, $2);
+}
 
 sub finalize {
     my($mod, $argv) = @_;
     $config->configure('pass_through')->deal_with($argv,
-        'grid|G=s', 'pane-width|S=i', 'pane|C=i', 'row|R=i',
+        'grid|G=s', 'pane-width|S=i', 'pane|C=s', 'row|R=i',
         'border-style|bs=s', 'paginate!',
         'auto-paginate|autopaginate|A',
-        'pager:s', 'no-pager|nopager');
+        'pager:s', 'no-pager|nopager',
+        'pdf:s', 'pdf-opts=s');
     my @passthru = $config->argv;
+
+    # -C C.R gives the number of rows as well
+    if (defined(my $pane = $config->{pane})) {
+        my($c, $r) = $pane =~ /^(\d+)(?:\.(\d+))?$/
+            or die "Invalid pane format: $pane (expected C or C.R)\n";
+        $config->{pane} = $c;
+        $config->{row} //= $r;
+    }
 
     if (my $grid = $config->{grid}) {
         my($c, $r) = $grid =~ /^(\d+)[x,](\d+)$/
@@ -250,7 +285,14 @@ sub finalize {
         $config->{row}  //= $r;
     }
 
-    my($term_width, $term_height) = term_size();
+    # --pdf: a sheet of paper takes the place of the terminal, and
+    # ansi2pdf takes the place of the pager.  Each screen is printed on
+    # a landscape sheet as it is.
+    my $pdf = $config->{pdf};
+    my $ansi2pdf = defined $pdf
+        ? join(' ', 'ansi2pdf -C1 --no-border -L', $config->{'pdf-opts'}) : undef;
+
+    my($term_width, $term_height) = $ansi2pdf ? pdf_size($ansi2pdf) : term_size();
     $term_width  ||= $ENV{COLUMNS} || 80;
     $term_height ||= $ENV{LINES}   || 24;
 
@@ -258,6 +300,14 @@ sub finalize {
     my $cols         = $config->{pane} // max(1, int($term_width / $pane_width));
     my $rows         = $config->{row};
     my $height       = defined $rows ? int(($term_height - 1) / $rows) : undef;
+    if ($ansi2pdf) {
+        # no line is needed for the pager, and the pages must fill the sheet
+        $height = int($term_height / ($rows || 1));
+        my $lines = $height * ($rows || 1);
+        $config->{pager} = "$ansi2pdf -w $term_width -l $lines"
+            . ($pdf ne '' ? ' -o ' . shell_escape($pdf) : '');
+        $config->{'no-pager'} = undef;
+    }
     my $border_style = $config->{'border-style'};
     my $no_page      = !$config->{paginate}
         || ($config->{'auto-paginate'} && $cols <= 1);
