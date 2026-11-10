@@ -41,15 +41,16 @@ is(run('-Mup -G3,2 --no-pager -- true')->status, 0, '-G3,2 option works');
 isnt(run('-Mup -Gabc --no-pager -- true')->status, 0, 'invalid grid fails');
 
 # Test pane option with rows
-is(run('-Mup -C2.2 --no-pager -- true')->status, 0, '-C2.2 option works');
-isnt(run('-Mup -C2. --no-pager -- true')->status, 0, '-C2. fails');
-isnt(run('-Mup -C.2 --no-pager -- true')->status, 0, '-C.2 fails');
+is(run('-Mup -C2,2 --no-pager -- true')->status, 0, '-C2,2 option works');
+isnt(run('-Mup -C2, --no-pager -- true')->status, 0, '-C2, fails');
+isnt(run('-Mup -C,2 --no-pager -- true')->status, 0, '-C,2 fails');
+isnt(run('-Mup -C2.2 --no-pager -- true')->status, 0, '-C2.2 fails');
 isnt(run('-Mup -C2x2 --no-pager -- true')->status, 0, '-C2x2 fails');
 subtest 'rows by -C' => sub {
     my @opt = ('--no-pager', '--bs=none', '--', 'perl', '-e', 'print "$_\n" for 1..40');
-    my $c = optex('-Mup', '-C2.2', @opt)->run->stdout;
+    my $c = optex('-Mup', '-C2,2', @opt)->run->stdout;
     my $g = optex('-Mup', '-G2x2', @opt)->run->stdout;
-    is($c, $g, '-C2.2 is the same as -G2x2');
+    is($c, $g, '-C2,2 is the same as -G2x2');
 };
 
 # Test pane and row options

@@ -19,7 +19,7 @@ nup - n-up, multi-column paged output for commands and files
      -F  --no-paginate      disable page mode
      -A  --auto-paginate    auto disable page mode for single column
      -H  --filename         show filename headers (default: on)
-     -C  --pane=#[.#]       number of columns, and rows (e.g., 2.2)
+     -C  --pane=#[,#]       number of columns, and rows (e.g., 2,2)
      -P  --page=#           page height in lines
      -S  --pane-width=#     pane width (default: 85)
     --bs --border-style=#   border style (default: heavy-box)
@@ -147,11 +147,11 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
 
 ## Layout Options
 
-- **-C** _C_\[._R_\], **--pane**=_C_\[._R_\]
+- **-C** _C_\[,_R_\], **--pane**=_C_\[,_R_\]
 
     Set the number of columns (panes), and the number of rows when it is
-    given after a period.  For example, `-C2` creates 2 columns, and
-    `-C2.3` creates 2 columns and 3 rows.
+    given after a comma.  For example, `-C2` creates 2 columns, and
+    `-C2,3` creates 2 columns and 3 rows.
 
 - **-R** _N_, **--row**=_N_
 
@@ -161,7 +161,7 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
 
 - **-G** _CxR_, **--grid**=_CxR_
 
-    Set grid layout.  `-G2x3` is equivalent to `-C2.3`.
+    Set grid layout.  `-G2x3` is equivalent to `-C2,3`.
     This option is kept for compatibility and may be removed in the
     future.
 
@@ -287,7 +287,7 @@ The terminal size is taken from the controlling terminal
 (`/dev/tty`).  When it is not available, as when `nup` is run
 without a terminal, the `COLUMNS` environment variable gives the
 width (default 80), and `LINES` gives the height (default 24) used
-to split the screen when the number of rows is set, as in `-C2.2`:
+to split the screen when the number of rows is set, as in `-C2,2`:
 
     COLUMNS=170 nup -C2 file1.txt file2.txt
 
@@ -311,7 +311,7 @@ Typical n-up usage:
 
     nup man nup                # view manual in n-up layout
     nup -C2 man perl           # 2 columns
-    nup -C2.2 man perl         # 2x2 grid (4-up layout)
+    nup -C2,2 man perl         # 2x2 grid (4-up layout)
     nup -F man perl            # no pagination
     nup file1.txt file2.txt    # view files side by side
     nup -C2 a.txt b.txt -w 170 # 2 columns, width 170 (ansicolumn -w)

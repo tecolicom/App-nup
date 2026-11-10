@@ -14,7 +14,7 @@ up - optex module for multi-column paged output
 
     optex -Mup -C2 -- command ...
 
-    optex -Mup -C2.2 -- command ...
+    optex -Mup -C2,2 -- command ...
 
 =head1 DESCRIPTION
 
@@ -28,7 +28,7 @@ terminal width divided by the pane width (default 85 characters).
 The terminal size is taken from the controlling terminal (C</dev/tty>);
 when it is not available, the C<COLUMNS> environment variable gives the
 width (default 80), and C<LINES> gives the height (default 24) used
-when the number of rows is set, as in C<-C2.2>.
+when the number of rows is set, as in C<-C2,2>.
 
 Both stdout and stderr are merged and passed through the filter, so
 error messages are also displayed in the multi-column paged output.
@@ -59,11 +59,11 @@ Module options must be specified before C<--> separator.
 
 =over 4
 
-=item B<-C> I<C>[.I<R>], B<--pane>=I<C>[.I<R>]
+=item B<-C> I<C>[,I<R>], B<--pane>=I<C>[,I<R>]
 
 Set the number of columns (panes) directly, and the number of rows
-when it is given after a period.  For example, C<-C2> creates 2
-columns, and C<-C2.3> creates a 2-column, 3-row layout (6-up).  The
+when it is given after a comma.  For example, C<-C2> creates 2
+columns, and C<-C2,3> creates a 2-column, 3-row layout (6-up).  The
 page height is calculated by dividing the terminal height by the
 number of rows.
 
@@ -76,7 +76,7 @@ future.
 =item B<-G> I<CxR>, B<--grid>=I<CxR>
 
 Set the grid layout.  C<--grid=2x3> or C<--grid=2,3> is equivalent to
-C<-C2.3>.
+C<-C2,3>.
 This option is kept for compatibility and may be removed in the
 future.
 
@@ -166,7 +166,7 @@ Set pane width to 100:
 
 Use 2x2 grid (4-up):
 
-    optex -Mup -C2.2 -- ls -l
+    optex -Mup -C2,2 -- ls -l
 
 No pagination:
 
@@ -270,10 +270,10 @@ sub finalize {
         'pdf:s', 'pdf-opts=s');
     my @passthru = $config->argv;
 
-    # -C C.R gives the number of rows as well
+    # -C C,R gives the number of rows as well
     if (defined(my $pane = $config->{pane})) {
-        my($c, $r) = $pane =~ /^(\d+)(?:\.(\d+))?$/
-            or die "Invalid pane format: $pane (expected C or C.R)\n";
+        my($c, $r) = $pane =~ /^(\d+)(?:,(\d+))?$/
+            or die "Invalid pane format: $pane (expected C or C,R)\n";
         $config->{pane} = $c;
         $config->{row} //= $r;
     }
