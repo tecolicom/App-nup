@@ -2,6 +2,16 @@ Revision history for Perl extension App-nup
 
 {{$NEXT}}
 
+1.11 2026-11-10T13:37:11Z
+
+    - Add --pdf to print the output to a PDF file by ansi2pdf
+      (https://github.com/tecolicom/App-ansi2pdf), and --pdf-opts to
+      give options to it
+    - -C takes the number of rows after a comma, as in "-C2,2"; -R
+      and -G are kept for compatibility and may be removed in the
+      future
+    - Require Getopt::Long::Bash 1.1.1
+
 1.10 2026-10-30T10:06:30Z
 
     - Keep page mode when options for ansicolumn follow the file name,

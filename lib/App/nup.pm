@@ -1,6 +1,6 @@
 package App::nup;
 
-our $VERSION = "1.10";
+our $VERSION = "1.11";
 
 1;
 =encoding utf-8
@@ -25,9 +25,7 @@ nup - n-up, multi-column paged output for commands and files
      -F  --no-paginate      disable page mode
      -A  --auto-paginate    auto disable page mode for single column
      -H  --filename         show filename headers (default: on)
-     -G  --grid=#           grid layout (e.g., 2x3)
-     -C  --pane=#           number of columns
-     -R  --row=#            number of rows
+     -C  --pane=#[,#]       number of columns, and rows (e.g., 2,2)
      -P  --page=#           page height in lines
      -S  --pane-width=#     pane width (default: 85)
     --bs --border-style=#   border style (default: heavy-box)
@@ -41,6 +39,8 @@ nup - n-up, multi-column paged output for commands and files
          --textconv[=EXT]   textconv for non-text files
          --pager=#          pager command (empty to disable)
          --no-pager         disable pager
+         --pdf[=FILE]       print to PDF by ansi2pdf
+         --pdf-opts=#       options for ansi2pdf (e.g., "-p a3 -l 80")
          --white-board      black on white board
          --black-board      white on black board
          --green-board      white on green board
@@ -48,7 +48,7 @@ nup - n-up, multi-column paged output for commands and files
 
 =head1 VERSION
 
-Version 1.10
+Version 1.11
 
 =cut
 =head1 DESCRIPTION
@@ -165,17 +165,23 @@ Use C<--no-filename> to disable.
 
 =over 4
 
-=item B<-C> I<N>, B<--pane>=I<N>
+=item B<-C> I<C>[,I<R>], B<--pane>=I<C>[,I<R>]
 
-Set the number of columns (panes).
+Set the number of columns (panes), and the number of rows when it is
+given after a comma.  For example, C<-C2> creates 2 columns, and
+C<-C2,3> creates 2 columns and 3 rows.
 
 =item B<-R> I<N>, B<--row>=I<N>
 
 Set the number of rows.
+This option is kept for compatibility and may be removed in the
+future.
 
 =item B<-G> I<CxR>, B<--grid>=I<CxR>
 
-Set grid layout. For example, C<-G2x3> creates 2 columns and 3 rows.
+Set grid layout.  C<-G2x3> is equivalent to C<-C2,3>.
+This option is kept for compatibility and may be removed in the
+future.
 
 =item B<-P> I<N>, B<--page>=I<N>
 
@@ -279,14 +285,53 @@ Disable pager.
 
 =back
 
+=head2 PDF Output
+
+=over 4
+
+=item B<--pdf>[=I<FILE>]
+
+Print the output to a PDF file by C<ansi2pdf>, instead of showing it
+on the terminal.  Without I<FILE>, the PDF is written to the standard
+output.
+
+A sheet of paper takes the place of the terminal, and C<ansi2pdf>
+takes the place of the pager.  The size of a sheet in columns and
+lines is asked to C<ansi2pdf>, the output is formatted for that size
+in the same way as for a terminal, and each screen is printed on a
+sheet as it is.  The default is a landscape A4 sheet of 60 lines,
+which has room for two panes of the default width.
+
+    nup --pdf=nup.pdf man nup
+
+=item B<--pdf-opts>=I<OPTIONS>
+
+Give options to C<ansi2pdf>, to set the paper size, the orientation
+and the number of lines on a sheet, which decides the font size.
+
+    nup --pdf=nup.pdf --pdf-opts='-p a3 -l 80' man nup   # A3, 80 lines
+    nup --pdf=nup.pdf --pdf-opts=-P -C1 man nup          # portrait
+
+=back
+
+The C<-P> option sets the number of lines of a page for PDF as well:
+a sheet has that many lines for each row.  The C<-w> option of
+C<ansicolumn>, given after the files or the command, sets the number
+of columns of a sheet.  The font size follows them, and the one that
+is not given is decided to fill the sheet.  With neither of them, a
+sheet has 60 lines.
+
+    nup --pdf=nup.pdf -P 80 man nup         # 80 lines on a sheet
+    nup --pdf=nup.pdf -C2,2 -P 40 man nup   # 2x2 pages of 40 lines
+    nup --pdf=nup.pdf -C3 file -w 300       # 300 columns on a sheet
+
 =head2 Terminal Size
 
 The terminal size is taken from the controlling terminal
 (C</dev/tty>).  When it is not available, as when C<nup> is run
 without a terminal, the C<COLUMNS> environment variable gives the
 width (default 80), and C<LINES> gives the height (default 24) used
-to split the screen when the number of rows is set with C<-R> or
-C<-G>:
+to split the screen when the number of rows is set, as in C<-C2,2>:
 
     COLUMNS=170 nup -C2 file1.txt file2.txt
 
@@ -314,11 +359,12 @@ Typical n-up usage:
 
     nup man nup                # view manual in n-up layout
     nup -C2 man perl           # 2 columns
-    nup -G2x2 man perl         # 2x2 grid (4-up layout)
+    nup -C2,2 man perl         # 2x2 grid (4-up layout)
     nup -F man perl            # no pagination
     nup file1.txt file2.txt    # view files side by side
     nup -C2 a.txt b.txt -w 170 # 2 columns, width 170 (ansicolumn -w)
     nup -e ./script.sh         # force command mode for a file
+    nup --pdf=nup.pdf man nup  # print to PDF (requires ansi2pdf)
 
 Using C<nup> as a C<MANPAGER>:
 
