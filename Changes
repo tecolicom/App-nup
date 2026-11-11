@@ -2,6 +2,19 @@ Revision history for Perl extension App-nup
 
 {{$NEXT}}
 
+1.12 2026-11-11T03:11:57Z
+
+    - Add -T (--device) to give the output device: the default is
+      "tty", the terminal, and any other device is a paper to print
+      to PDF by ansi2pdf, as "-T a4", "-T a4p" (A4 in portrait) or
+      "-T a3l" (A3 in landscape); "-T pdf" is the default paper.
+      The orientation after the paper name requires ansi2pdf 0.1.3
+    - Add -o (--output) to give the output file; a name ending with
+      ".pdf" chooses PDF without -T, and any other name gets what is
+      shown on the terminal
+    - Remove --pdf[=FILE] of 1.11 (incompatible change): use -T and
+      -o instead.  --pdf-opts remains
+
 1.11 2026-11-10T13:37:11Z
 
     - Add --pdf to print the output to a PDF file by ansi2pdf
