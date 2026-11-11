@@ -1,6 +1,6 @@
 package App::nup;
 
-our $VERSION = "1.12";
+our $VERSION = "1.13";
 
 1;
 =encoding utf-8
@@ -43,6 +43,7 @@ nup - n-up, multi-column paged output for commands and files
                             (e.g., a4, a4p, a3l)
      -o  --output=FILE      output file (PDF when it ends with .pdf)
          --pdf-opts=#       options for ansi2pdf (e.g., "-l 80")
+         --geometry         print the size and the kind of the device
          --white-board      black on white board
          --black-board      white on black board
          --green-board      white on green board
@@ -50,7 +51,7 @@ nup - n-up, multi-column paged output for commands and files
 
 =head1 VERSION
 
-Version 1.12
+Version 1.13
 
 =cut
 =head1 DESCRIPTION
@@ -327,6 +328,22 @@ pager is not used.  C<-T tty> does so for a name ending with C<.pdf>
 as well.
 
     nup -o nup.txt man nup          # the same as --no-pager > nup.txt
+
+=item B<--geometry>
+
+Print the size of the device in columns and lines and its kind,
+C<tty> or C<pdf>, and exit.  No file is read and no command is run.
+
+    $ nup -T a4p --geometry
+    100 60 pdf
+    $ nup -o nup.pdf -P 80 --geometry
+    275 80 pdf
+
+For a paper, the size is that of a sheet, which follows C<-T>, C<-o>,
+C<-P>, the number of rows, C<--pdf-opts> and C<-w> of C<ansicolumn>
+given after the file names.  For the terminal, it is the size of the
+terminal.  This is for a program that formats text before giving it
+to C<nup>, as L<mdee(1)|App::mdee> does.
 
 =item B<--pdf-opts>=I<OPTIONS>
 

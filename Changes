@@ -2,6 +2,13 @@ Revision history for Perl extension App-nup
 
 {{$NEXT}}
 
+1.13 2026-11-11T05:11:57Z
+
+    - Add --geometry to print the size of the device in columns and
+      lines and its kind, as "206 60 pdf" or "200 50 tty", without
+      reading a file or running a command; it is for a program that
+      formats text before giving it to nup, as mdee does
+
 1.12 2026-11-11T03:11:57Z
 
     - Add -T (--device) to give the output device: the default is

@@ -45,7 +45,7 @@ nup - n-up, multi-column paged output for commands and files
 
 # VERSION
 
-Version 1.12
+Version 1.13
 
 # DESCRIPTION
 
