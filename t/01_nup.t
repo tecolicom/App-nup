@@ -193,4 +193,12 @@ subtest 'device and output options' => sub {
     like nup('-T a3 -o out.pdf date'), qr/-T a3 -o out\.pdf /, 'device and output';
 };
 
+subtest 'geometry option' => sub {
+    like nup('--geometry'), qr/-Mup .*--geometry .*-- ansicolumn$/, 'no file is needed';
+    like nup('-T a4 --geometry - -w 300'), qr/-T a4 .*--geometry .*-- ansicolumn - -w 300$/,
+        'options for ansicolumn are kept';
+    like nup('--geometry date'), qr/-- ansicolumn date$/, 'a command is not run';
+    like `$script --geometry 2>&1 </dev/null`, qr/\A\d+ \d+ tty\n\z/, 'size of the terminal';
+};
+
 done_testing;

@@ -144,6 +144,14 @@ given by C<-w> (C<--width>) is the number of columns of a sheet.  The
 font size follows them, and the one that is not given is decided to
 fill the sheet.  The default is 60 lines on a sheet.
 
+=item B<--geometry>
+
+Print the size of the device in columns and lines and its kind,
+C<tty> or C<pdf>, as C<209 60 pdf>, and exit without running the
+command.  For a paper, the size is that of a sheet, which follows
+C<--device>, C<--output>, C<--page>, C<--width>, the number of rows
+and C<--pdf-opts>.  For the terminal, it is the size of the terminal.
+
 =item B<--pdf-opts>=I<OPTIONS>
 
 Give other options to C<ansi2pdf>, such as C<-l 80> for the number
@@ -289,6 +297,7 @@ my $config = Getopt::EX::Config->new(
     'device'       => undef,
     'output'       => undef,
     'pdf-opts'     => '',
+    'geometry'     => undef,
 );
 
 # Size of a sheet of paper in columns and lines, asked to ansi2pdf.
@@ -308,7 +317,7 @@ sub finalize {
         'auto-paginate|autopaginate|A',
         'pager:s', 'no-pager|nopager',
         'device|T=s', 'output|o=s',
-        'pdf-opts=s');
+        'pdf-opts=s', 'geometry');
     my @passthru = $config->argv;
 
     # -C C,R gives the number of rows as well
@@ -338,7 +347,7 @@ sub finalize {
     my $output = $config->{output};
     $device //= 'pdf' if defined $output and $output =~ /\.pdf$/i;
     $device //= 'tty';
-    if (defined $output and $device eq 'tty') {
+    if (defined $output and $device eq 'tty' and not $config->{geometry}) {
         $config->{pager} = 'cat > ' . shell_escape($output);
         $config->{'no-pager'} = undef;
     }
@@ -376,6 +385,15 @@ sub finalize {
             . (defined $output ? ' -o ' . shell_escape($output) : '');
         $config->{'no-pager'} = undef;
     }
+
+    # --geometry: tell the size of the device in columns and lines and
+    # its kind, tty or pdf, to a program that formats text for nup
+    if ($config->{geometry}) {
+        my $lines = $ansi2pdf ? $height * ($rows || 1) : $term_height;
+        say join ' ', $term_width, $lines, $ansi2pdf ? 'pdf' : 'tty';
+        exit 0;
+    }
+
     my $border_style = $config->{'border-style'};
     my $no_page      = !$config->{paginate}
         || ($config->{'auto-paginate'} && $cols <= 1);

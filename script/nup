@@ -49,6 +49,7 @@ nup - n-up, multi-column paged output for commands and files
                             (e.g., a4, a4p, a3l)
      -o  --output=FILE      output file (PDF when it ends with .pdf)
          --pdf-opts=#       options for ansi2pdf (e.g., "-l 80")
+         --geometry         print the size and the kind of the device
          --white-board      black on white board
          --black-board      white on black board
          --green-board      white on green board
@@ -115,6 +116,7 @@ declare -A OPTS=(
     [       device | T  :>up_opts # output device     ]=
     [       output | o  :>up_opts # output file       ]=
     [     pdf-opts |    :>up_opts # ansi2pdf options  ]=
+    [     geometry |     >up_opts # size of the device]=
     [     parallel | V            # parallel view     ]=
     [     document | D   >up_opts # document mode     ]=
     [     paginate |              # paginate mode     ]=1
@@ -194,6 +196,16 @@ pager() {
 # Set defaults for less environment
 export LESS="${LESS:--R}"
 export LESSANSIENDCHARS="${LESSANSIENDCHARS:-mK}"
+
+# --geometry: up.pm prints the size of the device and exits.  Nothing
+# is read or run; the arguments are taken as those of file view mode,
+# so that the options for ansicolumn count (nup --geometry - -w 100).
+if [[ " ${up_opts[*]} " == *" --geometry "* ]]; then
+    declare -a cmd=(optex -Mup "${up_opts[@]}" -- ansicolumn "$@")
+    debug "command: ${cmd[*]}"
+    [[ ${dryrun:-} ]] && { echo "${cmd[@]}"; exit; }
+    exec "${cmd[@]}"
+fi
 
 # Show help if no arguments and stdin is a terminal
 if (( $# == 0 )) && [[ -t 0 ]]; then
@@ -542,6 +554,22 @@ pager is not used.  C<-T tty> does so for a name ending with C<.pdf>
 as well.
 
     nup -o nup.txt man nup          # the same as --no-pager > nup.txt
+
+=item B<--geometry>
+
+Print the size of the device in columns and lines and its kind,
+C<tty> or C<pdf>, and exit.  No file is read and no command is run.
+
+    $ nup -T a4p --geometry
+    98 60 pdf
+    $ nup -o nup.pdf -P 80 --geometry
+    279 80 pdf
+
+For a paper, the size is that of a sheet, which follows C<-T>, C<-o>,
+C<-P>, the number of rows, C<--pdf-opts> and C<-w> of C<ansicolumn>
+given after the file names.  For the terminal, it is the size of the
+terminal.  This is for a program that formats text before giving it
+to C<nup>, as L<mdee(1)|App::mdee> does.
 
 =item B<--pdf-opts>=I<OPTIONS>
 

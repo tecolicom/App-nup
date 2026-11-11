@@ -125,6 +125,21 @@ subtest 'device and output' => sub {
     unlike $file->('e.pdf'), qr/%PDF-/, '-T tty -o FILE.pdf is not PDF';
     isnt run("-Mup -T nosuch --no-pager -- true")->status, 0,
         'unknown paper fails';
+
+    # --geometry tells the size of the device and its kind
+    my $geom = sub { run("-Mup @_ --geometry -- echo hello")->stdout };
+    my $paper = sub { chomp(my $g = qx(ansi2pdf -C1 --no-border -L @_ --geometry)); $g };
+    is $geom->('-T a4p'), $paper->('-p a4p') . " pdf\n", '--geometry -T a4p';
+    is $geom->('-T pdf'), $paper->() . " pdf\n", '--geometry -T pdf';
+    is $geom->("-o $dir/g.pdf"), $paper->() . " pdf\n", '--geometry -o FILE.pdf';
+    ok !-e "$dir/g.pdf", '--geometry writes no file';
+    is $geom->('-T a4 -P 40 -C2,2'), $paper->('-p a4 -l 80') . " pdf\n", '--geometry with -P and rows';
+    like $geom->('-T a4 -P 40 -C2,2'), qr/^\d+ 80 pdf$/, '--geometry tells the lines of a sheet';
+    unlike $geom->('-T a4p'), qr/hello/, '--geometry does not run the command';
+    like $geom->("-o $dir/g.txt"), qr/^\d+ \d+ tty$/, '--geometry -o FILE is tty';
+    ok !-e "$dir/g.txt", '--geometry writes no file for tty';
 };
+
+like run('-Mup --geometry -- echo hello')->stdout, qr/\A\d+ \d+ tty\n\z/, '--geometry on the terminal';
 
 done_testing;

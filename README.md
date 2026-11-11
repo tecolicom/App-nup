@@ -37,6 +37,7 @@ nup - n-up, multi-column paged output for commands and files
                             (e.g., a4, a4p, a3l)
      -o  --output=FILE      output file (PDF when it ends with .pdf)
          --pdf-opts=#       options for ansi2pdf (e.g., "-l 80")
+         --geometry         print the size and the kind of the device
          --white-board      black on white board
          --black-board      white on black board
          --green-board      white on green board
@@ -293,6 +294,22 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
     as well.
 
         nup -o nup.txt man nup          # the same as --no-pager > nup.txt
+
+- **--geometry**
+
+    Print the size of the device in columns and lines and its kind,
+    `tty` or `pdf`, and exit.  No file is read and no command is run.
+
+        $ nup -T a4p --geometry
+        98 60 pdf
+        $ nup -o nup.pdf -P 80 --geometry
+        279 80 pdf
+
+    For a paper, the size is that of a sheet, which follows `-T`, `-o`,
+    `-P`, the number of rows, `--pdf-opts` and `-w` of `ansicolumn`
+    given after the file names.  For the terminal, it is the size of the
+    terminal.  This is for a program that formats text before giving it
+    to `nup`, as [mdee(1)](https://metacpan.org/pod/App%3A%3Amdee) does.
 
 - **--pdf-opts**=_OPTIONS_
 
