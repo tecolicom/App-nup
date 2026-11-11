@@ -83,4 +83,48 @@ subtest 'pager environment' => sub {
     }
 };
 
+# Test PDF output: a device other than tty is a paper, printed by ansi2pdf
+subtest 'device and output' => sub {
+    plan skip_all => 'ansi2pdf is not available'
+        unless (qx(ansi2pdf --geometry -p a4p 2>/dev/null) // '') =~ /^\d+ \d+$/;
+    use File::Temp qw(tempdir);
+    my $dir = tempdir(CLEANUP => 1);
+    my $box = sub {
+        my $pdf = shift;
+        $pdf =~ m{/MediaBox \[0 0 ([\d.]+) ([\d.]+)\]} or return 'no page';
+        $1 > $2 ? 'landscape' : 'portrait';
+    };
+    # PDF is binary, and the runner reads the output as UTF-8
+    local $SIG{__WARN__} = sub { warn @_ unless $_[0] =~ /does not map to Unicode/ };
+    my $pdf = sub { run("-Mup @_ -- echo hello")->stdout };
+    my $file = sub {
+        open my $fh, '<:raw', "$dir/$_[0]" or return '';
+        local $/; scalar <$fh>;
+    };
+
+    like $pdf->('-T pdf'), qr/%PDF-/, '-T pdf writes PDF to stdout';
+    is $box->($pdf->('-T pdf')),  'landscape', '-T pdf is landscape';
+    is $box->($pdf->('-T a4')),   'landscape', '-T a4 is landscape';
+    is $box->($pdf->('-T a4p')),  'portrait',  '-T a4p is portrait';
+    is $box->($pdf->('-T a4l')),  'landscape', '-T a4l is landscape';
+    is $box->($pdf->('--device=a4p')), 'portrait', '--device';
+    is $box->($pdf->('-T a4p --pdf-opts=-L')), 'landscape', 'pdf-opts come last';
+    unlike $pdf->('-T tty --no-pager'), qr/%PDF-/, '-T tty is not PDF';
+
+    unlike $pdf->("-T a4p -o $dir/a.pdf"), qr/%PDF-/, '-o: no PDF to stdout';
+    is $box->($file->('a.pdf')), 'portrait', '-T a4p -o FILE';
+    $pdf->("-o $dir/b.pdf");
+    is $box->($file->('b.pdf')), 'landscape', '-o FILE.pdf alone is PDF';
+
+    # -o writes what is shown on the terminal, when the device is tty
+    unlike $pdf->("-o $dir/d.txt"), qr/hello/, '-o FILE: nothing to stdout';
+    like   $file->('d.txt'), qr/hello/, '-o FILE writes the text';
+    unlike $file->('d.txt'), qr/%PDF-/, '-o FILE is not PDF';
+    $pdf->("-T tty -o $dir/e.pdf");
+    like   $file->('e.pdf'), qr/hello/, '-T tty -o FILE.pdf writes the text';
+    unlike $file->('e.pdf'), qr/%PDF-/, '-T tty -o FILE.pdf is not PDF';
+    isnt run("-Mup -T nosuch --no-pager -- true")->status, 0,
+        'unknown paper fails';
+};
+
 done_testing;

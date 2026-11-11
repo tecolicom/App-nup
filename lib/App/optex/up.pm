@@ -116,13 +116,27 @@ C<less -F +Gg>.
 
 Disable pager.  Output goes directly to stdout.
 
-=item B<--pdf>[=I<FILE>]
+=item B<--device>=I<DEVICE>, B<-T> I<DEVICE>
 
-Print the output to a PDF file by C<ansi2pdf>.  Without I<FILE>, the
-PDF is written to the standard output.  The size of a sheet of paper
-in columns and lines, which C<ansi2pdf --geometry> tells, is used in
-place of the terminal size, and C<ansi2pdf> is used in place of the
-pager.  Each screen is printed on a landscape sheet as it is.
+Set the device to show the output on.  The default is C<tty>, the
+terminal.  Any other device is a paper, and the output is printed to
+PDF by C<ansi2pdf>.  The name of a paper is the one for the C<-p>
+option of C<ansi2pdf>, as C<a4> or C<a3>, and C<p> or C<l> after it
+gives the orientation, as C<a4p> for A4 in portrait.  A paper without
+it is used in landscape.  The device C<pdf> is the default paper of
+C<ansi2pdf>.
+
+The size of a sheet of paper in columns and lines, which
+C<ansi2pdf --geometry> tells, is used in place of the terminal size,
+and C<ansi2pdf> is used in place of the pager.  Each screen is
+printed on a sheet as it is.
+
+=item B<--output>=I<FILE>, B<-o> I<FILE>
+
+Write the output to I<FILE>.  When the name ends with C<.pdf>, the
+output is PDF without C<--device> as well.  Otherwise, what is shown
+on the terminal is written to the file as it is, with the ANSI
+sequences, and the pager is not used.
 
 The page height given by C<-P> (C<--page>) is the number of lines of
 a page here too: a sheet has that many lines for each row.  The width
@@ -132,8 +146,9 @@ fill the sheet.  The default is 60 lines on a sheet.
 
 =item B<--pdf-opts>=I<OPTIONS>
 
-Give options to C<ansi2pdf>, such as C<-p a3> for the paper size,
-C<-P> for portrait and C<-l 80> for the number of lines on a sheet.
+Give other options to C<ansi2pdf>, such as C<-l 80> for the number
+of lines on a sheet and C<-m 15> for the margin.  They are given
+after the paper, so they take precedence.
 
 =item Other options
 
@@ -271,7 +286,8 @@ my $config = Getopt::EX::Config->new(
     'auto-paginate' => undef,
     'pager'        => undef,
     'no-pager'     => undef,
-    'pdf'          => undef,
+    'device'       => undef,
+    'output'       => undef,
     'pdf-opts'     => '',
 );
 
@@ -291,7 +307,8 @@ sub finalize {
         'border-style|bs=s', 'paginate!',
         'auto-paginate|autopaginate|A',
         'pager:s', 'no-pager|nopager',
-        'pdf:s', 'pdf-opts=s');
+        'device|T=s', 'output|o=s',
+        'pdf-opts=s');
     my @passthru = $config->argv;
 
     # -C C,R gives the number of rows as well
@@ -309,13 +326,27 @@ sub finalize {
         $config->{row}  //= $r;
     }
 
-    # --pdf: a sheet of paper takes the place of the terminal, and
-    # ansi2pdf takes the place of the pager.  Each screen is printed on
-    # a landscape sheet as it is.
-    my $pdf = $config->{pdf};
+    # -T: the device to show the output on.  It is the terminal (tty)
+    # by default.  Any other device is a paper, as a4 or a4p, or "pdf"
+    # for the default paper: a sheet of paper takes the place of the
+    # terminal, and ansi2pdf takes the place of the pager.  Each screen
+    # is printed on a sheet as it is, which is landscape unless the
+    # paper tells the orientation.  -o gives the file to write to, and
+    # a name ending with .pdf is enough to choose PDF.  With the
+    # terminal as the device, -o writes what would be shown on it.
+    my $device = $config->{device};
+    my $output = $config->{output};
+    $device //= 'pdf' if defined $output and $output =~ /\.pdf$/i;
+    $device //= 'tty';
+    if (defined $output and $device eq 'tty') {
+        $config->{pager} = 'cat > ' . shell_escape($output);
+        $config->{'no-pager'} = undef;
+    }
     my $ansi2pdf;
-    if (defined $pdf) {
-        $ansi2pdf = join ' ', 'ansi2pdf -C1 --no-border -L', $config->{'pdf-opts'};
+    if ($device ne 'tty') {
+        $ansi2pdf = join ' ', 'ansi2pdf -C1 --no-border -L',
+            ($device eq 'pdf' ? () : '-p ' . shell_escape($device)),
+            $config->{'pdf-opts'};
         # -P gives the lines of a page, and a sheet has as many pages
         # as the rows.  -w gives the columns of a sheet.  ansi2pdf
         # decides the one that is not given, to fill the sheet.
@@ -342,7 +373,7 @@ sub finalize {
         $height = int($term_height / ($rows || 1));
         my $lines = $height * ($rows || 1);
         $config->{pager} = "$ansi2pdf -w $term_width -l $lines"
-            . ($pdf ne '' ? ' -o ' . shell_escape($pdf) : '');
+            . (defined $output ? ' -o ' . shell_escape($output) : '');
         $config->{'no-pager'} = undef;
     }
     my $border_style = $config->{'border-style'};

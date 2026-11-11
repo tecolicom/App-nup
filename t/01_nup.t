@@ -181,10 +181,16 @@ subtest 'combined options' => sub {
 };
 
 subtest 'pdf options' => sub {
-    like nup('--pdf=out.pdf date'), qr/--pdf=out\.pdf /, 'pdf with file';
-    like nup('--pdf date'), qr/--pdf --/, 'pdf without file';
-    like nup(q(--pdf=out.pdf --pdf-opts="-p a3 -l 80" date)),
-        qr/--pdf-opts -p a3 -l 80 /, 'pdf-opts';
+    like nup(q(-o out.pdf --pdf-opts="-m 15 -l 80" date)),
+        qr/--pdf-opts -m 15 -l 80 /, 'pdf-opts';
+    isnt system("$script -n --pdf date >/dev/null 2>&1"), 0, '--pdf is gone';
+};
+
+subtest 'device and output options' => sub {
+    like nup('-T a4p date'), qr/-T a4p /, 'device';
+    like nup('--device=a4p date'), qr/--device a4p /, 'device, long';
+    like nup('-o out.pdf date'), qr/-o out\.pdf /, 'output';
+    like nup('-T a3 -o out.pdf date'), qr/-T a3 -o out\.pdf /, 'device and output';
 };
 
 done_testing;

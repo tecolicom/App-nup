@@ -33,8 +33,10 @@ nup - n-up, multi-column paged output for commands and files
          --textconv[=EXT]   textconv for non-text files
          --pager=#          pager command (empty to disable)
          --no-pager         disable pager
-         --pdf[=FILE]       print to PDF by ansi2pdf
-         --pdf-opts=#       options for ansi2pdf (e.g., "-p a3 -l 80")
+     -T  --device=#         output device: tty, pdf, or a paper for PDF
+                            (e.g., a4, a4p, a3l)
+     -o  --output=FILE      output file (PDF when it ends with .pdf)
+         --pdf-opts=#       options for ansi2pdf (e.g., "-l 80")
          --white-board      black on white board
          --black-board      white on black board
          --green-board      white on green board
@@ -255,11 +257,20 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
 
 ## PDF Output
 
-- **--pdf**\[=_FILE_\]
+- **-T** _DEVICE_, **--device**=_DEVICE_
 
-    Print the output to a PDF file by `ansi2pdf`, instead of showing it
-    on the terminal.  Without _FILE_, the PDF is written to the standard
-    output.
+    Set the device to show the output on.  The default is `tty`, the
+    terminal.  Any other device is a paper, and the output is printed to
+    PDF by `ansi2pdf`, instead of being shown on the terminal.
+
+    The name of a paper is the one for the `-p` option of `ansi2pdf`,
+    such as `a4`, `a3`, `b5` or `letter`.  A paper is used in
+    landscape orientation.  The letter `p` or `l` after the name gives
+    the orientation: `a4p` is A4 in portrait, and `a4l` is A4 in
+    landscape.  The device `pdf` is the default paper of `ansi2pdf`, A4.
+
+        nup -T a4 man nup > nup.pdf     # A4, landscape
+        nup -T a4p -C1 man nup | lpr    # A4, portrait
 
     A sheet of paper takes the place of the terminal, and `ansi2pdf`
     takes the place of the pager.  The size of a sheet in columns and
@@ -268,15 +279,28 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
     sheet as it is.  The default is a landscape A4 sheet of 60 lines,
     which has room for two panes of the default width.
 
-        nup --pdf=nup.pdf man nup
+- **-o** _FILE_, **--output**=_FILE_
+
+    Write the output to _FILE_.  When the name ends with `.pdf`, the
+    output is PDF without `-T` as well.
+
+        nup -o nup.pdf man nup          # A4, landscape
+        nup -T a3 -o nup.pdf man nup    # A3, landscape
+
+    Otherwise, what is shown on the terminal is written to the file as it
+    is, with the ANSI sequences and in the size of the terminal, and the
+    pager is not used.  `-T tty` does so for a name ending with `.pdf`
+    as well.
+
+        nup -o nup.txt man nup          # the same as --no-pager > nup.txt
 
 - **--pdf-opts**=_OPTIONS_
 
-    Give options to `ansi2pdf`, to set the paper size, the orientation
-    and the number of lines on a sheet, which decides the font size.
+    Give other options to `ansi2pdf`, such as the number of lines on a
+    sheet, the margin and the fonts.  They are given after the paper, so
+    they take precedence.
 
-        nup --pdf=nup.pdf --pdf-opts='-p a3 -l 80' man nup   # A3, 80 lines
-        nup --pdf=nup.pdf --pdf-opts=-P -C1 man nup          # portrait
+        nup -o nup.pdf --pdf-opts='-l 80 -m 15' man nup
 
 The `-P` option sets the number of lines of a page for PDF as well:
 a sheet has that many lines for each row.  The `-w` option of
@@ -285,9 +309,9 @@ of columns of a sheet.  The font size follows them, and the one that
 is not given is decided to fill the sheet.  With neither of them, a
 sheet has 60 lines.
 
-    nup --pdf=nup.pdf -P 80 man nup         # 80 lines on a sheet
-    nup --pdf=nup.pdf -C2,2 -P 40 man nup   # 2x2 pages of 40 lines
-    nup --pdf=nup.pdf -C3 file -w 300       # 300 columns on a sheet
+    nup -o nup.pdf -P 80 man nup         # 80 lines on a sheet
+    nup -o nup.pdf -C2,2 -P 40 man nup   # 2x2 pages of 40 lines
+    nup -o nup.pdf -C3 file -w 300       # 300 columns on a sheet
 
 ## Terminal Size
 
@@ -324,7 +348,8 @@ Typical n-up usage:
     nup file1.txt file2.txt    # view files side by side
     nup -C2 a.txt b.txt -w 170 # 2 columns, width 170 (ansicolumn -w)
     nup -e ./script.sh         # force command mode for a file
-    nup --pdf=nup.pdf man nup  # print to PDF (requires ansi2pdf)
+    nup -o nup.pdf man nup     # print to PDF (requires ansi2pdf)
+    nup -T a4p -C1 file | lpr  # print on A4 in portrait
 
 Using `nup` as a `MANPAGER`:
 
