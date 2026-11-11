@@ -25,7 +25,7 @@ nup-parallel.png:
 	./capture.sh -o $(CURDIR)/$@ -- 'cd $(CURDIR)/.. && nup script/nup lib/App/optex/up.pm'
 
 nup-grid.png:
-	./capture.sh -r 51 -d 4 -o $(CURDIR)/$@ -- '$(MAN) nup -G2x2 man perl'
+	./capture.sh -r 51 -d 4 -o $(CURDIR)/$@ -- '$(MAN) nup -C2,2 man perl'
 
 nup-green-board.png:
 	./capture.sh -o $(CURDIR)/$@ -- 'cd $(CURDIR)/.. && nup --green-board README.md'
