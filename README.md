@@ -301,9 +301,9 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
     `tty` or `pdf`, and exit.  No file is read and no command is run.
 
         $ nup -T a4p --geometry
-        98 60 pdf
+        100 60 pdf
         $ nup -o nup.pdf -P 80 --geometry
-        279 80 pdf
+        275 80 pdf
 
     For a paper, the size is that of a sheet, which follows `-T`, `-o`,
     `-P`, the number of rows, `--pdf-opts` and `-w` of `ansicolumn`

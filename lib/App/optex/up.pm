@@ -147,7 +147,7 @@ fill the sheet.  The default is 60 lines on a sheet.
 =item B<--geometry>
 
 Print the size of the device in columns and lines and its kind,
-C<tty> or C<pdf>, as C<209 60 pdf>, and exit without running the
+C<tty> or C<pdf>, as C<206 60 pdf>, and exit without running the
 command.  For a paper, the size is that of a sheet, which follows
 C<--device>, C<--output>, C<--page>, C<--width>, the number of rows
 and C<--pdf-opts>.  For the terminal, it is the size of the terminal.
