@@ -138,8 +138,9 @@ SH
         my($right, $align) = @_;
         my $n = $on_screen->(20);
         my($fwd, $back) = map { $align ? "$n$_" : $_ x $n } qw(l h);
+        my $end = $align ? "noaction ${n}L" : 'end-scroll';
         "h left-scroll;l $right;H no-scroll;L end-scroll;"
-        . "g no-scroll;G end-scroll;< no-scroll;> end-scroll;"
+        . "g no-scroll;G $end;< no-scroll;> $end;"
         . "\\  noaction $fwd;b noaction $back";
     };
     like(optex('-Mup', '--lateral', '-S20', @cmd)->run->stdout,

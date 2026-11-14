@@ -727,10 +727,13 @@ of C<nup>.  A repeated search goes on from the next record.
 =item B<--align-shift>
 
 The horizontal shift stays at a multiple of the C<--shift> amount, the
-width of a pane with C<-L>.  A search, and the right end, keep the
-panes at the edge of the screen, and C<n> and C<N> go through the
-panes that have a match, one by one.  C<-L> adds this option when the
-C<less> has it.
+width of a pane with C<-L>, so that the panes are always at the edge
+of the screen.  C<-L> adds this option when the C<less> has it, and
+the screens are then the same as without C<-L>: space, C<b>, C<G> and
+C<E<gt>> move by the screens, the last screen shows the last pages
+and the rest of it is blank, and C<n> and C<N> skip the matches on
+the screen and move by the screens to the next page that has one.
+C<l> goes on until the last page is at the left edge.
 
 =back
 

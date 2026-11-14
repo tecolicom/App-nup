@@ -445,10 +445,13 @@ two options:
 - **--align-shift**
 
     The horizontal shift stays at a multiple of the `--shift` amount, the
-    width of a pane with `-L`.  A search, and the right end, keep the
-    panes at the edge of the screen, and `n` and `N` go through the
-    panes that have a match, one by one.  `-L` adds this option when the
-    `less` has it.
+    width of a pane with `-L`, so that the panes are always at the edge
+    of the screen.  `-L` adds this option when the `less` has it, and
+    the screens are then the same as without `-L`: space, `b`, `G` and
+    `>` move by the screens, the last screen shows the last pages
+    and the rest of it is blank, and `n` and `N` skip the matches on
+    the screen and move by the screens to the next page that has one.
+    `l` goes on until the last page is at the left edge.
 
 Install it with Homebrew.  It cannot be installed together with the
 `less` of Homebrew itself, which has the same command name:

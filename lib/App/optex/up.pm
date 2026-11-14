@@ -481,9 +481,12 @@ sub finalize {
         # shift, so they are given as many times.
         my $n = max(1, int($term_width / $lateral_width));
         my($fwd, $back) = map { $align_shift ? "$n$_" : $_ x $n } qw(l h);
+        # With --align-shift, G and > give the count to end-scroll, to
+        # show the last screen as it is without --lateral.
+        my $end = $align_shift ? "noaction ${n}L" : 'end-scroll';
         $ENV{LESSKEY_CONTENT} //= join ';',
             "h left-scroll;l $right;H no-scroll;L end-scroll",
-            "g no-scroll;G end-scroll;< no-scroll;> end-scroll",
+            "g no-scroll;G $end;< no-scroll;> $end",
             "\\  noaction $fwd;b noaction $back";
     }
 
