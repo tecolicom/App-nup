@@ -2,6 +2,15 @@ Revision history for Perl extension App-nup
 
 {{$NEXT}}
 
+1.15 2026-11-14T13:44:34Z
+
+    - With --lateral, g and < go to the left end and G and > to the
+      right end, as H and L, and space and b move to the right and
+      to the left by the panes on the screen (less 661 or later, by
+      LESSKEY_CONTENT); with a less that has --align-shift
+      (tecolicom/tap), G and > show the last screen as it is without
+      --lateral, the last pages at the left and the rest blank
+
 1.14 2026-11-13T07:02:52Z
 
     - Add --lateral (-L) to put all the pages in one row, however

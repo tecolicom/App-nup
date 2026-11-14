@@ -1,6 +1,6 @@
 package App::nup;
 
-our $VERSION = "1.14";
+our $VERSION = "1.15";
 
 1;
 =encoding utf-8
@@ -52,7 +52,7 @@ nup - n-up, multi-column paged output for commands and files
 
 =head1 VERSION
 
-Version 1.14
+Version 1.15
 
 =cut
 =head1 DESCRIPTION
@@ -173,13 +173,20 @@ When the pager is C<less>, C<nup> adds C<< -S --shift=I<N> --rscroll=- >>
 to it, where I<N> is the width of a pane: the lines are
 not wrapped, and the right and left arrow keys move by one page.
 C<h> and C<l> move to the left and to the right as well, and C<H>
-and C<L> go to the left end and to the right end of the row: C<nup>
-sets the C<LESSKEY_CONTENT> environment variable to
+and C<L> go to the left end and to the right end of the row, and so
+do C<g> and C<G>, and C<E<lt>> and C<E<gt>>.  Space and C<b> move
+to the right and to the left by the panes on the screen: by three
+with three panes.  C<nup> sets the C<LESSKEY_CONTENT> environment
+variable to
 
-    h left-scroll;l right-scroll;H no-scroll;L end-scroll
+    h left-scroll;l right-scroll;H no-scroll;L end-scroll;
+    g no-scroll;G end-scroll;< no-scroll;> end-scroll;
+    \  noaction lll;b noaction hhh
 
-when it is not set.  C<h> and C<H> are the help of C<less>, which
-is not on a key then: set C<LESSKEY_CONTENT> yourself to keep it.  The
+(in one line) when it is not set.  C<h> and C<H> are the help of
+C<less>, which is not on a key then, and C<g> and C<G> do not go to
+the first and the last line, which are on the screen all the time:
+set C<LESSKEY_CONTENT> yourself to keep them.  The
 options are added to C<NUP_PAGER>, C<NUP_PAGE_PAGER> and C<--pager>
 as well when the command is C<less>; another pager is used as it is,
 and has to be told not to wrap the lines.
@@ -484,10 +491,13 @@ of C<nup>.  A repeated search goes on from the next record.
 =item B<--align-shift>
 
 The horizontal shift stays at a multiple of the C<--shift> amount, the
-width of a pane with C<-L>.  A search, and the right end, keep the
-panes at the edge of the screen, and C<n> and C<N> go through the
-panes that have a match, one by one.  C<-L> adds this option when the
-C<less> has it.
+width of a pane with C<-L>, so that the panes are always at the edge
+of the screen.  C<-L> adds this option when the C<less> has it, and
+the screens are then the same as without C<-L>: space, C<b>, C<G> and
+C<E<gt>> move by the screens, the last screen shows the last pages
+and the rest of it is blank, and C<n> and C<N> skip the matches on
+the screen and move by the screens to the next page that has one.
+C<l> goes on until the last page is at the left edge.
 
 =back
 
