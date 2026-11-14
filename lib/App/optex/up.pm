@@ -116,8 +116,10 @@ screen divided by that number, in a very large output width.  When
 the pager is C<less>, C<< -S --shift=I<N> --rscroll=- >> is added to
 it, where I<N> is the width of a pane, so that the lines are not
 wrapped and the arrow keys move by one page; C<h> and C<l> do the
-same, and C<H> and C<L> go to the left and the right end, by the
-C<LESSKEY_CONTENT> environment variable, when it is not set.  With
+same, C<H> and C<L> go to the left and the right end, and so do
+C<g> and C<G>, C<E<lt>> and C<E<gt>>, and space and C<b> move to
+the right and to the left by the panes on the screen, by the C<LESSKEY_CONTENT> environment variable, when
+it is not set.  With
 less 710 or later, C<l> stops at the right end, and C<--align-shift>
 is added when the less has it; see L<nup/LESS>.  It cannot be used
 with
@@ -473,8 +475,16 @@ sub finalize {
         $pager .= " -S --shift=$lateral_width --rscroll=-";
         $pager .= " --align-shift" if $align_shift;
         my $right = $version >= 710 ? 'right-limit-scroll' : 'right-scroll';
-        $ENV{LESSKEY_CONTENT} //=
-            "h left-scroll;l $right;H no-scroll;L end-scroll";
+        # g, G, < and > go to the ends as H and L, and space and b move
+        # by the panes on the screen: with --align-shift, a count of l
+        # and h is the number of panes; without, it would change the
+        # shift, so they are given as many times.
+        my $n = max(1, int($term_width / $lateral_width));
+        my($fwd, $back) = map { $align_shift ? "$n$_" : $_ x $n } qw(l h);
+        $ENV{LESSKEY_CONTENT} //= join ';',
+            "h left-scroll;l $right;H no-scroll;L end-scroll",
+            "g no-scroll;G end-scroll;< no-scroll;> end-scroll",
+            "\\  noaction $fwd;b noaction $back";
     }
 
     # Build default ansicolumn options.  With --lateral, the panes are

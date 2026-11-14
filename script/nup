@@ -409,13 +409,20 @@ When the pager is C<less>, C<nup> adds C<< -S --shift=I<N> --rscroll=- >>
 to it, where I<N> is the width of a pane: the lines are
 not wrapped, and the right and left arrow keys move by one page.
 C<h> and C<l> move to the left and to the right as well, and C<H>
-and C<L> go to the left end and to the right end of the row: C<nup>
-sets the C<LESSKEY_CONTENT> environment variable to
+and C<L> go to the left end and to the right end of the row, and so
+do C<g> and C<G>, and C<E<lt>> and C<E<gt>>.  Space and C<b> move
+to the right and to the left by the panes on the screen: by three
+with three panes.  C<nup> sets the C<LESSKEY_CONTENT> environment
+variable to
 
-    h left-scroll;l right-scroll;H no-scroll;L end-scroll
+    h left-scroll;l right-scroll;H no-scroll;L end-scroll;
+    g no-scroll;G end-scroll;< no-scroll;> end-scroll;
+    \  noaction lll;b noaction hhh
 
-when it is not set.  C<h> and C<H> are the help of C<less>, which
-is not on a key then: set C<LESSKEY_CONTENT> yourself to keep it.  The
+(in one line) when it is not set.  C<h> and C<H> are the help of
+C<less>, which is not on a key then, and C<g> and C<G> do not go to
+the first and the last line, which are on the screen all the time:
+set C<LESSKEY_CONTENT> yourself to keep them.  The
 options are added to C<NUP_PAGER>, C<NUP_PAGE_PAGER> and C<--pager>
 as well when the command is C<less>; another pager is used as it is,
 and has to be told not to wrap the lines.

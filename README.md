@@ -159,13 +159,20 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
     to it, where _N_ is the width of a pane: the lines are
     not wrapped, and the right and left arrow keys move by one page.
     `h` and `l` move to the left and to the right as well, and `H`
-    and `L` go to the left end and to the right end of the row: `nup`
-    sets the `LESSKEY_CONTENT` environment variable to
+    and `L` go to the left end and to the right end of the row, and so
+    do `g` and `G`, and `<` and `>`.  Space and `b` move
+    to the right and to the left by the panes on the screen: by three
+    with three panes.  `nup` sets the `LESSKEY_CONTENT` environment
+    variable to
 
-        h left-scroll;l right-scroll;H no-scroll;L end-scroll
+        h left-scroll;l right-scroll;H no-scroll;L end-scroll;
+        g no-scroll;G end-scroll;< no-scroll;> end-scroll;
+        \  noaction lll;b noaction hhh
 
-    when it is not set.  `h` and `H` are the help of `less`, which
-    is not on a key then: set `LESSKEY_CONTENT` yourself to keep it.  The
+    (in one line) when it is not set.  `h` and `H` are the help of
+    `less`, which is not on a key then, and `g` and `G` do not go to
+    the first and the last line, which are on the screen all the time:
+    set `LESSKEY_CONTENT` yourself to keep them.  The
     options are added to `NUP_PAGER`, `NUP_PAGE_PAGER` and `--pager`
     as well when the command is `less`; another pager is used as it is,
     and has to be told not to wrap the lines.

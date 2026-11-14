@@ -129,10 +129,22 @@ SH
     unlike(optex('-Mup', '-S20', @cmd)->run->stdout, qr/--shift/,
            'no shift without --lateral');
 
-    # h and l of less scroll to the left and to the right
-    like(optex('-Mup', '--lateral', @cmd)->run->stdout,
-         qr/^KEYS: h left-scroll;l right-scroll;H no-scroll;L end-scroll$/m,
-         'h, l, H and L are given to less');
+    # h and l of less scroll to the left and to the right, H, L, g, G,
+    # < and > go to the ends, and space and b move by the panes on the
+    # screen: a count of l and h with --align-shift, l and h as many
+    # times without
+    my $on_screen = sub { my $w = shift; int($width / $fit->($w)) };
+    my $keys = sub {
+        my($right, $align) = @_;
+        my $n = $on_screen->(20);
+        my($fwd, $back) = map { $align ? "$n$_" : $_ x $n } qw(l h);
+        "h left-scroll;l $right;H no-scroll;L end-scroll;"
+        . "g no-scroll;G end-scroll;< no-scroll;> end-scroll;"
+        . "\\  noaction $fwd;b noaction $back";
+    };
+    like(optex('-Mup', '--lateral', '-S20', @cmd)->run->stdout,
+         qr/^KEYS: \Q@{[ $keys->('right-scroll', 0) ]}\E$/m,
+         'keys are given to less');
     like(optex('-Mup', @cmd)->run->stdout,
          qr/^KEYS: $/m, 'no keys without --lateral');
     {
@@ -142,7 +154,6 @@ SH
     }
     # A less of 710 or later stops l at the right end, and one that has
     # --align-shift keeps the shift at the boundaries of the panes
-    my $keys = sub { "h left-scroll;l $_[0];H no-scroll;L end-scroll" };
     for (['709x',             'right-scroll',       ''],
          ['710',              'right-limit-scroll', ''],
          ['713x align-shift', 'right-limit-scroll', ' --align-shift']) {
@@ -151,7 +162,8 @@ SH
         my $out = optex('-Mup', '--lateral', '-S20', @cmd)->run->stdout;
         like($out, qr/^ARGS: --file-size -S --shift=@{[ $fit->(20) ]} --rscroll=-\Q$align\E$/m,
              "less $less: options");
-        like($out, qr/^KEYS: \Q@{[ $keys->($right) ]}\E$/m, "less $less: l is $right");
+        like($out, qr/^KEYS: \Q@{[ $keys->($right, $align) ]}\E$/m,
+             "less $less: l is $right" . ($align ? ', space and b by a count' : ''));
     }
     like(optex('-Mup', '-L', "--pager=$bin/less -R", @cmd)->run->stdout,
          qr/^ARGS: -R -S --shift=@{[ $fit->(85) ]} --rscroll=-$/m,
