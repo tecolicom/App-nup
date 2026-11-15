@@ -1,7 +1,8 @@
 # Generate screenshot images for documentation.
 # Requires: iTerm2, capture.sh, nup, mdee
 #
-# Note: On Retina displays, captured images will be at 2x resolution.
+# Note: On Retina displays, capture.sh reduces the images to the
+# resolution of a non-Retina display.
 #
 # The grid image uses 51 rows: with -R2 the page height is
 # int((51 - 1) / 2) = 25, so two rows fill the 50 lines above the

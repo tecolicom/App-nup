@@ -8,9 +8,10 @@
 #
 # Requires: iTerm2, macOS screencapture, getoptlong.sh
 #
-# Note: On Retina displays, the captured image will be at 2x
-# resolution.  There is currently no simple way to capture at
-# 1x resolution without a non-Retina (virtual) display.
+# Note: On Retina displays, the window is captured at 2x resolution.
+# The image is then reduced to the size of the window in points, so
+# that it is the same as one taken on a non-Retina display.  Use
+# --hires to keep the captured resolution.
 #
 # Usage: ./capture.sh [-o output.png] [-c cols] [-r rows] command...
 # Example: ./capture.sh -o nup.png 'nup man nup'
@@ -24,6 +25,7 @@ declare -A OPTS=(
     [ shadow |s  # capture with window shadow ]=1
     [ delay  |d: # delay before capture (sec) ]=2
     [ keys   |k: # send keys after command    ]=
+    [ hires  |H  # keep the Retina resolution  ]=
     [ help   |h  # show help                  ]=
 )
 
@@ -72,6 +74,15 @@ EOF
     sleep 1
 fi
 
+# Width of the window in points, to know the scale of the display
+WIN_W=$(osascript <<EOF
+tell application "iTerm"
+    set b to bounds of (window id $WIN_ID)
+    return (item 3 of b) - (item 1 of b)
+end tell
+EOF
+)
+
 # Capture screenshot
 if [[ $shadow ]]; then
     osascript <<EOF
@@ -100,6 +111,16 @@ tell application "iTerm"
     close newWin
 end tell
 EOF
+fi
+
+# On a Retina display the image has 2 pixels for a point (the shadow
+# makes it a little wider than the window): reduce it to 1.
+if [[ -f "$OUTPUT" && ! $hires && $WIN_W -gt 0 ]]; then
+    px=$(sips -g pixelWidth "$OUTPUT" | awk '/pixelWidth/ { print $2 }')
+    scale=$(( px / WIN_W ))
+    if (( scale > 1 )); then
+        sips --resampleWidth $(( px / scale )) "$OUTPUT" > /dev/null
+    fi
 fi
 
 if [ -f "$OUTPUT" ]; then
