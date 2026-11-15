@@ -1,6 +1,6 @@
 package App::nup;
 
-our $VERSION = "1.16";
+our $VERSION = "1.17";
 
 1;
 =encoding utf-8
@@ -24,7 +24,7 @@ nup - n-up, multi-column paged output for commands and files
      -D  --document         document mode (default: on)
      -F  --no-paginate      disable page mode
      -A  --auto-paginate    auto disable page mode for single column
-     -L  --lateral          all pages in one row, scrolled sideways
+     -L  --lateral          pages or files in one row, scrolled sideways
      -H  --filename         show filename headers (default: on)
      -C  --pane=#[,#]       number of columns, and rows (e.g., 2,2)
      -P  --page=#           page height in lines
@@ -52,7 +52,7 @@ nup - n-up, multi-column paged output for commands and files
 
 =head1 VERSION
 
-Version 1.16
+Version 1.17
 
 =cut
 =head1 DESCRIPTION
@@ -178,18 +178,23 @@ C<nup> also puts the following keys in the C<LESSKEY_CONTENT>
 environment variable, which C<less> 661 or later reads.  With three panes on the
 screen and a C<less> older than 710, they are:
 
-    h        left-scroll     one page to the left
-    l        right-scroll    one page to the right
-    H g <    no-scroll       the left end of the row
-    L G >    end-scroll      the right end of the row
-    space    noaction lll    the panes on the screen to the right
-    b        noaction hhh    the panes on the screen to the left
+    h , left    left-scroll         one page to the left
+    l . right   right-scroll        one page to the right
+    H g <       no-scroll           the left end of the row
+    L G >       end-scroll          the right end of the row
+    space       noaction ESC-) x 3  the panes on the screen to the right
+    b           noaction ESC-( x 3  the panes on the screen to the left
 
-C<noaction lll> does nothing and then types C<l> three times.  In
+C<noaction> does nothing and then types the keys after it, here
+ESC-) three times.  It cannot type the arrow keys, so ESC-) and
+ESC-( are given the same actions as the right and left arrow.  In
 C<LESSKEY_CONTENT>, they are in one line, joined by C<;>, as
 C<h left-scroll;l right-scroll;...>, and space is written C<\ >, a
-backslash and a space.  With C<less> 710 or later, C<l> is
-C<right-limit-scroll>, which stops at the right end.
+backslash and a space.
+With C<less> 710 or later, C<l>, C<.>, the right arrow and ESC-) are
+C<right-limit-scroll>, which stops at the right end.  A count before
+C<.> is taken for a decimal point of the number by C<less>; give it
+to the right arrow instead, as C<3> and the right arrow.
 
 The help of C<less> on C<h> and C<H> is then on no key, and C<g> and
 C<G> no longer go to the first and the last line, which are on the
@@ -217,8 +222,18 @@ the screens are the same as without C<-L>.
     nup -L man perlfunc
     nup -L -C4 README.md
 
-This is for the pages of one input.  It cannot be used with more
-than one file, C<--parallel>, C<--no-paginate>, rows (C<-R>,
+With more than one file, or C<-V>, the files side by side go on to
+the right in the same way, instead of going on below: each file is a
+column of its own, without pages, and as many columns as without this
+option are on the screen.  The lines move up and down as usual, and
+only C<h>, C<l>, C<,>, C<.>, the arrow keys, ESC-( and ESC-), C<H>,
+C<L>, C<E<lt>> and C<E<gt>> are put in C<LESSKEY_CONTENT>, to move by one column and to
+the ends; C<g> and C<G> go to the first and the last line.
+
+    nup -L *.txt
+
+With C<--no-paginate> and one input, which has nothing to put on the
+right, this option is ignored.  It cannot be used with rows (C<-R>,
 C<-C2,2>, C<-G>) or PDF output (C<-T>, C<-o> with C<.pdf>).
 C<--auto-paginate> is ignored.  The pages are laid out once, for the
 height of the terminal at that time.
@@ -460,15 +475,16 @@ have it, so C<+Gg> is the default.  Set C<NUP_PAGER> to use it:
 
 =item C<less> 661
 
-C<LESSKEY_CONTENT> is read, which C<-L> uses to put its keys: C<h>,
-C<l>, C<H>, C<L>, C<g>, C<G>, C<E<lt>>, C<E<gt>>, space and C<b>.
+C<LESSKEY_CONTENT> is read, which C<-L> uses to put its keys:
+C<h>, C<l>, C<,>, C<.>, the arrow keys, ESC-( and ESC-), C<H>, C<L>, C<g>, C<G>,
+C<E<lt>>, C<E<gt>>, space and C<b>.
 An older C<less> ignores it.
 
 =item C<less> 710
 
 C<right-limit-scroll> stops at the right end of the lines.  C<-L>
-puts it on C<l>, in place of C<right-scroll>, which goes on past the
-end.
+puts it on C<l>, C<.>, the right arrow and ESC-), in place of C<right-scroll>,
+which goes on past the end.
 
 =back
 
@@ -501,11 +517,11 @@ the screens are then the same as without C<-L>: space, C<b>, C<G> and
 C<E<gt>> move by the screens, the last screen shows the last pages
 and the rest of it is blank, and C<n> and C<N> skip the matches on
 the screen and move by the screens to the next page that has one.
-C<l> goes on until the last page is at the left edge.  For this,
-the keys of C<-L> are given a count instead of being repeated: with
-three panes, space and C<b> are C<3l> and C<3h>, and C<G> and
-C<E<gt>> are C<3L>, while C<L> shows the end of the row at the right
-edge of the screen.
+C<l>, C<.> and the right arrow go on until the last page is at the left
+edge.  For this, the keys of C<-L> are given a count instead of being repeated:
+with three panes, space and C<b> are C<3> ESC-) and C<3> ESC-(, and
+C<G> and C<E<gt>> are C<3L>, while C<L> shows the end of the row at
+the right edge of the screen.
 
 =back
 
@@ -587,6 +603,7 @@ Typical n-up usage:
     nup -F man perl            # no pagination
     nup -L man perl            # one row of pages, scrolled sideways
     nup -L -C4 man perl        # four pages on the screen at a time
+    nup -L *.txt               # files side by side, scrolled sideways
     nup file1.txt file2.txt    # view files side by side
     nup -C2 a.txt b.txt -w 170 # 2 columns, width 170 (ansicolumn -w)
     nup -e ./script.sh         # force command mode for a file

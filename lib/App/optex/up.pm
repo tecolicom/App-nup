@@ -1,6 +1,6 @@
 package App::optex::up;
 
-our $VERSION = "1.16";
+our $VERSION = "1.17";
 
 =encoding utf-8
 
