@@ -128,6 +128,8 @@ SH
          'less shifts by the width of a pane');
     unlike(optex('-Mup', '-S20', @cmd)->run->stdout, qr/--shift/,
            'no shift without --lateral');
+    unlike(optex('-Mup', '--lateral', '--no-lateral', '-S20', @cmd)->run->stdout,
+           qr/--shift/, '--no-lateral turns it off');
 
     # h and l of less scroll to the left and to the right, H, L, g, G,
     # < and > go to the ends, and space and b move by the panes on the
@@ -200,13 +202,22 @@ SH
         # a page of 8 lines has 6 lines of text inside the border
         is(length $top, $pane->(4) * 7, 'seven panes, each a quarter of the screen');
     }
+    # Without pages, as for the files side by side, only h, l, H and L
+    # are put, and the other keys move up and down as usual
+    like(optex('-Mup', '--lateral', '--no-paginate', '-S20', @cmd)->run->stdout,
+         qr/^KEYS: h left-scroll;l right-scroll;H no-scroll;L end-scroll$/m,
+         'without pages, only h, l, H and L');
+    like(optex('-Mup', '--lateral', '--no-paginate', '-S20', @cmd)->run->stdout,
+         qr/^ARGS: --file-size -S --shift=@{[ $fit->(20) ]} --rscroll=-$/m,
+         'without pages, less shifts by the width of a pane');
+
     $ENV{NUP_PAGER} = q(perl -pe s/^/OTHER:/);
     my $other = optex('-Mup', '--lateral', '-S20', @cmd)->run;
     like($other->stdout, qr/^OTHER:/m, 'another pager is used as it is');
     is($other->status, 0, 'another pager gets no option of less');
 
     # what makes no sense with one row of pages
-    for my $with ('-R2', '-C2,2', '-G2x2', '--no-paginate', '-T a4', '-o out.pdf') {
+    for my $with ('-R2', '-C2,2', '-G2x2', '-T a4', '-o out.pdf') {
         isnt(run("-Mup --lateral $with --no-pager -- true")->status, 0,
              "--lateral with $with fails");
     }

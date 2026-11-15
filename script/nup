@@ -30,7 +30,7 @@ nup - n-up, multi-column paged output for commands and files
      -D  --document         document mode (default: on)
      -F  --no-paginate      disable page mode
      -A  --auto-paginate    auto disable page mode for single column
-     -L  --lateral          all pages in one row, scrolled sideways
+     -L  --lateral          pages or files in one row, scrolled sideways
      -H  --filename         show filename headers (default: on)
      -C  --pane=#[,#]       number of columns, and rows (e.g., 2,2)
      -P  --page=#           page height in lines
@@ -196,12 +196,11 @@ fi
 # Main
 ##############################################################################
 
-# --lateral is a row of the pages of one input (the option only goes
-# to up_opts, so look for it there, as for --geometry below)
+# --lateral puts on the right what does not fit the screen: the pages
+# of one input, or the files side by side (the option only goes to
+# up_opts, so look for it there, as for --geometry below)
 lateral=
 [[ " ${up_opts[*]} " =~ " "(-L|--lateral)" " ]] && lateral=1
-[[ $lateral && ${parallel:-} ]] &&
-    die "--lateral cannot be used with --parallel."
 
 # --parallel/-V: forward to ansicolumn via up.pm passthrough
 [[ ${parallel:-} ]] && up_opts+=(-V)
@@ -265,9 +264,9 @@ if [[ -n $textconv && $textconv != none ]] && match_ext "$textconv" "$@"; then
     optex_mod+=(-Mtextconv)
 fi
 
+side_by_side=${parallel:-}
 if is_command_mode "$@"; then
     # Command mode: use optex -Mup
-    [[ ${parallel:-} ]] && paginate=
     local_cmd="$1"; shift
     declare -a expanded_cmd
     read -ra expanded_cmd <<< "$(expand_alias "$local_cmd")"
@@ -278,11 +277,16 @@ else
     # them are for ansicolumn (nup FILE -w 100).
     nfiles=0
     for arg; do [[ $arg == -?* ]] && break; (( ++nfiles )); done
-    [[ $lateral ]] && (( nfiles > 1 )) &&
-        die "--lateral cannot be used with more than one file."
-    [[ ${parallel:-} ]] || (( nfiles > 1 )) && paginate=
+    (( nfiles > 1 )) && side_by_side=1
     declare -a target=(ansicolumn "$@")
 fi
+
+# The files side by side (-V or more than one file) have no pages
+[[ $side_by_side ]] && paginate=
+
+# One input without pages (-F) fills the columns of the screen, and
+# there is nothing to put on the right: --lateral is turned off
+[[ $lateral && -z ${paginate:-} && -z $side_by_side ]] && up_opts+=(--no-lateral)
 
 # Disable page mode for --no-paginate/-F, or for parallel layout
 # (-V or multiple files) which has no page structure
@@ -460,8 +464,17 @@ the screens are the same as without C<-L>.
     nup -L man perlfunc
     nup -L -C4 README.md
 
-This is for the pages of one input.  It cannot be used with more
-than one file, C<--parallel>, C<--no-paginate>, rows (C<-R>,
+With more than one file, or C<-V>, the files side by side go on to
+the right in the same way, instead of going on below: each file is a
+column of its own, without pages, and as many columns as without this
+option are on the screen.  The lines move up and down as usual, and
+only C<h>, C<l>, C<H> and C<L> are put in C<LESSKEY_CONTENT>, to move
+by one column and to the ends.
+
+    nup -L *.txt
+
+With C<--no-paginate> and one input, which has nothing to put on the
+right, this option is ignored.  It cannot be used with rows (C<-R>,
 C<-C2,2>, C<-G>) or PDF output (C<-T>, C<-o> with C<.pdf>).
 C<--auto-paginate> is ignored.  The pages are laid out once, for the
 height of the terminal at that time.
@@ -830,6 +843,7 @@ Typical n-up usage:
     nup -F man perl            # no pagination
     nup -L man perl            # one row of pages, scrolled sideways
     nup -L -C4 man perl        # four pages on the screen at a time
+    nup -L *.txt               # files side by side, scrolled sideways
     nup file1.txt file2.txt    # view files side by side
     nup -C2 a.txt b.txt -w 170 # 2 columns, width 170 (ansicolumn -w)
     nup -e ./script.sh         # force command mode for a file

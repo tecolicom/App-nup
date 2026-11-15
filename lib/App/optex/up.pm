@@ -106,7 +106,7 @@ command does this automatically).
 Automatically disable page mode when only one column fits the
 terminal.
 
-=item B<-L>, B<--lateral>
+=item B<-L>, B<-->[B<no->]B<lateral>
 
 Put all the pages in one row, however wide it becomes.  The screen
 shows as many panes as without this option, as many as fit or the
@@ -126,8 +126,14 @@ the screen.  With less 710 or later, C<l> stops at the right end.
 The build of less in tecolicom/tap does more; see
 L<nup/"LESS INTEGRATION">.
 
-It cannot be used with rows (C<-R>, C<-C2,2>, C<-G>),
-C<--no-paginate> or PDF output, and C<--auto-paginate> is ignored.
+With C<--no-paginate>, it is for the files side by side, as the
+L<nup> command gives it for more than one file: each file is a column
+of its own, the columns go on to the right, and only C<h>, C<l>, C<H>
+and C<L> are put in C<LESSKEY_CONTENT>.  One input without pages
+makes a column of each line.
+
+It cannot be used with rows (C<-R>, C<-C2,2>, C<-G>) or PDF output,
+and C<--auto-paginate> is ignored.
 
 =item B<--pager>=I<COMMAND>
 
@@ -360,7 +366,7 @@ sub finalize {
         'grid|G=s', 'pane-width|S=i', 'pane|C=s', 'row|R=i',
         'border-style|bs=s', 'paginate!',
         'auto-paginate|autopaginate|A',
-        'lateral|L',
+        'lateral|L!',
         'pager:s', 'no-pager|nopager',
         'device|T=s', 'output|o=s',
         'pdf-opts=s', 'geometry');
@@ -399,11 +405,11 @@ sub finalize {
     }
     # --lateral: all the pages in one row, as wide as it becomes, to be
     # scrolled sideways by the pager.  There are no rows and no sheet
-    # of paper in it, and it is made of pages.
+    # of paper in it.  Without pages (--no-paginate), it is for the
+    # files side by side, each in a column of its own.
     my $lateral = $config->{lateral};
     if ($lateral) {
         my $with = defined $config->{row}  ? 'the number of rows (-R, -C, -G)'
-                 : !$config->{paginate}    ? '--no-paginate'
                  : $device ne 'tty'        ? 'PDF output (-T, -o)'
                  : undef;
         die "--lateral cannot be used with $with.\n" if $with;
@@ -491,11 +497,14 @@ sub finalize {
         # #command section of their own, because the later of the same
         # keys wins, and the keys of ~/.lesskey are read before it.
         # NUP_LESSKEY gives keys in place of these, and an empty one
-        # leaves LESSKEY_CONTENT as it is.
+        # leaves LESSKEY_CONTENT as it is.  Without pages, the columns
+        # go on downward, and the other keys move up and down as usual.
         my $keys = $ENV{NUP_LESSKEY} // join ';',
             "h left-scroll;l $right;H no-scroll;L end-scroll",
-            "g no-scroll;G $end;< no-scroll;> $end",
-            "\\  noaction $fwd;b noaction $back";
+            $config->{paginate} ? (
+                "g no-scroll;G $end;< no-scroll;> $end",
+                "\\  noaction $fwd;b noaction $back",
+            ) : ();
         if ($keys ne '') {
             my $user = $ENV{LESSKEY_CONTENT} // '';
             $ENV{LESSKEY_CONTENT} = $user eq '' ? $keys : "$user\n#command\n$keys";

@@ -18,7 +18,7 @@ nup - n-up, multi-column paged output for commands and files
      -D  --document         document mode (default: on)
      -F  --no-paginate      disable page mode
      -A  --auto-paginate    auto disable page mode for single column
-     -L  --lateral          all pages in one row, scrolled sideways
+     -L  --lateral          pages or files in one row, scrolled sideways
      -H  --filename         show filename headers (default: on)
      -C  --pane=#[,#]       number of columns, and rows (e.g., 2,2)
      -P  --page=#           page height in lines
@@ -203,8 +203,17 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
         nup -L man perlfunc
         nup -L -C4 README.md
 
-    This is for the pages of one input.  It cannot be used with more
-    than one file, `--parallel`, `--no-paginate`, rows (`-R`,
+    With more than one file, or `-V`, the files side by side go on to
+    the right in the same way, instead of going on below: each file is a
+    column of its own, without pages, and as many columns as without this
+    option are on the screen.  The lines move up and down as usual, and
+    only `h`, `l`, `H` and `L` are put in `LESSKEY_CONTENT`, to move
+    by one column and to the ends.
+
+        nup -L *.txt
+
+    With `--no-paginate` and one input, which has nothing to put on the
+    right, this option is ignored.  It cannot be used with rows (`-R`,
     `-C2,2`, `-G`) or PDF output (`-T`, `-o` with `.pdf`).
     `--auto-paginate` is ignored.  The pages are laid out once, for the
     height of the terminal at that time.
@@ -535,6 +544,7 @@ Typical n-up usage:
     nup -F man perl            # no pagination
     nup -L man perl            # one row of pages, scrolled sideways
     nup -L -C4 man perl        # four pages on the screen at a time
+    nup -L *.txt               # files side by side, scrolled sideways
     nup file1.txt file2.txt    # view files side by side
     nup -C2 a.txt b.txt -w 170 # 2 columns, width 170 (ansicolumn -w)
     nup -e ./script.sh         # force command mode for a file
