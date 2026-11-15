@@ -162,19 +162,37 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
     and `L` go to the left end and to the right end of the row, and so
     do `g` and `G`, and `<` and `>`.  Space and `b` move
     to the right and to the left by the panes on the screen: by three
-    with three panes.  `nup` sets the `LESSKEY_CONTENT` environment
-    variable to
+    with three panes.  `nup` puts these keys in the `LESSKEY_CONTENT`
+    environment variable.  With three panes and a `less` older than 710
+    without `--align-shift`, it is
 
         h left-scroll;l right-scroll;H no-scroll;L end-scroll;
         g no-scroll;G end-scroll;< no-scroll;> end-scroll;
         \  noaction lll;b noaction hhh
 
-    (in one line) when it is not set.  `h` and `H` are the help of
-    `less`, which is not on a key then, and `g` and `G` do not go to
-    the first and the last line, which are on the screen all the time:
-    set `LESSKEY_CONTENT` yourself to keep them.  The
-    options are added to `NUP_PAGER`, `NUP_PAGE_PAGER` and `--pager`
-    as well when the command is `less`; another pager is used as it is,
+    in one line.  With `less` 710 or later, `l` is
+    `right-limit-scroll`, and with `--align-shift`, the keys are given
+    a count instead of being repeated: `3l`, `3h`, and `3L` for `G`
+    and `>`.
+
+    The help of `less` on `h` and `H` is then on no key, and `g` and
+    `G` no longer go to the first and the last line, which are on the
+    screen all the time anyway.
+
+    When `LESSKEY_CONTENT` is set, the keys are added after it, in a
+    `#command` section, so that they win over the same keys there and
+    in `~/.lesskey`; the other keys stay as they are.
+
+    `NUP_LESSKEY` gives the keys in place of those of `nup`, in the
+    same way, and they do not change with the panes or the `less`.  Set
+    it empty not to add any keys, and `LESSKEY_CONTENT` is left as it
+    is:
+
+        export NUP_LESSKEY=
+
+    The options are added to `NUP_PAGER`, `NUP_PAGE_PAGER` and
+    `--pager` as well when the command is `less`; another pager is used
+    as it is,
     and has to be told not to wrap the lines.
 
     What works depends on the version of `less`, and the build of
@@ -186,8 +204,8 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
 
     This is for the pages of one input.  It cannot be used with more
     than one file, `--parallel`, `--no-paginate`, rows (`-R`,
-    `-C2,2`, `-G`) or PDF output (`-T`, `-o` with `.pdf`).  `--auto-paginate` is ignored.  The pages are laid out
-    once, for the height of the terminal at that time.
+    `-C2,2`, `-G`) or PDF output (`-T`, `-o` with `.pdf`).
+    `--auto-paginate` is ignored.  The pages are laid out once, for the height of the terminal at that time.
 
 - **-H**, **--filename**
 
@@ -403,6 +421,9 @@ already defined, to ensure proper display with `less`:
     Default: `mK`.  Recognizes SGR (`m`) and erase line (`K`)
     sequences.
 
+`-L` adds its keys to `LESSKEY_CONTENT`, or those of
+`NUP_LESSKEY` when it is set; see `-L` in ["OPTIONS"](#options).
+
 ## Versions
 
 - `less` 590
@@ -415,8 +436,9 @@ already defined, to ensure proper display with `less`:
 
 - `less` 661
 
-    `LESSKEY_CONTENT` is read, which `-L` uses to put the keys `h`,
-    `l`, `H` and `L`.  An older `less` ignores it.
+    `LESSKEY_CONTENT` is read, which `-L` uses to put its keys: `h`,
+    `l`, `H`, `L`, `g`, `G`, `<`, `>`, space and `b`.
+    An older `less` ignores it.
 
 - `less` 710
 

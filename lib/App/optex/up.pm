@@ -112,19 +112,21 @@ Put all the pages in one row, however wide it becomes.  The screen
 shows as many panes as without this option, as many as fit or the
 number given by C<-C>, and the row goes on to the right: the panes
 are given to C<ansicolumn> by their width (C<-S>), the width of the
-screen divided by that number, in a very large output width.  When
-the pager is C<less>, C<< -S --shift=I<N> --rscroll=- >> is added to
-it, where I<N> is the width of a pane, so that the lines are not
-wrapped and the arrow keys move by one page; C<h> and C<l> do the
-same, C<H> and C<L> go to the left and the right end, and so do
-C<g> and C<G>, C<E<lt>> and C<E<gt>>, and space and C<b> move to
-the right and to the left by the panes on the screen, by the C<LESSKEY_CONTENT> environment variable, when
-it is not set.  With
+screen divided by that number, in a very large output width.
+
+When the pager is C<less>, C<< -S --shift=I<N> --rscroll=- >> is
+added to it, where I<N> is the width of a pane, so that the lines are
+not wrapped and the arrow keys move by one page.  Keys are added to
+C<LESSKEY_CONTENT>, after the keys of the user, or those of
+C<NUP_LESSKEY> in their place, none when it is empty: C<h> and C<l> move
+by one page as well, C<H> and C<L> go to the left and the right end,
+and so do C<g> and C<G>, C<E<lt>> and C<E<gt>>, and space and C<b>
+move to the right and to the left by the panes on the screen.  With
 less 710 or later, C<l> stops at the right end, and C<--align-shift>
-is added when the less has it; see L<nup/LESS>.  It cannot be used
-with
-rows (C<-R>, C<-C2,2>, C<-G>), C<--no-paginate> or PDF output, and
-C<--auto-paginate> is ignored.
+is added when the less has it; see L<nup/LESS>.
+
+It cannot be used with rows (C<-R>, C<-C2,2>, C<-G>),
+C<--no-paginate> or PDF output, and C<--auto-paginate> is ignored.
 
 =item B<--pager>=I<COMMAND>
 
@@ -484,10 +486,19 @@ sub finalize {
         # With --align-shift, G and > give the count to end-scroll, to
         # show the last screen as it is without --lateral.
         my $end = $align_shift ? "noaction ${n}L" : 'end-scroll';
-        $ENV{LESSKEY_CONTENT} //= join ';',
+        # The keys go after the LESSKEY_CONTENT of the user, in a
+        # #command section of their own, because the later of the same
+        # keys wins, and the keys of ~/.lesskey are read before it.
+        # NUP_LESSKEY gives keys in place of these, and an empty one
+        # leaves LESSKEY_CONTENT as it is.
+        my $keys = $ENV{NUP_LESSKEY} // join ';',
             "h left-scroll;l $right;H no-scroll;L end-scroll",
             "g no-scroll;G $end;< no-scroll;> $end",
             "\\  noaction $fwd;b noaction $back";
+        if ($keys ne '') {
+            my $user = $ENV{LESSKEY_CONTENT} // '';
+            $ENV{LESSKEY_CONTENT} = $user eq '' ? $keys : "$user\n#command\n$keys";
+        }
     }
 
     # Build default ansicolumn options.  With --lateral, the panes are

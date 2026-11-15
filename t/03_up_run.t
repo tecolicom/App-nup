@@ -149,9 +149,29 @@ SH
     like(optex('-Mup', @cmd)->run->stdout,
          qr/^KEYS: $/m, 'no keys without --lateral');
     {
+        # The keys go after the LESSKEY_CONTENT of the user, in a
+        # #command section, so that they win over the same keys there
+        local $ENV{LESSKEY_CONTENT} = 'x quit';
+        like(optex('-Mup', '--lateral', '-S20', @cmd)->run->stdout,
+             qr/^KEYS: x quit\n#command\n\Q@{[ $keys->('right-scroll', 0) ]}\E$/m,
+             'keys are added to LESSKEY_CONTENT of the user');
+    }
+    {
+        # NUP_LESSKEY gives the keys in place of those of nup, and
+        # an empty one gives none, leaving LESSKEY_CONTENT as it is
+        local $ENV{NUP_LESSKEY} = 'y quit';
+        like(optex('-Mup', '--lateral', @cmd)->run->stdout,
+             qr/^KEYS: y quit$/m, 'keys of NUP_LESSKEY');
         local $ENV{LESSKEY_CONTENT} = 'x quit';
         like(optex('-Mup', '--lateral', @cmd)->run->stdout,
-             qr/^KEYS: x quit$/m, 'LESSKEY_CONTENT of the user is kept');
+             qr/^KEYS: x quit\n#command\ny quit$/m,
+             'keys of NUP_LESSKEY are added to LESSKEY_CONTENT');
+        $ENV{NUP_LESSKEY} = '';
+        like(optex('-Mup', '--lateral', @cmd)->run->stdout,
+             qr/^KEYS: x quit$/m, 'LESSKEY_CONTENT is kept with empty NUP_LESSKEY');
+        delete $ENV{LESSKEY_CONTENT};
+        like(optex('-Mup', '--lateral', @cmd)->run->stdout,
+             qr/^KEYS: $/m, 'no keys with empty NUP_LESSKEY');
     }
     # A less of 710 or later stops l at the right end, and one that has
     # --align-shift keeps the shift at the boundaries of the panes

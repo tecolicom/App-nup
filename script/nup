@@ -412,19 +412,37 @@ C<h> and C<l> move to the left and to the right as well, and C<H>
 and C<L> go to the left end and to the right end of the row, and so
 do C<g> and C<G>, and C<E<lt>> and C<E<gt>>.  Space and C<b> move
 to the right and to the left by the panes on the screen: by three
-with three panes.  C<nup> sets the C<LESSKEY_CONTENT> environment
-variable to
+with three panes.  C<nup> puts these keys in the C<LESSKEY_CONTENT>
+environment variable.  With three panes and a C<less> older than 710
+without C<--align-shift>, it is
 
     h left-scroll;l right-scroll;H no-scroll;L end-scroll;
     g no-scroll;G end-scroll;< no-scroll;> end-scroll;
     \  noaction lll;b noaction hhh
 
-(in one line) when it is not set.  C<h> and C<H> are the help of
-C<less>, which is not on a key then, and C<g> and C<G> do not go to
-the first and the last line, which are on the screen all the time:
-set C<LESSKEY_CONTENT> yourself to keep them.  The
-options are added to C<NUP_PAGER>, C<NUP_PAGE_PAGER> and C<--pager>
-as well when the command is C<less>; another pager is used as it is,
+in one line.  With C<less> 710 or later, C<l> is
+C<right-limit-scroll>, and with C<--align-shift>, the keys are given
+a count instead of being repeated: C<3l>, C<3h>, and C<3L> for C<G>
+and C<E<gt>>.
+
+The help of C<less> on C<h> and C<H> is then on no key, and C<g> and
+C<G> no longer go to the first and the last line, which are on the
+screen all the time anyway.
+
+When C<LESSKEY_CONTENT> is set, the keys are added after it, in a
+C<#command> section, so that they win over the same keys there and
+in F<~/.lesskey>; the other keys stay as they are.
+
+C<NUP_LESSKEY> gives the keys in place of those of C<nup>, in the
+same way, and they do not change with the panes or the C<less>.  Set
+it empty not to add any keys, and C<LESSKEY_CONTENT> is left as it
+is:
+
+    export NUP_LESSKEY=
+
+The options are added to C<NUP_PAGER>, C<NUP_PAGE_PAGER> and
+C<--pager> as well when the command is C<less>; another pager is used
+as it is,
 and has to be told not to wrap the lines.
 
 What works depends on the version of C<less>, and the build of
@@ -436,8 +454,8 @@ a search as well; see L</LESS>.
 
 This is for the pages of one input.  It cannot be used with more
 than one file, C<--parallel>, C<--no-paginate>, rows (C<-R>,
-C<-C2,2>, C<-G>) or PDF output (C<-T>, C<-o> with C<.pdf>).  C<--auto-paginate> is ignored.  The pages are laid out
-once, for the height of the terminal at that time.
+C<-C2,2>, C<-G>) or PDF output (C<-T>, C<-o> with C<.pdf>).
+C<--auto-paginate> is ignored.  The pages are laid out once, for the height of the terminal at that time.
 
 =item B<-H>, B<--filename>
 
@@ -679,6 +697,9 @@ sequences.
 
 =back
 
+C<-L> adds its keys to C<LESSKEY_CONTENT>, or those of
+C<NUP_LESSKEY> when it is set; see C<-L> in L</OPTIONS>.
+
 =head2 Versions
 
 =over 4
@@ -693,8 +714,9 @@ have it, so C<+Gg> is the default.  Set C<NUP_PAGER> to use it:
 
 =item C<less> 661
 
-C<LESSKEY_CONTENT> is read, which C<-L> uses to put the keys C<h>,
-C<l>, C<H> and C<L>.  An older C<less> ignores it.
+C<LESSKEY_CONTENT> is read, which C<-L> uses to put its keys: C<h>,
+C<l>, C<H>, C<L>, C<g>, C<G>, C<E<lt>>, C<E<gt>>, space and C<b>.
+An older C<less> ignores it.
 
 =item C<less> 710
 
