@@ -2,6 +2,18 @@ Revision history for Perl extension App-nup
 
 {{$NEXT}}
 
+1.16 2026-11-15T02:58:52Z
+
+    - Add NUP_OPTS for the options given before those on the command
+      line, as for nup called by another command: NUP_OPTS=-L man
+    - With --lateral, the keys are added after LESSKEY_CONTENT of the
+      user, so that they win over the same keys there and in
+      ~/.lesskey; NUP_LESSKEY gives keys in their place, and an empty
+      one adds none
+    - Rearrange the documents: the build of less in tecolicom/tap in
+      one place, the LESS section renamed to LESS INTEGRATION, a new
+      ENVIRONMENT section, and the keys of --lateral as a table
+
 1.15 2026-11-14T13:44:34Z
 
     - With --lateral, g and < go to the left end and G and > to the
