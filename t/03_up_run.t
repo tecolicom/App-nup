@@ -131,17 +131,17 @@ SH
     unlike(optex('-Mup', '--lateral', '--no-lateral', '-S20', @cmd)->run->stdout,
            qr/--shift/, '--no-lateral turns it off');
 
-    # h and l of less scroll to the left and to the right, H, L, g, G,
-    # < and > go to the ends, and space and b move by the panes on the
-    # screen: a count of l and h with --align-shift, l and h as many
-    # times without
+    # The arrow keys, and ESC-) and ESC-( with the same actions, scroll
+    # to the right and to the left, H, L, g, G, < and > go to the ends,
+    # and space and b move by the panes on the screen: a count of ESC-)
+    # and ESC-( with --align-shift, them as many times without
     my $on_screen = sub { my $w = shift; int($width / $fit->($w)) };
     my $keys = sub {
         my($right, $align) = @_;
         my $n = $on_screen->(20);
-        my($fwd, $back) = map { $align ? "$n$_" : $_ x $n } qw(l h);
+        my($fwd, $back) = map { $align ? "$n$_" : $_ x $n } '\e)', '\e(';
         my $end = $align ? "noaction ${n}L" : 'end-scroll';
-        "h left-scroll;l $right;H no-scroll;L end-scroll;"
+        "h left-scroll;l $right;, left-scroll;. $right;\\kl left-scroll;\\kr $right;\\e( left-scroll;\\e) $right;H no-scroll;L end-scroll;"
         . "g no-scroll;G $end;< no-scroll;> $end;"
         . "\\  noaction $fwd;b noaction $back";
     };
@@ -175,8 +175,9 @@ SH
         like(optex('-Mup', '--lateral', @cmd)->run->stdout,
              qr/^KEYS: $/m, 'no keys with empty NUP_LESSKEY');
     }
-    # A less of 710 or later stops l at the right end, and one that has
-    # --align-shift keeps the shift at the boundaries of the panes
+    # A less of 710 or later stops the right arrow at the right end,
+    # and one that has --align-shift keeps the shift at the boundaries
+    # of the panes
     for (['709x',             'right-scroll',       ''],
          ['710',              'right-limit-scroll', ''],
          ['713x align-shift', 'right-limit-scroll', ' --align-shift']) {
@@ -186,7 +187,7 @@ SH
         like($out, qr/^ARGS: --file-size -S --shift=@{[ $fit->(20) ]} --rscroll=-\Q$align\E$/m,
              "less $less: options");
         like($out, qr/^KEYS: \Q@{[ $keys->($right, $align) ]}\E$/m,
-             "less $less: l is $right" . ($align ? ', space and b by a count' : ''));
+             "less $less: right is $right" . ($align ? ', space and b by a count' : ''));
     }
     like(optex('-Mup', '-L', "--pager=$bin/less -R", @cmd)->run->stdout,
          qr/^ARGS: -R -S --shift=@{[ $fit->(85) ]} --rscroll=-$/m,
@@ -202,11 +203,12 @@ SH
         # a page of 8 lines has 6 lines of text inside the border
         is(length $top, $pane->(4) * 7, 'seven panes, each a quarter of the screen');
     }
-    # Without pages, as for the files side by side, only h, l, H and L
-    # are put, and the other keys move up and down as usual
+    # Without pages, as for the files side by side, only the arrow
+    # keys, ESC-) and ESC-(, H, L, < and > are put, and the other keys
+    # move up and down as usual
     like(optex('-Mup', '--lateral', '--no-paginate', '-S20', @cmd)->run->stdout,
-         qr/^KEYS: h left-scroll;l right-scroll;H no-scroll;L end-scroll$/m,
-         'without pages, only h, l, H and L');
+         qr/^KEYS: h left-scroll;l right-scroll;, left-scroll;\. right-scroll;\\kl left-scroll;\\kr right-scroll;\\e\( left-scroll;\\e\) right-scroll;H no-scroll;L end-scroll;< no-scroll;> end-scroll$/m,
+         'without pages, only the arrows, H, L, < and >');
     like(optex('-Mup', '--lateral', '--no-paginate', '-S20', @cmd)->run->stdout,
          qr/^ARGS: --file-size -S --shift=@{[ $fit->(20) ]} --rscroll=-$/m,
          'without pages, less shifts by the width of a pane');

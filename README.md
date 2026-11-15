@@ -164,18 +164,23 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
     environment variable, which `less` 661 or later reads.  With three panes on the
     screen and a `less` older than 710, they are:
 
-        h        left-scroll     one page to the left
-        l        right-scroll    one page to the right
-        H g <    no-scroll       the left end of the row
-        L G >    end-scroll      the right end of the row
-        space    noaction lll    the panes on the screen to the right
-        b        noaction hhh    the panes on the screen to the left
+        h , left    left-scroll         one page to the left
+        l . right   right-scroll        one page to the right
+        H g <       no-scroll           the left end of the row
+        L G >       end-scroll          the right end of the row
+        space       noaction ESC-) x 3  the panes on the screen to the right
+        b           noaction ESC-( x 3  the panes on the screen to the left
 
-    `noaction lll` does nothing and then types `l` three times.  In
+    `noaction` does nothing and then types the keys after it, here
+    ESC-) three times.  It cannot type the arrow keys, so ESC-) and
+    ESC-( are given the same actions as the right and left arrow.  In
     `LESSKEY_CONTENT`, they are in one line, joined by `;`, as
     `h left-scroll;l right-scroll;...`, and space is written `\ `, a
-    backslash and a space.  With `less` 710 or later, `l` is
-    `right-limit-scroll`, which stops at the right end.
+    backslash and a space.
+    With `less` 710 or later, `l`, `.`, the right arrow and ESC-) are
+    `right-limit-scroll`, which stops at the right end.  A count before
+    `.` is taken for a decimal point of the number by `less`; give it
+    to the right arrow instead, as `3` and the right arrow.
 
     The help of `less` on `h` and `H` is then on no key, and `g` and
     `G` no longer go to the first and the last line, which are on the
@@ -207,8 +212,9 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
     the right in the same way, instead of going on below: each file is a
     column of its own, without pages, and as many columns as without this
     option are on the screen.  The lines move up and down as usual, and
-    only `h`, `l`, `H` and `L` are put in `LESSKEY_CONTENT`, to move
-    by one column and to the ends.
+    only `h`, `l`, `,`, `.`, the arrow keys, ESC-( and ESC-), `H`,
+    `L`, `<` and `>` are put in `LESSKEY_CONTENT`, to move by one column and to
+    the ends; `g` and `G` go to the first and the last line.
 
         nup -L *.txt
 
@@ -431,15 +437,16 @@ of `less` does more for the pages of `nup`.
 
 - `less` 661
 
-    `LESSKEY_CONTENT` is read, which `-L` uses to put its keys: `h`,
-    `l`, `H`, `L`, `g`, `G`, `<`, `>`, space and `b`.
+    `LESSKEY_CONTENT` is read, which `-L` uses to put its keys:
+    `h`, `l`, `,`, `.`, the arrow keys, ESC-( and ESC-), `H`, `L`, `g`, `G`,
+    `<`, `>`, space and `b`.
     An older `less` ignores it.
 
 - `less` 710
 
     `right-limit-scroll` stops at the right end of the lines.  `-L`
-    puts it on `l`, in place of `right-scroll`, which goes on past the
-    end.
+    puts it on `l`, `.`, the right arrow and ESC-), in place of `right-scroll`,
+    which goes on past the end.
 
 `-L` runs `less --align-shift --version` to see the version of
 `less`, and whether it has the option below.
@@ -468,11 +475,11 @@ two options:
     `>` move by the screens, the last screen shows the last pages
     and the rest of it is blank, and `n` and `N` skip the matches on
     the screen and move by the screens to the next page that has one.
-    `l` goes on until the last page is at the left edge.  For this,
-    the keys of `-L` are given a count instead of being repeated: with
-    three panes, space and `b` are `3l` and `3h`, and `G` and
-    `>` are `3L`, while `L` shows the end of the row at the right
-    edge of the screen.
+    `l`, `.` and the right arrow go on until the last page is at the left
+    edge.  For this, the keys of `-L` are given a count instead of being repeated:
+    with three panes, space and `b` are `3` ESC-) and `3` ESC-(, and
+    `G` and `>` are `3L`, while `L` shows the end of the row at
+    the right edge of the screen.
 
 Install it with Homebrew.  It cannot be installed together with the
 `less` of Homebrew itself, which has the same command name:
