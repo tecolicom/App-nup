@@ -193,6 +193,16 @@ subtest 'lateral option' => sub {
     like nup('--lateral cpanfile Changes'), qr/lateral/, 'the message tells the option';
 };
 
+subtest 'NUP_OPTS' => sub {
+    local $ENV{NUP_OPTS} = '-L -C3';
+    like nup('date'), qr/-Mup .* -L .*-C 3 .*-- date$/, 'options of NUP_OPTS';
+    like nup('-C2 date'), qr/-C 3 -C 2 .*-- date$/,
+        'options on the command line come after them';
+    like nup('cpanfile Changes'), qr/lateral/, 'they are checked as the others';
+    $ENV{NUP_OPTS} = '';
+    unlike nup('date'), qr/ -L /, 'empty NUP_OPTS';
+};
+
 subtest 'pdf options' => sub {
     like nup(q(-o out.pdf --pdf-opts="-m 15 -l 80" date)),
         qr/--pdf-opts -m 15 -l 80 /, 'pdf-opts';

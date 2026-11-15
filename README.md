@@ -479,6 +479,14 @@ Then use `--align-record` for the pages:
 
 ## Read by `nup`
 
+- `NUP_OPTS`
+
+    Options given before those on the command line, separated by spaces,
+    so that the options on the command line take precedence.  This is
+    useful when `nup` is called by another command, as `MANPAGER`:
+
+        NUP_OPTS=-L man perlfunc
+
 - `NUP_PAGER`
 
     The pager command, used when `--pager` is not given.  Default:

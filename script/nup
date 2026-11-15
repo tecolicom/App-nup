@@ -183,6 +183,13 @@ pager() {
 # Parse options
 ##############################################################################
 
+# NUP_OPTS goes before the options on the command line, split on
+# spaces (read does not expand file names), so that they win
+if [[ ${NUP_OPTS:-} ]]; then
+    read -ra nup_opts <<< "$NUP_OPTS"
+    (( ${#nup_opts[@]} )) && set -- "${nup_opts[@]}" "$@"
+fi
+
 . getoptlong.sh OPTS "$@"
 
 ##############################################################################
@@ -760,6 +767,14 @@ Then use C<--align-record> for the pages:
 =head2 Read by C<nup>
 
 =over 4
+
+=item C<NUP_OPTS>
+
+Options given before those on the command line, separated by spaces,
+so that the options on the command line take precedence.  This is
+useful when C<nup> is called by another command, as C<MANPAGER>:
+
+    NUP_OPTS=-L man perlfunc
 
 =item C<NUP_PAGER>
 
