@@ -107,7 +107,7 @@ case "$*" in *--version*)
     exit 0 ;;
 esac
 echo "ARGS: $*"
-echo "KEYS: $LESSKEY_CONTENT"
+printf "KEYS: %s\n" "$LESSKEY_CONTENT"
 cat >/dev/null
 SH
     close $fh;
