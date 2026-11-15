@@ -117,13 +117,14 @@ screen divided by that number, in a very large output width.
 When the pager is C<less>, C<< -S --shift=I<N> --rscroll=- >> is
 added to it, where I<N> is the width of a pane, so that the lines are
 not wrapped and the arrow keys move by one page.  Keys are added to
-C<LESSKEY_CONTENT>, after the keys of the user, or those of
-C<NUP_LESSKEY> in their place, none when it is empty: C<h> and C<l> move
-by one page as well, C<H> and C<L> go to the left and the right end,
-and so do C<g> and C<G>, C<E<lt>> and C<E<gt>>, and space and C<b>
-move to the right and to the left by the panes on the screen.  With
-less 710 or later, C<l> stops at the right end, and C<--align-shift>
-is added when the less has it; see L<nup/LESS>.
+C<LESSKEY_CONTENT> (less 661 or later), after the keys of the user,
+or those of C<NUP_LESSKEY> in their place, none when it is empty:
+C<h> and C<l> move by one page as well, C<H> and C<L> go to the left
+and the right end, and so do C<g> and C<G>, C<E<lt>> and C<E<gt>>,
+and space and C<b> move to the right and to the left by the panes on
+the screen.  With less 710 or later, C<l> stops at the right end.
+The build of less in tecolicom/tap does more; see
+L<nup/"LESS INTEGRATION">.
 
 It cannot be used with rows (C<-R>, C<-C2,2>, C<-G>),
 C<--no-paginate> or PDF output, and C<--auto-paginate> is ignored.

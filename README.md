@@ -155,25 +155,27 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
     as many as fit, or the number given by `-C`.  With `-C4`, four
     pages are on the screen at a time, each a quarter of it wide.
 
-    When the pager is `less`, `nup` adds `-S --shift=_N_ --rscroll=-`
-    to it, where _N_ is the width of a pane: the lines are
-    not wrapped, and the right and left arrow keys move by one page.
-    `h` and `l` move to the left and to the right as well, and `H`
-    and `L` go to the left end and to the right end of the row, and so
-    do `g` and `G`, and `<` and `>`.  Space and `b` move
-    to the right and to the left by the panes on the screen: by three
-    with three panes.  `nup` puts these keys in the `LESSKEY_CONTENT`
-    environment variable.  With three panes and a `less` older than 710
-    without `--align-shift`, it is
+    When the pager is `less`, `nup` adds
+    `-S --shift=_N_ --rscroll=-` to it, where _N_ is the width of
+    a pane: the lines are not wrapped, and the right and left arrow keys
+    move by one page.
 
-        h left-scroll;l right-scroll;H no-scroll;L end-scroll;
-        g no-scroll;G end-scroll;< no-scroll;> end-scroll;
-        \  noaction lll;b noaction hhh
+    `nup` also puts the following keys in the `LESSKEY_CONTENT`
+    environment variable, which `less` 661 or later reads.  With three panes on the
+    screen and a `less` older than 710, they are:
 
-    in one line.  With `less` 710 or later, `l` is
-    `right-limit-scroll`, and with `--align-shift`, the keys are given
-    a count instead of being repeated: `3l`, `3h`, and `3L` for `G`
-    and `>`.
+        h        left-scroll     one page to the left
+        l        right-scroll    one page to the right
+        H g <    no-scroll       the left end of the row
+        L G >    end-scroll      the right end of the row
+        space    noaction lll    the panes on the screen to the right
+        b        noaction hhh    the panes on the screen to the left
+
+    `noaction lll` does nothing and then types `l` three times.  In
+    `LESSKEY_CONTENT`, they are in one line, joined by `;`, as
+    `h left-scroll;l right-scroll;...`, and space is written `\ `, a
+    backslash and a space.  With `less` 710 or later, `l` is
+    `right-limit-scroll`, which stops at the right end.
 
     The help of `less` on `h` and `H` is then on no key, and `g` and
     `G` no longer go to the first and the last line, which are on the
@@ -192,12 +194,11 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
 
     The options are added to `NUP_PAGER`, `NUP_PAGE_PAGER` and
     `--pager` as well when the command is `less`; another pager is used
-    as it is,
-    and has to be told not to wrap the lines.
+    as it is, and has to be told not to wrap the lines.
 
-    What works depends on the version of `less`, and the build of
-    `less` in tecolicom/tap keeps the panes at the edge of the screen in
-    a search as well; see ["LESS"](#less).
+    See ["LESS INTEGRATION"](#less-integration) for what works with the versions of
+    `less`, and for the build of `less` in tecolicom/tap, with which
+    the screens are the same as without `-L`.
 
         nup -L man perlfunc
         nup -L -C4 README.md
@@ -205,7 +206,8 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
     This is for the pages of one input.  It cannot be used with more
     than one file, `--parallel`, `--no-paginate`, rows (`-R`,
     `-C2,2`, `-G`) or PDF output (`-T`, `-o` with `.pdf`).
-    `--auto-paginate` is ignored.  The pages are laid out once, for the height of the terminal at that time.
+    `--auto-paginate` is ignored.  The pages are laid out once, for the
+    height of the terminal at that time.
 
 - **-H**, **--filename**
 
@@ -308,7 +310,8 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
     The `PAGER` variable is not used to avoid an infinite loop when
     `PAGER` is set to `nup`.
     `+Gg` makes `less` read all input before displaying, so that `-F`
-    and the percentage work; see ["LESS"](#less) for the settings of `less`.
+    and the percentage work; see ["LESS INTEGRATION"](#less-integration) for the settings
+    of `less`.
 
     Use `--pager=` (empty) or `--no-pager` to disable pager.
 
@@ -400,29 +403,12 @@ to split the screen when the number of rows is set, as in `-C2,2`:
 
     COLUMNS=170 nup -C2 file1.txt file2.txt
 
-# LESS
+# LESS INTEGRATION
 
 `nup` is made to be used with `less`.  It sets environment
-variables for `less`, and adds options to it for `-L`.  Some of them
-need a recent version, and a patched build of `less` does more for
-the pages of `nup`.
-
-## Environment Variables
-
-`nup` sets the following environment variables when they are not
-already defined, to ensure proper display with `less`:
-
-- `LESS`
-
-    Default: `-R`.  Required for ANSI color sequences.
-
-- `LESSANSIENDCHARS`
-
-    Default: `mK`.  Recognizes SGR (`m`) and erase line (`K`)
-    sequences.
-
-`-L` adds its keys to `LESSKEY_CONTENT`, or those of
-`NUP_LESSKEY` when it is set; see `-L` in ["OPTIONS"](#options).
+variables for `less` (see ["ENVIRONMENT"](#environment)), and adds options to it
+for `-L`.  Some of them need a recent version, and a patched build
+of `less` does more for the pages of `nup`.
 
 ## Versions
 
@@ -473,7 +459,11 @@ two options:
     `>` move by the screens, the last screen shows the last pages
     and the rest of it is blank, and `n` and `N` skip the matches on
     the screen and move by the screens to the next page that has one.
-    `l` goes on until the last page is at the left edge.
+    `l` goes on until the last page is at the left edge.  For this,
+    the keys of `-L` are given a count instead of being repeated: with
+    three panes, space and `b` are `3l` and `3h`, and `G` and
+    `>` are `3L`, while `L` shows the end of the row at the right
+    edge of the screen.
 
 Install it with Homebrew.  It cannot be installed together with the
 `less` of Homebrew itself, which has the same command name:
@@ -484,6 +474,48 @@ Then use `--align-record` for the pages:
 
     export NUP_PAGER="less --file-size"
     export NUP_PAGE_PAGER="less --file-size --align-record=-1"
+
+# ENVIRONMENT
+
+## Read by `nup`
+
+- `NUP_PAGER`
+
+    The pager command, used when `--pager` is not given.  Default:
+    `less -F +Gg`.  See `--pager` in ["Pager Options"](#pager-options).
+
+- `NUP_PAGE_PAGER`
+
+    The pager command in page mode, used in place of `NUP_PAGER`.  See
+    `--pager` in ["Pager Options"](#pager-options).
+
+- `NUP_LESSKEY`
+
+    The keys that `-L` gives to `less`, in place of those of `nup`.
+    Empty for no keys.  See `-L` in ["General Options"](#general-options).
+
+- `COLUMNS`, `LINES`
+
+    The width and the height of the terminal when `/dev/tty` is not
+    available.  See ["Terminal Size"](#terminal-size).
+
+`PAGER` is not read, so that it can be set to `nup`.
+
+## Set by `nup`
+
+These are set for `less`, when they are not set already:
+
+- `LESS`
+
+    Default: `-R`.  Required for ANSI color sequences.
+
+- `LESSANSIENDCHARS`
+
+    Default: `mK`.  Recognizes SGR (`m`) and erase line (`K`)
+    sequences.
+
+`-L` adds its keys to `LESSKEY_CONTENT`, after those already in
+it.  See `-L` in ["General Options"](#general-options).
 
 # EXAMPLES
 
@@ -514,7 +546,7 @@ Use [tecolicom/tap](https://github.com/tecolicom/homebrew-tap):
     brew tap tecolicom/tap
     brew install app-nup
 
-See ["LESS"](#less) for the build of `less` in the same tap.
+See ["LESS INTEGRATION"](#less-integration) for the build of `less` in the same tap.
 
 ## CPAN
 
