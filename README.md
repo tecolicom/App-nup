@@ -333,8 +333,8 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
 
     _NAME_ is the highlighter:
 
-        skylighting       skylighting, the highlighter of pandoc (default)
-        sourcehighlight   source-highlight of GNU Source-highlight
+        skylighting, sky       skylighting, the highlighter of pandoc (default)
+        sourcehighlight, gnu   source-highlight of GNU Source-highlight
 
         brew install skylighting
         brew install source-highlight
@@ -344,7 +344,8 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
         export NUP_OPTS=--highlight=sourcehighlight
 
     Use `--no-highlight` to disable.  `--hi` is the short name of the
-    option: `--hi=sourcehighlight`, `--no-hi`.
+    option, and `sky` and `gnu` are those of the highlighters:
+    `--hi=gnu`, `--no-hi`.
 
 ## Pager Options
 

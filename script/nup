@@ -113,6 +113,12 @@ declare -A highlighter=(
     [sourcehighlight]=source-highlight
 )
 
+# Short names of the highlighters
+declare -A highlighter_alias=(
+    [sky]=skylighting
+    [gnu]=sourcehighlight
+)
+
 declare -A OPTS=(
     [&REQUIRE]=1.2.0 [&USAGE]="$USAGE" [&PERMUTE]= [&DELIM]=
     [         help | h   !        # show help         ]=
@@ -300,6 +306,7 @@ else
     # without a name.
     if [[ -v highlight ]]; then
         : ${highlight:=skylighting}
+        highlight=${highlighter_alias[$highlight]:-$highlight}
         [[ -v highlighter[$highlight] ]] \
             || { echo "$myname: $highlight: unknown highlighter" >&2; exit 2; }
         if command -v "${highlighter[$highlight]}" >/dev/null 2>&1; then
@@ -635,8 +642,8 @@ are not changed.
 
 I<NAME> is the highlighter:
 
-    skylighting       skylighting, the highlighter of pandoc (default)
-    sourcehighlight   source-highlight of GNU Source-highlight
+    skylighting, sky       skylighting, the highlighter of pandoc (default)
+    sourcehighlight, gnu   source-highlight of GNU Source-highlight
 
     brew install skylighting
     brew install source-highlight
@@ -646,7 +653,8 @@ Set the one to use in C<NUP_OPTS>:
     export NUP_OPTS=--highlight=sourcehighlight
 
 Use C<--no-highlight> to disable.  C<--hi> is the short name of the
-option: C<--hi=sourcehighlight>, C<--no-hi>.
+option, and C<sky> and C<gnu> are those of the highlighters:
+C<--hi=gnu>, C<--no-hi>.
 
 =back
 

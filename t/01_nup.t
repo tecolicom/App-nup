@@ -300,6 +300,17 @@ subtest 'highlight' => sub {
         like nup_highlight('--hi=sourcehighlight --no-hi script/nup'),
             qr/-Mup --filename --label S= %n  -- ansicolumn script\/nup$/,
             '--no-hi after --hi=NAME';
+        # sky and gnu are the short names of the highlighters
+        like nup_highlight('--hi=sky script/nup'), qr/--highlight=skylighting /, '--hi=sky';
+        like nup_highlight('--hi=gnu script/nup'),
+            qr/--highlight=sourcehighlight /, '--hi=gnu';
+        like nup_highlight('--highlight=gnu script/nup'),
+            qr/--highlight=sourcehighlight /, '--highlight=gnu';
+        {
+            local $ENV{NUP_OPTS} = '--hi=gnu';
+            like nup_highlight('script/nup'), qr/--highlight=sourcehighlight /,
+                'NUP_OPTS=--hi=gnu';
+        }
         like nup_highlight('--highlight=nosuch script/nup'),
             qr/nosuch: unknown highlighter/, 'unknown name';
         unlike nup_highlight('-e echo hello'), qr/highlight/, 'command mode';
