@@ -44,8 +44,8 @@ nup - n-up, multi-column paged output for commands and files
     --cm --colormap=#       color mapping (LABEL=COLOR)
          --[no-]page-number page number on border (default: on)
          --textconv[=EXT]   textconv for non-text files
-         --highlight[=#]    syntax highlight of files (default: on)
-         --no-highlight     disable syntax highlight
+    --hl --highlight[=#]    syntax highlight of files (default: on)
+         --no-highlight     disable syntax highlight (--no-hl)
          --pager=#          pager command (empty to disable)
          --no-pager         disable pager
      -T  --device=#         output device: tty, pdf, or a paper for PDF
@@ -122,7 +122,7 @@ declare -A OPTS=(
     [         exec | e            # execute command   ]=
     [        alias | %            # command aliases   ]=
     [     textconv |    :         # textconv          ]=pdf,docx,docm,pptx,pptm,xlsx,xlsm,jpg,jpeg
-    [    highlight |    ?         # syntax highlight  ]=
+    [    highlight | hl ?         # syntax highlight  ]=
     [        pager |    :!        # pager command     ]=
     [       device | T  :>up_opts # output device     ]=
     [       output | o  :>up_opts # output file       ]=
@@ -619,7 +619,7 @@ C<pdf,docx,docm,pptx,pptm,xlsx,xlsm,jpg,jpeg>.
 
 Use C<--textconv=none> to disable.
 
-=item B<--highlight>[=I<NAME>], B<--no-highlight>
+=item B<--hl>, B<--highlight>[=I<NAME>], B<--no-highlight>
 
 Color the source files by their syntax in file view mode.  Enabled
 by default, and done when the command of the highlighter and
@@ -642,7 +642,8 @@ Set the one to use in C<NUP_OPTS>:
 
     export NUP_OPTS=--highlight=sourcehighlight
 
-Use C<--no-highlight> to disable.
+Use C<--no-highlight> to disable.  C<--hl> is the short name of the
+option: C<--hl=sourcehighlight>, C<--no-hl>.
 
 =back
 

@@ -32,8 +32,8 @@ nup - n-up, multi-column paged output for commands and files
     --cm --colormap=#       color mapping (LABEL=COLOR)
          --[no-]page-number page number on border (default: on)
          --textconv[=EXT]   textconv for non-text files
-         --highlight[=#]    syntax highlight of files (default: on)
-         --no-highlight     disable syntax highlight
+    --hl --highlight[=#]    syntax highlight of files (default: on)
+         --no-highlight     disable syntax highlight (--no-hl)
          --pager=#          pager command (empty to disable)
          --no-pager         disable pager
      -T  --device=#         output device: tty, pdf, or a paper for PDF
@@ -317,7 +317,7 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
 
     Use `--textconv=none` to disable.
 
-- **--highlight**\[=_NAME_\], **--no-highlight**
+- **--hl**, **--highlight**\[=_NAME_\], **--no-highlight**
 
     Color the source files by their syntax in file view mode.  Enabled
     by default, and done when the command of the highlighter and
@@ -340,7 +340,8 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
 
         export NUP_OPTS=--highlight=sourcehighlight
 
-    Use `--no-highlight` to disable.
+    Use `--no-highlight` to disable.  `--hl` is the short name of the
+    option: `--hl=sourcehighlight`, `--no-hl`.
 
 ## Pager Options
 
