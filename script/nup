@@ -44,7 +44,8 @@ nup - n-up, multi-column paged output for commands and files
     --cm --colormap=#       color mapping (LABEL=COLOR)
          --[no-]page-number page number on border (default: on)
          --textconv[=EXT]   textconv for non-text files
-         --[no-]highlight   syntax highlight of files (default: on)
+         --highlight[=#]    syntax highlight of files (default: on)
+         --no-highlight     disable syntax highlight
          --pager=#          pager command (empty to disable)
          --no-pager         disable pager
      -T  --device=#         output device: tty, pdf, or a paper for PDF
@@ -105,8 +106,15 @@ declare -A alias=(
     [tree]="tree -C"
 )
 
+# Highlighters (--highlight=NAME): the converter of IO::Factotum and
+# the command it runs
+declare -A highlighter=(
+    [skylighting]=skylighting
+    [sourcehighlight]=source-highlight
+)
+
 declare -A OPTS=(
-    [&REQUIRE]=1.1.1 [&USAGE]="$USAGE" [&PERMUTE]= [&DELIM]=
+    [&REQUIRE]=1.2.0 [&USAGE]="$USAGE" [&PERMUTE]= [&DELIM]=
     [         help | h   !        # show help         ]=
     [      version |     !        # show version      ]=
     [        debug | d            # debug mode        ]=
@@ -114,7 +122,7 @@ declare -A OPTS=(
     [         exec | e            # execute command   ]=
     [        alias | %            # command aliases   ]=
     [     textconv |    :         # textconv          ]=pdf,docx,docm,pptx,pptm,xlsx,xlsm,jpg,jpeg
-    [    highlight |              # syntax highlight  ]=1
+    [    highlight |    ?         # syntax highlight  ]=
     [        pager |    :!        # pager command     ]=
     [       device | T  :>up_opts # output device     ]=
     [       output | o  :>up_opts # output file       ]=
@@ -191,6 +199,11 @@ if [[ ${NUP_OPTS:-} ]]; then
     read -ra nup_opts <<< "$NUP_OPTS"
     (( ${#nup_opts[@]} )) && set -- "${nup_opts[@]}" "$@"
 fi
+
+# --highlight[=NAME] takes an optional value, which can not have an
+# initial value: the value given here stays when the option is not
+# given, and --no-highlight unsets it
+highlight=skylighting
 
 . getoptlong.sh OPTS "$@"
 
@@ -281,10 +294,17 @@ else
     for arg; do [[ $arg == -?* ]] && break; (( ++nfiles )); done
     (( nfiles > 1 )) && side_by_side=1
     declare -a target=(ansicolumn "$@")
-    # Syntax highlight, when the skylighting command is there: up.pm
-    # makes ansicolumn read the files through it (IO::Factotum)
-    if [[ ${highlight:-} ]] && command -v skylighting >/dev/null 2>&1; then
-        up_opts+=(--highlight)
+    # Syntax highlight, when the command of the highlighter is there:
+    # up.pm makes ansicolumn read the files through it (IO::Factotum).
+    # $highlight is unset by --no-highlight, and empty by --highlight
+    # without a name.
+    if [[ -v highlight ]]; then
+        : ${highlight:=skylighting}
+        [[ -v highlighter[$highlight] ]] \
+            || { echo "$myname: $highlight: unknown highlighter" >&2; exit 2; }
+        if command -v "${highlighter[$highlight]}" >/dev/null 2>&1; then
+            up_opts+=("--highlight=$highlight")
+        fi
     fi
 fi
 
@@ -599,19 +619,28 @@ C<pdf,docx,docm,pptx,pptm,xlsx,xlsm,jpg,jpeg>.
 
 Use C<--textconv=none> to disable.
 
-=item B<-->[B<no->]B<highlight>
+=item B<--highlight>[=I<NAME>], B<--no-highlight>
 
 Color the source files by their syntax in file view mode.  Enabled
-by default, and done when the C<skylighting> command, the syntax
-highlighter of pandoc, and L<IO::Factotum> are installed; nothing
-changes without them.
-C<ansicolumn> reads each file through C<skylighting> by
-L<IO::Factotum::skylighting>, with the language told from the name
-of the file.  A file whose language is not known, as one without an
-extension, is shown as it is, and so is a file which has ANSI
-sequences already.  The file names in the headers are not changed.
+by default, and done when the command of the highlighter and
+L<IO::Factotum> are installed; nothing changes without them.
+C<ansicolumn> reads each file through the command, with the language
+told from the name of the file, or from the first line of a script.
+A file whose language is not known is shown as it is, and so is a
+file which has ANSI sequences already.  The file names in the headers
+are not changed.
+
+I<NAME> is the highlighter:
+
+    skylighting       skylighting, the highlighter of pandoc (default)
+    sourcehighlight   source-highlight of GNU Source-highlight
 
     brew install skylighting
+    brew install source-highlight
+
+Set the one to use in C<NUP_OPTS>:
+
+    export NUP_OPTS=--highlight=sourcehighlight
 
 Use C<--no-highlight> to disable.
 

@@ -32,7 +32,8 @@ nup - n-up, multi-column paged output for commands and files
     --cm --colormap=#       color mapping (LABEL=COLOR)
          --[no-]page-number page number on border (default: on)
          --textconv[=EXT]   textconv for non-text files
-         --[no-]highlight   syntax highlight of files (default: on)
+         --highlight[=#]    syntax highlight of files (default: on)
+         --no-highlight     disable syntax highlight
          --pager=#          pager command (empty to disable)
          --no-pager         disable pager
      -T  --device=#         output device: tty, pdf, or a paper for PDF
@@ -316,19 +317,28 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
 
     Use `--textconv=none` to disable.
 
-- **--**\[**no-**\]**highlight**
+- **--highlight**\[=_NAME_\], **--no-highlight**
 
     Color the source files by their syntax in file view mode.  Enabled
-    by default, and done when the `skylighting` command, the syntax
-    highlighter of pandoc, and [IO::Factotum](https://metacpan.org/pod/IO%3A%3AFactotum) are installed; nothing
-    changes without them.
-    `ansicolumn` reads each file through `skylighting` by
-    [IO::Factotum::skylighting](https://metacpan.org/pod/IO%3A%3AFactotum%3A%3Askylighting), with the language told from the name
-    of the file.  A file whose language is not known, as one without an
-    extension, is shown as it is, and so is a file which has ANSI
-    sequences already.  The file names in the headers are not changed.
+    by default, and done when the command of the highlighter and
+    [IO::Factotum](https://metacpan.org/pod/IO%3A%3AFactotum) are installed; nothing changes without them.
+    `ansicolumn` reads each file through the command, with the language
+    told from the name of the file, or from the first line of a script.
+    A file whose language is not known is shown as it is, and so is a
+    file which has ANSI sequences already.  The file names in the headers
+    are not changed.
+
+    _NAME_ is the highlighter:
+
+        skylighting       skylighting, the highlighter of pandoc (default)
+        sourcehighlight   source-highlight of GNU Source-highlight
 
         brew install skylighting
+        brew install source-highlight
+
+    Set the one to use in `NUP_OPTS`:
+
+        export NUP_OPTS=--highlight=sourcehighlight
 
     Use `--no-highlight` to disable.
 

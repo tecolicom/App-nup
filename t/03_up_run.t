@@ -299,25 +299,39 @@ subtest 'highlight' => sub {
   SKIP: {
         skip 'IO::Factotum is installed', 1
             if grep { -f "$_/IO/Factotum.pm" } @INC, split /:/, $ENV{PERL5LIB} // '';
-        unlike run('-Mup --highlight --no-pager -- ansicolumn FILE')->stdout,
+        unlike run('-Mup --highlight=skylighting --no-pager -- ansicolumn FILE')->stdout,
             qr/factotum/, 'not without IO::Factotum';
     }
 
-    # with it: a module file which is only looked for, not loaded
-    mkdir "$dir/lib" and mkdir "$dir/lib/IO" or die;
-    open $fh, '>', "$dir/lib/IO/Factotum.pm" or die;
-    print $fh "die 'not to be loaded';\n";
-    close $fh;
+    # with it: the module files are only looked for, not loaded
+    my $module = sub {
+        my $file = "$dir/lib/" . shift;
+        open my $fh, '>', $file or die "$file: $!";
+        print $fh "die 'not to be loaded';\n";
+        close $fh;
+    };
+    mkdir "$dir/lib" and mkdir "$dir/lib/IO" and mkdir "$dir/lib/IO/Factotum" or die;
+    $module->('IO/Factotum.pm');
+    $module->('IO/Factotum/skylighting.pm');
     local $ENV{PERL5LIB} = join ':', "$dir/lib", $ENV{PERL5LIB} // ();
 
-    like run('-Mup --highlight --no-pager -- ansicolumn FILE -w 100')->stdout,
+    like run('-Mup --highlight=skylighting --no-pager -- ansicolumn FILE -w 100')->stdout,
         qr/\A\[--factotum=skylighting\]\[--bs=.*\[FILE\]\[-w\]\[100\]\z/,
         'ansicolumn gets --factotum';
+
+    # the converter of the name has to be there as well
+  SKIP: {
+        skip 'IO::Factotum::sourcehighlight is installed', 1
+            if grep { -f "$_/IO/Factotum/sourcehighlight.pm" } @INC, split /:/, $ENV{PERL5LIB};
+        unlike run('-Mup --highlight=sourcehighlight --no-pager -- ansicolumn FILE')->stdout,
+            qr/factotum/, 'not without the converter of the name';
+    }
+    $module->('IO/Factotum/sourcehighlight.pm');
+    like run('-Mup --highlight=sourcehighlight --no-pager -- ansicolumn FILE')->stdout,
+        qr/\A\[--factotum=sourcehighlight\]/, 'the name is given as it is';
     unlike run('-Mup --no-pager -- ansicolumn FILE')->stdout, qr/factotum/,
         'not without --highlight';
-    unlike run('-Mup --highlight --no-highlight --no-pager -- ansicolumn FILE')->stdout,
-        qr/factotum/, '--no-highlight';
-    unlike run('-Mup --highlight --no-pager -- echo hello')->stdout, qr/factotum/,
+    unlike run('-Mup --highlight=skylighting --no-pager -- echo hello')->stdout, qr/factotum/,
         'not in command mode';
 };
 

@@ -257,23 +257,42 @@ subtest 'highlight' => sub {
         (grep { -x } map { "$_/$name" } split /:/, $ENV{PATH})[0];
     };
 
-    # with a skylighting command in PATH (a dummy; -n runs nothing)
+    # with the commands in PATH (dummies; -n runs nothing)
     mkdir "$dir/with" or die;
-    open my $fh, '>', "$dir/with/skylighting" or die;
-    print $fh "#!/bin/sh\n";
-    close $fh;
-    chmod 0755, "$dir/with/skylighting" or die;
+    for my $command (qw(skylighting source-highlight)) {
+        open my $fh, '>', "$dir/with/$command" or die;
+        print $fh "#!/bin/sh\n";
+        close $fh;
+        chmod 0755, "$dir/with/$command" or die;
+    }
     {
         local $ENV{PATH} = "$dir/with:$ENV{PATH}";
         like nup_highlight('script/nup'),
-            qr/-Mup .*--highlight .*-- ansicolumn script\/nup$/,
-            'file view asks up.pm for it';
+            qr/-Mup .*--highlight=skylighting .*-- ansicolumn script\/nup$/,
+            'file view asks up.pm for it, skylighting by default';
+        like nup_highlight('--highlight script/nup'),
+            qr/--highlight=skylighting /, '--highlight without a name';
+        like nup_highlight('--highlight=sourcehighlight script/nup'),
+            qr/--highlight=sourcehighlight /, '--highlight=sourcehighlight';
         like nup_highlight('script/nup cpanfile -w 100'),
-            qr/-Mup .*--highlight .*-- ansicolumn script\/nup cpanfile -w 100$/,
+            qr/-Mup .*--highlight=skylighting .*-- ansicolumn script\/nup cpanfile -w 100$/,
             'the arguments of ansicolumn are as they were';
         unlike nup_highlight('--no-highlight script/nup'), qr/highlight/, '--no-highlight';
         like nup_highlight('--no-highlight script/nup'), qr/-- ansicolumn script\/nup$/,
             '--no-highlight leaves the command as it was';
+        unlike nup_highlight('--highlight=sourcehighlight --no-highlight script/nup'),
+            qr/highlight/, '--no-highlight after --highlight=NAME';
+        like nup_highlight('--no-highlight --highlight=sourcehighlight script/nup'),
+            qr/--highlight=sourcehighlight /, '--highlight=NAME after --no-highlight';
+        {
+            local $ENV{NUP_OPTS} = '--highlight=sourcehighlight';
+            like nup_highlight('script/nup'), qr/--highlight=sourcehighlight /,
+                'NUP_OPTS gives the default';
+            unlike nup_highlight('--no-highlight script/nup'), qr/highlight/,
+                '--no-highlight wins over NUP_OPTS';
+        }
+        like nup_highlight('--highlight=nosuch script/nup'),
+            qr/nosuch: unknown highlighter/, 'unknown name';
         unlike nup_highlight('-e echo hello'), qr/highlight/, 'command mode';
         unlike nup_highlight('date'), qr/highlight/, 'command mode without -e';
         unlike nup_highlight('--geometry'), qr/highlight/, '--geometry';
