@@ -293,6 +293,23 @@ subtest 'highlight' => sub {
     close $fh;
     chmod 0755, "$dir/ansicolumn" or die;
     local $ENV{PATH} = "$dir:$ENV{PATH}";
+
+    # without IO::Polarizer, --highlight does nothing: ansicolumn would
+    # fail by the option
+  SKIP: {
+        skip 'IO::Polarizer is installed', 1
+            if grep { -f "$_/IO/Polarizer.pm" } @INC, split /:/, $ENV{PERL5LIB} // '';
+        unlike run('-Mup --highlight --no-pager -- ansicolumn FILE')->stdout,
+            qr/polarizer/, 'not without IO::Polarizer';
+    }
+
+    # with it: a module file which is only looked for, not loaded
+    mkdir "$dir/lib" and mkdir "$dir/lib/IO" or die;
+    open $fh, '>', "$dir/lib/IO/Polarizer.pm" or die;
+    print $fh "die 'not to be loaded';\n";
+    close $fh;
+    local $ENV{PERL5LIB} = join ':', "$dir/lib", $ENV{PERL5LIB} // ();
+
     like run('-Mup --highlight --no-pager -- ansicolumn FILE -w 100')->stdout,
         qr/\A\[--polarizer=skylighting\]\[--bs=.*\[FILE\]\[-w\]\[100\]\z/,
         'ansicolumn gets --polarizer';

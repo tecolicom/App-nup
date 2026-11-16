@@ -596,7 +596,8 @@ Use C<--textconv=none> to disable.
 
 Color the source files by their syntax in file view mode.  Enabled
 by default, and done when the C<skylighting> command, the syntax
-highlighter of pandoc, is installed; nothing changes without it.
+highlighter of pandoc, and L<IO::Polarizer> are installed; nothing
+changes without them.
 C<ansicolumn> reads each file through C<skylighting> by
 L<IO::Polarizer::skylighting>, with the language told from the name
 of the file.  A file whose language is not known, as one without an
