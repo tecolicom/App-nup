@@ -481,12 +481,15 @@ two options:
     `G` and `>` are `3L`, while `L` shows the end of the row at
     the right edge of the screen.
 
-Install it with Homebrew.  It cannot be installed together with the
-`less` of Homebrew itself, which has the same command name:
+`app-nup` of the tap has it inside, and `nup` of `app-nup` runs it.
+It is put apart from the commands of Homebrew, so the `less` of
+Homebrew itself stays as it is.  To use it as `less` outside of
+`nup`, install it on its own; it cannot be installed together with
+the `less` of Homebrew, which has the same command name:
 
     brew install tecolicom/tap/less
 
-Then use `--align-record` for the pages:
+With either, use `--align-record` for the pages:
 
     export NUP_PAGER="less --file-size"
     export NUP_PAGE_PAGER="less --file-size --align-record=-1"
@@ -571,7 +574,8 @@ Use [tecolicom/tap](https://github.com/tecolicom/homebrew-tap):
     brew tap tecolicom/tap
     brew install app-nup
 
-See ["LESS INTEGRATION"](#less-integration) for the build of `less` in the same tap.
+It comes with the build of `less` in the same tap, which `nup` runs;
+see ["LESS INTEGRATION"](#less-integration).
 
 ## CPAN
 
