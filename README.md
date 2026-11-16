@@ -292,8 +292,11 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
 
 - **--**\[**no-**\]**page-number**
 
-    Show page number on the bottom border of each column.  Enabled by
-    default.  Use `--no-page-number` to disable.
+    Show page number on the bottom border of each column.  With the
+    files side by side (more than one file, or `-V`), which can be long,
+    it is shown on the top border as well, at the left, under the file
+    name.  Enabled by default.  Use
+    `--no-page-number` to disable.
 
 - **--white-board**, **--black-board**, **--green-board**, **--slate-board**
 

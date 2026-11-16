@@ -237,6 +237,18 @@ subtest 'geometry option' => sub {
     like `$script --geometry 2>&1 </dev/null`, qr/\A\d+ \d+ tty\n\z/, 'size of the terminal';
 };
 
+subtest 'page number at the top' => sub {
+    like nup('script/nup'), qr/--label S= %n /, 'one file: at the bottom';
+    unlike nup('script/nup'), qr/--label NW=/, 'one file: not at the top';
+    like nup('script/nup cpanfile'), qr/--label S= %n .*--label NW= %n @1/,
+        'two files: at the top as well';
+    like nup('-V script/nup'), qr/--label NW= %n @1/, '-V: at the top as well';
+    like nup('-V date'), qr/--label NW= %n @1/, '-V with a command';
+    unlike nup('date'), qr/--label NW=/, 'a command: not at the top';
+    unlike nup('--no-page-number script/nup cpanfile'), qr/--label/,
+        '--no-page-number: no label';
+};
+
 subtest 'highlight' => sub {
     use File::Temp qw(tempdir);
     my $dir = tempdir(CLEANUP => 1);

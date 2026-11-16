@@ -291,6 +291,10 @@ fi
 # The files side by side (-V or more than one file) have no pages
 [[ $side_by_side ]] && paginate=
 
+# They can be long, and the bottom border far below: the number is
+# shown at the top as well, at the left, under the file name
+[[ $side_by_side && ${page_number:-} ]] && up_opts+=(--label NW=" %n @1")
+
 # One input without pages (-F) fills the columns of the screen, and
 # there is nothing to put on the right: --lateral is turned off
 [[ $lateral && -z ${paginate:-} && -z $side_by_side ]] && up_opts+=(--no-lateral)
@@ -567,8 +571,11 @@ Available labels: C<TEXT>, C<BORDER>.
 
 =item B<-->[B<no->]B<page-number>
 
-Show page number on the bottom border of each column.  Enabled by
-default.  Use C<--no-page-number> to disable.
+Show page number on the bottom border of each column.  With the
+files side by side (more than one file, or C<-V>), which can be long,
+it is shown on the top border as well, at the left, under the file
+name.  Enabled by default.  Use
+C<--no-page-number> to disable.
 
 =item B<--white-board>, B<--black-board>, B<--green-board>, B<--slate-board>
 
