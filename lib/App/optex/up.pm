@@ -122,7 +122,8 @@ or those of C<NUP_LESSKEY> in their place, none when it is empty:
 C<h> and C<l>, C<,> and C<.>, and ESC-( and ESC-), move by one page
 as the arrow keys, C<H> and C<L> go to the left and the right end,
 and so do C<g> and C<G>, C<E<lt>> and C<E<gt>>, and space and C<b>
-move to the right and to the left by the panes on the screen.  With less 710 or
+move to the right and to the left by the panes on the screen, as do
+C<j> and C<k> and the down and up arrows.  With less 710 or
 later, C<l>, C<.>, the right arrow and ESC-) stop at the right end.
 The build of less in tecolicom/tap does more; see
 L<nup/"LESS INTEGRATION">.
@@ -522,6 +523,11 @@ sub finalize {
             $config->{paginate} ? (
                 "g no-scroll;G $end;< no-scroll;> $end",
                 "\\  noaction $fwd;b noaction $back",
+                # the pages have the height of the screen, and there
+                # is nothing below: the keys to go down and up move by
+                # the panes on the screen, as space and b do
+                "j noaction $fwd;k noaction $back",
+                "\\kd noaction $fwd;\\ku noaction $back",
             ) : (
                 "< no-scroll;> end-scroll",
             );

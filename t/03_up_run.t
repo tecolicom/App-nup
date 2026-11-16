@@ -134,7 +134,9 @@ SH
     # The arrow keys, and ESC-) and ESC-( with the same actions, scroll
     # to the right and to the left, H, L, g, G, < and > go to the ends,
     # and space and b move by the panes on the screen: a count of ESC-)
-    # and ESC-( with --align-shift, them as many times without
+    # and ESC-( with --align-shift, them as many times without.  So
+    # do j and k and the down and up arrows: the pages have the height
+    # of the screen, and there is nothing to scroll down to.
     my $on_screen = sub { my $w = shift; int($width / $fit->($w)) };
     my $keys = sub {
         my($right, $align) = @_;
@@ -143,7 +145,8 @@ SH
         my $end = $align ? "noaction ${n}L" : 'end-scroll';
         "h left-scroll;l $right;, left-scroll;. $right;\\kl left-scroll;\\kr $right;\\e( left-scroll;\\e) $right;H no-scroll;L end-scroll;"
         . "g no-scroll;G $end;< no-scroll;> $end;"
-        . "\\  noaction $fwd;b noaction $back";
+        . "\\  noaction $fwd;b noaction $back;"
+        . "j noaction $fwd;k noaction $back;\\kd noaction $fwd;\\ku noaction $back";
     };
     like(optex('-Mup', '--lateral', '-S20', @cmd)->run->stdout,
          qr/^KEYS: \Q@{[ $keys->('right-scroll', 0) ]}\E$/m,

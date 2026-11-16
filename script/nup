@@ -456,13 +456,16 @@ C<nup> also puts the following keys in the C<LESSKEY_CONTENT>
 environment variable, which C<less> 661 or later reads.  With three panes on the
 screen and a C<less> older than 710, they are:
 
-    h , left    left-scroll         one page to the left
-    l . right   right-scroll        one page to the right
-    H g <       no-scroll           the left end of the row
-    L G >       end-scroll          the right end of the row
-    space       noaction ESC-) x 3  the panes on the screen to the right
-    b           noaction ESC-( x 3  the panes on the screen to the left
+    h , left      left-scroll         one page to the left
+    l . right     right-scroll        one page to the right
+    H g <         no-scroll           the left end of the row
+    L G >         end-scroll          the right end of the row
+    space j down  noaction ESC-) x 3  the panes on the screen to the right
+    b k up        noaction ESC-( x 3  the panes on the screen to the left
 
+The pages have the height of the screen, and there is nothing to
+scroll down to: C<j> and C<k> and the down and up arrows go on to the
+next and the previous screen, as space and C<b> do.
 C<noaction> does nothing and then types the keys after it, here
 ESC-) three times.  It cannot type the arrow keys, so ESC-) and
 ESC-( are given the same actions as the right and left arrow.  In
@@ -784,7 +787,7 @@ have it, so C<+Gg> is the default.  Set C<NUP_PAGER> to use it:
 
 C<LESSKEY_CONTENT> is read, which C<-L> uses to put its keys:
 C<h>, C<l>, C<,>, C<.>, the arrow keys, ESC-( and ESC-), C<H>, C<L>, C<g>, C<G>,
-C<E<lt>>, C<E<gt>>, space and C<b>.
+C<E<lt>>, C<E<gt>>, space, C<b>, C<j> and C<k>.
 An older C<less> ignores it.
 
 =item C<less> 710
@@ -826,7 +829,8 @@ and the rest of it is blank, and C<n> and C<N> skip the matches on
 the screen and move by the screens to the next page that has one.
 C<l>, C<.> and the right arrow go on until the last page is at the left
 edge.  For this, the keys of C<-L> are given a count instead of being repeated:
-with three panes, space and C<b> are C<3> ESC-) and C<3> ESC-(, and
+with three panes, space and C<b>, and the keys which do the same, are
+C<3> ESC-) and C<3> ESC-(, and
 C<G> and C<E<gt>> are C<3L>, while C<L> shows the end of the row at
 the right edge of the screen.
 

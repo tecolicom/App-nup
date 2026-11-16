@@ -166,13 +166,16 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
     environment variable, which `less` 661 or later reads.  With three panes on the
     screen and a `less` older than 710, they are:
 
-        h , left    left-scroll         one page to the left
-        l . right   right-scroll        one page to the right
-        H g <       no-scroll           the left end of the row
-        L G >       end-scroll          the right end of the row
-        space       noaction ESC-) x 3  the panes on the screen to the right
-        b           noaction ESC-( x 3  the panes on the screen to the left
+        h , left      left-scroll         one page to the left
+        l . right     right-scroll        one page to the right
+        H g <         no-scroll           the left end of the row
+        L G >         end-scroll          the right end of the row
+        space j down  noaction ESC-) x 3  the panes on the screen to the right
+        b k up        noaction ESC-( x 3  the panes on the screen to the left
 
+    The pages have the height of the screen, and there is nothing to
+    scroll down to: `j` and `k` and the down and up arrows go on to the
+    next and the previous screen, as space and `b` do.
     `noaction` does nothing and then types the keys after it, here
     ESC-) three times.  It cannot type the arrow keys, so ESC-) and
     ESC-( are given the same actions as the right and left arrow.  In
@@ -470,7 +473,7 @@ of `less` does more for the pages of `nup`.
 
     `LESSKEY_CONTENT` is read, which `-L` uses to put its keys:
     `h`, `l`, `,`, `.`, the arrow keys, ESC-( and ESC-), `H`, `L`, `g`, `G`,
-    `<`, `>`, space and `b`.
+    `<`, `>`, space, `b`, `j` and `k`.
     An older `less` ignores it.
 
 - `less` 710
@@ -508,7 +511,8 @@ two options:
     the screen and move by the screens to the next page that has one.
     `l`, `.` and the right arrow go on until the last page is at the left
     edge.  For this, the keys of `-L` are given a count instead of being repeated:
-    with three panes, space and `b` are `3` ESC-) and `3` ESC-(, and
+    with three panes, space and `b`, and the keys which do the same, are
+    `3` ESC-) and `3` ESC-(, and
     `G` and `>` are `3L`, while `L` shows the end of the row at
     the right edge of the screen.
 
