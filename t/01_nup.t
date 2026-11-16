@@ -291,15 +291,15 @@ subtest 'highlight' => sub {
             unlike nup_highlight('--no-highlight script/nup'), qr/highlight/,
                 '--no-highlight wins over NUP_OPTS';
         }
-        # --hl is the short name
-        like nup_highlight('--hl script/nup'), qr/--highlight=skylighting /, '--hl';
-        like nup_highlight('--hl=sourcehighlight script/nup'),
-            qr/--highlight=sourcehighlight /, '--hl=sourcehighlight';
-        like nup_highlight('--no-hl script/nup'),
-            qr/-Mup --filename --label S= %n  -- ansicolumn script\/nup$/, '--no-hl';
-        like nup_highlight('--hl=sourcehighlight --no-hl script/nup'),
+        # --hi is the short name
+        like nup_highlight('--hi script/nup'), qr/--highlight=skylighting /, '--hi';
+        like nup_highlight('--hi=sourcehighlight script/nup'),
+            qr/--highlight=sourcehighlight /, '--hi=sourcehighlight';
+        like nup_highlight('--no-hi script/nup'),
+            qr/-Mup --filename --label S= %n  -- ansicolumn script\/nup$/, '--no-hi';
+        like nup_highlight('--hi=sourcehighlight --no-hi script/nup'),
             qr/-Mup --filename --label S= %n  -- ansicolumn script\/nup$/,
-            '--no-hl after --hl=NAME';
+            '--no-hi after --hi=NAME';
         like nup_highlight('--highlight=nosuch script/nup'),
             qr/nosuch: unknown highlighter/, 'unknown name';
         unlike nup_highlight('-e echo hello'), qr/highlight/, 'command mode';
