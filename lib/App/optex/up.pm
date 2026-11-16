@@ -193,11 +193,11 @@ after the paper, so they take precedence.
 =item B<--highlight>=I<NAME>
 
 When the command is C<ansicolumn>, give it the option
-C<--factotum=>I<NAME>: the files are read through the highlighter of
-the name, C<skylighting> or C<sourcehighlight>, and shown with syntax
-highlight.  See L<IO::Factotum::skylighting> and
-L<IO::Factotum::sourcehighlight>.  Nothing is done when the module of
-the highlighter is not installed.
+C<--highlight=>I<NAME>: the files are read through the highlighter of
+the name, and shown with syntax highlight.  The highlighters are the
+modules of L<IO::Factotum::Highlight>: C<skylighting> (C<sky>) and
+C<sourcehighlight> (C<gnu>).  Nothing is done when the module of the
+highlighter is not installed.
 
 =item Other options
 
@@ -611,11 +611,12 @@ sub finalize {
     if (@$argv && $argv->[0] eq 'ansicolumn') {
 
         # --highlight=NAME: ansicolumn reads the files through the
-        # highlighter (IO::Factotum).  Without the module of the name,
-        # ansicolumn fails by the option: look for it, without loading.
+        # highlighter (IO::Factotum::Highlight::NAME).  Without the
+        # module of the name, ansicolumn fails by the option: look
+        # for it, without loading.
         if (my $name = $config->{highlight}) {
-            my $module = "IO/Factotum/$name.pm";
-            unshift @ac_opts, "--factotum=$name"
+            my $module = "IO/Factotum/Highlight/$name.pm";
+            unshift @ac_opts, "--highlight=$name"
                 if $name =~ /\A\w+\z/
                 and grep { !ref and -f "$_/$module" } @INC;
         }

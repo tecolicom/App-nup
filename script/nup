@@ -106,17 +106,11 @@ declare -A alias=(
     [tree]="tree -C"
 )
 
-# Highlighters (--highlight=NAME): the converter of IO::Factotum and
-# the command it runs
+# Highlighters (--highlight=NAME): the module of
+# IO::Factotum::Highlight, with its short name, and the command it runs
 declare -A highlighter=(
-    [skylighting]=skylighting
-    [sourcehighlight]=source-highlight
-)
-
-# Short names of the highlighters
-declare -A highlighter_alias=(
-    [sky]=skylighting
-    [gnu]=sourcehighlight
+    [skylighting]=skylighting           [sky]=skylighting
+    [sourcehighlight]=source-highlight  [gnu]=source-highlight
 )
 
 declare -A OPTS=(
@@ -301,12 +295,12 @@ else
     (( nfiles > 1 )) && side_by_side=1
     declare -a target=(ansicolumn "$@")
     # Syntax highlight, when the command of the highlighter is there:
-    # up.pm makes ansicolumn read the files through it (IO::Factotum).
+    # up.pm gives the name to ansicolumn, which reads the files
+    # through it (IO::Factotum::Highlight).
     # $highlight is unset by --no-highlight, and empty by --highlight
     # without a name.
     if [[ -v highlight ]]; then
         : ${highlight:=skylighting}
-        highlight=${highlighter_alias[$highlight]:-$highlight}
         [[ -v highlighter[$highlight] ]] \
             || { echo "$myname: $highlight: unknown highlighter" >&2; exit 2; }
         if command -v "${highlighter[$highlight]}" >/dev/null 2>&1; then

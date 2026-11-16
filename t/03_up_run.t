@@ -300,10 +300,10 @@ subtest 'highlight' => sub {
     # without IO::Factotum, --highlight does nothing: ansicolumn would
     # fail by the option
   SKIP: {
-        skip 'IO::Factotum is installed', 1
-            if grep { -f "$_/IO/Factotum.pm" } @INC, split /:/, $ENV{PERL5LIB} // '';
+        skip 'IO::Factotum::Highlight::skylighting is installed', 1
+            if grep { -f "$_/IO/Factotum/Highlight/skylighting.pm" } @INC, split /:/, $ENV{PERL5LIB} // '';
         unlike run('-Mup --highlight=skylighting --no-pager -- ansicolumn FILE')->stdout,
-            qr/factotum/, 'not without IO::Factotum';
+            qr/highlight/, 'not without the highlighter';
     }
 
     # with it: the module files are only looked for, not loaded
@@ -313,28 +313,29 @@ subtest 'highlight' => sub {
         print $fh "die 'not to be loaded';\n";
         close $fh;
     };
-    mkdir "$dir/lib" and mkdir "$dir/lib/IO" and mkdir "$dir/lib/IO/Factotum" or die;
+    mkdir "$dir/lib" and mkdir "$dir/lib/IO" and mkdir "$dir/lib/IO/Factotum"
+        and mkdir "$dir/lib/IO/Factotum/Highlight" or die;
     $module->('IO/Factotum.pm');
-    $module->('IO/Factotum/skylighting.pm');
+    $module->('IO/Factotum/Highlight/skylighting.pm');
     local $ENV{PERL5LIB} = join ':', "$dir/lib", $ENV{PERL5LIB} // ();
 
     like run('-Mup --highlight=skylighting --no-pager -- ansicolumn FILE -w 100')->stdout,
-        qr/\A\[--factotum=skylighting\]\[--bs=.*\[FILE\]\[-w\]\[100\]\z/,
-        'ansicolumn gets --factotum';
+        qr/\A\[--highlight=skylighting\]\[--bs=.*\[FILE\]\[-w\]\[100\]\z/,
+        'ansicolumn gets --highlight';
 
-    # the converter of the name has to be there as well
+    # the highlighter of the name has to be there
   SKIP: {
-        skip 'IO::Factotum::sourcehighlight is installed', 1
-            if grep { -f "$_/IO/Factotum/sourcehighlight.pm" } @INC, split /:/, $ENV{PERL5LIB};
-        unlike run('-Mup --highlight=sourcehighlight --no-pager -- ansicolumn FILE')->stdout,
-            qr/factotum/, 'not without the converter of the name';
+        skip 'IO::Factotum::Highlight::gnu is installed', 1
+            if grep { -f "$_/IO/Factotum/Highlight/gnu.pm" } @INC, split /:/, $ENV{PERL5LIB};
+        unlike run('-Mup --highlight=gnu --no-pager -- ansicolumn FILE')->stdout,
+            qr/highlight/, 'not without the highlighter of the name';
     }
-    $module->('IO/Factotum/sourcehighlight.pm');
-    like run('-Mup --highlight=sourcehighlight --no-pager -- ansicolumn FILE')->stdout,
-        qr/\A\[--factotum=sourcehighlight\]/, 'the name is given as it is';
-    unlike run('-Mup --no-pager -- ansicolumn FILE')->stdout, qr/factotum/,
+    $module->('IO/Factotum/Highlight/gnu.pm');
+    like run('-Mup --highlight=gnu --no-pager -- ansicolumn FILE')->stdout,
+        qr/\A\[--highlight=gnu\]/, 'the name is given as it is';
+    unlike run('-Mup --no-pager -- ansicolumn FILE')->stdout, qr/highlight/,
         'not without --highlight';
-    unlike run('-Mup --highlight=skylighting --no-pager -- echo hello')->stdout, qr/factotum/,
+    unlike run('-Mup --highlight=skylighting --no-pager -- echo hello')->stdout, qr/highlight/,
         'not in command mode';
 };
 
