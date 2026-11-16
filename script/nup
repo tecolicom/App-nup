@@ -282,7 +282,7 @@ else
     (( nfiles > 1 )) && side_by_side=1
     declare -a target=(ansicolumn "$@")
     # Syntax highlight, when the skylighting command is there: up.pm
-    # makes ansicolumn read the files through it (IO::Polarizer)
+    # makes ansicolumn read the files through it (IO::Factotum)
     if [[ ${highlight:-} ]] && command -v skylighting >/dev/null 2>&1; then
         up_opts+=(--highlight)
     fi
@@ -596,10 +596,10 @@ Use C<--textconv=none> to disable.
 
 Color the source files by their syntax in file view mode.  Enabled
 by default, and done when the C<skylighting> command, the syntax
-highlighter of pandoc, and L<IO::Polarizer> are installed; nothing
+highlighter of pandoc, and L<IO::Factotum> are installed; nothing
 changes without them.
 C<ansicolumn> reads each file through C<skylighting> by
-L<IO::Polarizer::skylighting>, with the language told from the name
+L<IO::Factotum::skylighting>, with the language told from the name
 of the file.  A file whose language is not known, as one without an
 extension, is shown as it is, and so is a file which has ANSI
 sequences already.  The file names in the headers are not changed.

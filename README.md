@@ -317,10 +317,10 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
 
     Color the source files by their syntax in file view mode.  Enabled
     by default, and done when the `skylighting` command, the syntax
-    highlighter of pandoc, and [IO::Polarizer](https://metacpan.org/pod/IO%3A%3APolarizer) are installed; nothing
+    highlighter of pandoc, and [IO::Factotum](https://metacpan.org/pod/IO%3A%3AFactotum) are installed; nothing
     changes without them.
     `ansicolumn` reads each file through `skylighting` by
-    [IO::Polarizer::skylighting](https://metacpan.org/pod/IO%3A%3APolarizer%3A%3Askylighting), with the language told from the name
+    [IO::Factotum::skylighting](https://metacpan.org/pod/IO%3A%3AFactotum%3A%3Askylighting), with the language told from the name
     of the file.  A file whose language is not known, as one without an
     extension, is shown as it is, and so is a file which has ANSI
     sequences already.  The file names in the headers are not changed.

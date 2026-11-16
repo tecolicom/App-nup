@@ -294,30 +294,30 @@ subtest 'highlight' => sub {
     chmod 0755, "$dir/ansicolumn" or die;
     local $ENV{PATH} = "$dir:$ENV{PATH}";
 
-    # without IO::Polarizer, --highlight does nothing: ansicolumn would
+    # without IO::Factotum, --highlight does nothing: ansicolumn would
     # fail by the option
   SKIP: {
-        skip 'IO::Polarizer is installed', 1
-            if grep { -f "$_/IO/Polarizer.pm" } @INC, split /:/, $ENV{PERL5LIB} // '';
+        skip 'IO::Factotum is installed', 1
+            if grep { -f "$_/IO/Factotum.pm" } @INC, split /:/, $ENV{PERL5LIB} // '';
         unlike run('-Mup --highlight --no-pager -- ansicolumn FILE')->stdout,
-            qr/polarizer/, 'not without IO::Polarizer';
+            qr/factotum/, 'not without IO::Factotum';
     }
 
     # with it: a module file which is only looked for, not loaded
     mkdir "$dir/lib" and mkdir "$dir/lib/IO" or die;
-    open $fh, '>', "$dir/lib/IO/Polarizer.pm" or die;
+    open $fh, '>', "$dir/lib/IO/Factotum.pm" or die;
     print $fh "die 'not to be loaded';\n";
     close $fh;
     local $ENV{PERL5LIB} = join ':', "$dir/lib", $ENV{PERL5LIB} // ();
 
     like run('-Mup --highlight --no-pager -- ansicolumn FILE -w 100')->stdout,
-        qr/\A\[--polarizer=skylighting\]\[--bs=.*\[FILE\]\[-w\]\[100\]\z/,
-        'ansicolumn gets --polarizer';
-    unlike run('-Mup --no-pager -- ansicolumn FILE')->stdout, qr/polarizer/,
+        qr/\A\[--factotum=skylighting\]\[--bs=.*\[FILE\]\[-w\]\[100\]\z/,
+        'ansicolumn gets --factotum';
+    unlike run('-Mup --no-pager -- ansicolumn FILE')->stdout, qr/factotum/,
         'not without --highlight';
     unlike run('-Mup --highlight --no-highlight --no-pager -- ansicolumn FILE')->stdout,
-        qr/polarizer/, '--no-highlight';
-    unlike run('-Mup --highlight --no-pager -- echo hello')->stdout, qr/polarizer/,
+        qr/factotum/, '--no-highlight';
+    unlike run('-Mup --highlight --no-pager -- echo hello')->stdout, qr/factotum/,
         'not in command mode';
 };
 

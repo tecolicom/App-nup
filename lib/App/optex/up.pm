@@ -192,9 +192,9 @@ after the paper, so they take precedence.
 =item B<--highlight>
 
 When the command is C<ansicolumn>, give it the option
-C<--polarizer=skylighting>: the files are read through the
+C<--factotum=skylighting>: the files are read through the
 C<skylighting> command, and shown with syntax highlight.  See
-L<IO::Polarizer::skylighting>.  Nothing is done when L<IO::Polarizer>
+L<IO::Factotum::skylighting>.  Nothing is done when L<IO::Factotum>
 is not installed.
 
 =item Other options
@@ -544,11 +544,11 @@ sub finalize {
     # If command is ansicolumn, apply default options and pager
     if (@$argv && $argv->[0] eq 'ansicolumn') {
         # --highlight: ansicolumn reads the files through skylighting
-        # (IO::Polarizer).  Without the module, ansicolumn would fail
+        # (IO::Factotum).  Without the module, ansicolumn would fail
         # by the option, so it is looked for here, not loaded.
-        unshift @ac_opts, '--polarizer=skylighting'
+        unshift @ac_opts, '--factotum=skylighting'
             if $config->{highlight}
-            and grep { !ref and -f "$_/IO/Polarizer.pm" } @INC;
+            and grep { !ref and -f "$_/IO/Factotum.pm" } @INC;
         # Insert defaults after 'ansicolumn', so user options take precedence
         splice @$argv, 1, 0, @ac_opts;
         if ($config->{'no-pager'} || $pager eq '') {
