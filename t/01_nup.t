@@ -35,7 +35,14 @@ BEGIN {
 
 my $script = File::Spec->rel2abs('script/nup');
 
+# The command line by the dry-run.  The syntax highlight depends on the
+# skylighting command being installed, so it is off here, and is
+# tested by nup_highlight.
 sub nup {
+    nup_highlight('--no-highlight', @_);
+}
+
+sub nup_highlight {
     my @args = @_;
     my $cmd = "$script -n @args 2>&1";
     chomp(my $out = `$cmd`);
@@ -228,6 +235,53 @@ subtest 'geometry option' => sub {
         'options for ansicolumn are kept';
     like nup('--geometry date'), qr/-- ansicolumn date$/, 'a command is not run';
     like `$script --geometry 2>&1 </dev/null`, qr/\A\d+ \d+ tty\n\z/, 'size of the terminal';
+};
+
+subtest 'highlight' => sub {
+    use File::Temp qw(tempdir);
+    my $dir = tempdir(CLEANUP => 1);
+    my $find = sub {
+        my $name = shift;
+        (grep { -x } map { "$_/$name" } split /:/, $ENV{PATH})[0];
+    };
+
+    # with a skylighting command in PATH (a dummy; -n runs nothing)
+    mkdir "$dir/with" or die;
+    open my $fh, '>', "$dir/with/skylighting" or die;
+    print $fh "#!/bin/sh\n";
+    close $fh;
+    chmod 0755, "$dir/with/skylighting" or die;
+    {
+        local $ENV{PATH} = "$dir/with:$ENV{PATH}";
+        like nup_highlight('script/nup'),
+            qr/-Mup .*--highlight .*-- ansicolumn script\/nup$/,
+            'file view asks up.pm for it';
+        like nup_highlight('script/nup cpanfile -w 100'),
+            qr/-Mup .*--highlight .*-- ansicolumn script\/nup cpanfile -w 100$/,
+            'the arguments of ansicolumn are as they were';
+        unlike nup_highlight('--no-highlight script/nup'), qr/highlight/, '--no-highlight';
+        like nup_highlight('--no-highlight script/nup'), qr/-- ansicolumn script\/nup$/,
+            '--no-highlight leaves the command as it was';
+        unlike nup_highlight('-e echo hello'), qr/highlight/, 'command mode';
+        unlike nup_highlight('date'), qr/highlight/, 'command mode without -e';
+        unlike nup_highlight('--geometry'), qr/highlight/, '--geometry';
+    }
+
+    # without it: only bash and getoptlong.sh, and the system directories
+  SKIP: {
+        skip 'skylighting is in a system directory', 2
+            if grep { -x "$_/skylighting" } qw(/usr/bin /bin);
+        my($bash, $getoptlong) = map { $find->($_) } qw(bash getoptlong.sh);
+        skip 'bash or getoptlong.sh is not found', 2
+            unless $bash and $getoptlong;
+        mkdir "$dir/without" or die;
+        symlink $bash, "$dir/without/bash" or die;
+        symlink $getoptlong, "$dir/without/getoptlong.sh" or die;
+        local $ENV{PATH} = "$dir/without:/usr/bin:/bin";
+        my $out = nup_highlight('script/nup');
+        like $out, qr/-- ansicolumn script\/nup$/, 'as it was without skylighting';
+        unlike $out, qr/highlight/, 'no --highlight';
+    }
 };
 
 done_testing;

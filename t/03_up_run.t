@@ -283,6 +283,27 @@ subtest 'device and output' => sub {
     ok !-e "$dir/g.txt", '--geometry writes no file for tty';
 };
 
+# --highlight gives ansicolumn the option to read the files through
+# skylighting
+subtest 'highlight' => sub {
+    my $dir = File::Temp::tempdir(CLEANUP => 1);
+    # an ansicolumn which shows its arguments
+    open my $fh, '>', "$dir/ansicolumn" or die;
+    print $fh qq{#!/bin/sh\nprintf '[%s]' "\$@"\n};
+    close $fh;
+    chmod 0755, "$dir/ansicolumn" or die;
+    local $ENV{PATH} = "$dir:$ENV{PATH}";
+    like run('-Mup --highlight --no-pager -- ansicolumn FILE -w 100')->stdout,
+        qr/\A\[--polarizer=skylighting\]\[--bs=.*\[FILE\]\[-w\]\[100\]\z/,
+        'ansicolumn gets --polarizer';
+    unlike run('-Mup --no-pager -- ansicolumn FILE')->stdout, qr/polarizer/,
+        'not without --highlight';
+    unlike run('-Mup --highlight --no-highlight --no-pager -- ansicolumn FILE')->stdout,
+        qr/polarizer/, '--no-highlight';
+    unlike run('-Mup --highlight --no-pager -- echo hello')->stdout, qr/polarizer/,
+        'not in command mode';
+};
+
 like run('-Mup --geometry -- echo hello')->stdout, qr/\A\d+ \d+ tty\n\z/, '--geometry on the terminal';
 
 done_testing;

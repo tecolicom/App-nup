@@ -32,6 +32,7 @@ nup - n-up, multi-column paged output for commands and files
     --cm --colormap=#       color mapping (LABEL=COLOR)
          --[no-]page-number page number on border (default: on)
          --textconv[=EXT]   textconv for non-text files
+         --[no-]highlight   syntax highlight of files (default: on)
          --pager=#          pager command (empty to disable)
          --no-pager         disable pager
      -T  --device=#         output device: tty, pdf, or a paper for PDF
@@ -311,6 +312,21 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
     `pdf,docx,docm,pptx,pptm,xlsx,xlsm,jpg,jpeg`.
 
     Use `--textconv=none` to disable.
+
+- **--**\[**no-**\]**highlight**
+
+    Color the source files by their syntax in file view mode.  Enabled
+    by default, and done when the `skylighting` command, the syntax
+    highlighter of pandoc, is installed; nothing changes without it.
+    `ansicolumn` reads each file through `skylighting` by
+    [IO::Polarizer::skylighting](https://metacpan.org/pod/IO%3A%3APolarizer%3A%3Askylighting), with the language told from the name
+    of the file.  A file whose language is not known, as one without an
+    extension, is shown as it is, and so is a file which has ANSI
+    sequences already.  The file names in the headers are not changed.
+
+        brew install skylighting
+
+    Use `--no-highlight` to disable.
 
 ## Pager Options
 

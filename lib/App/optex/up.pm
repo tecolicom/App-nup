@@ -189,6 +189,13 @@ Give other options to C<ansi2pdf>, such as C<-l 80> for the number
 of lines on a sheet and C<-m 15> for the margin.  They are given
 after the paper, so they take precedence.
 
+=item B<--highlight>
+
+When the command is C<ansicolumn>, give it the option
+C<--polarizer=skylighting>: the files are read through the
+C<skylighting> command, and shown with syntax highlight.  See
+L<IO::Polarizer::skylighting>.
+
 =item Other options
 
 Any unrecognized options are passed through to L<App::ansicolumn>.
@@ -330,6 +337,7 @@ my $config = Getopt::EX::Config->new(
     'output'       => undef,
     'pdf-opts'     => '',
     'geometry'     => undef,
+    'highlight'    => undef,
 );
 
 # The number of panes that the row of --lateral has room for.
@@ -371,7 +379,7 @@ sub finalize {
         'lateral|L!',
         'pager:s', 'no-pager|nopager',
         'device|T=s', 'output|o=s',
-        'pdf-opts=s', 'geometry');
+        'pdf-opts=s', 'geometry', 'highlight!');
     my @passthru = $config->argv;
 
     # -C C,R gives the number of rows as well
@@ -534,6 +542,10 @@ sub finalize {
 
     # If command is ansicolumn, apply default options and pager
     if (@$argv && $argv->[0] eq 'ansicolumn') {
+        # --highlight: ansicolumn reads the files through skylighting
+        # (IO::Polarizer)
+        unshift @ac_opts, '--polarizer=skylighting'
+            if $config->{highlight};
         # Insert defaults after 'ansicolumn', so user options take precedence
         splice @$argv, 1, 0, @ac_opts;
         if ($config->{'no-pager'} || $pager eq '') {
