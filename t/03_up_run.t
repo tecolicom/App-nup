@@ -146,13 +146,36 @@ SH
         "h left-scroll;l $right;, left-scroll;. $right;\\kl left-scroll;\\kr $right;\\e( left-scroll;\\e) $right;H no-scroll;L end-scroll;"
         . "g no-scroll;G $end;< no-scroll;> $end;"
         . "\\  noaction $fwd;b noaction $back;"
-        . "j noaction $fwd;k noaction $back;\\kd noaction $fwd;\\ku noaction $back";
+        . "j noaction $fwd;k noaction $back;\\kd noaction $fwd;\\ku noaction $back;"
+        . "d noaction $fwd;u noaction $back;^D noaction $fwd;^U noaction $back;"
+        . "\\r noaction $fwd;\\n noaction $fwd;"
+        . "J $end;K no-scroll";
     };
     like(optex('-Mup', '--lateral', '-S20', @cmd)->run->stdout,
          qr/^KEYS: \Q@{[ $keys->('right-scroll', 0) ]}\E$/m,
          'keys are given to less');
-    like(optex('-Mup', @cmd)->run->stdout,
-         qr/^KEYS: $/m, 'no keys without --lateral');
+    # Without --lateral, the pages fill the screen and go on below:
+    # the keys to go down and up move by the screen as space and b.
+    # Without pages, they move by the line as usual.
+    my $page_keys = 'j forw-screen;k back-screen;\\kd forw-screen;\\ku back-screen;d forw-screen;u back-screen;^D forw-screen;^U back-screen;\\r forw-screen;\\n forw-screen;J goto-end;K goto-line';
+    like(optex('-Mup', '-C2', @cmd)->run->stdout,
+         qr/^KEYS: \Q$page_keys\E$/m, 'keys of the pages without --lateral');
+    like(optex('-Mup', '-C2', '--no-paginate', @cmd)->run->stdout,
+         qr/^KEYS: $/m, 'no keys without pages');
+    like(optex('-Mup', '-C1', '-A', @cmd)->run->stdout,
+         qr/^KEYS: $/m, 'no keys with one pane and --auto-paginate');
+    {
+        local $ENV{LESSKEY_CONTENT} = 'x quit';
+        like(optex('-Mup', '-C2', @cmd)->run->stdout,
+             qr/^KEYS: x quit\n#command\n\Q$page_keys\E$/m,
+             'keys of the pages are added to LESSKEY_CONTENT of the user');
+        local $ENV{NUP_LESSKEY} = '';
+        like(optex('-Mup', '-C2', @cmd)->run->stdout,
+             qr/^KEYS: x quit$/m, 'no keys of the pages with empty NUP_LESSKEY');
+        $ENV{NUP_LESSKEY} = 'y quit';
+        like(optex('-Mup', '-C2', @cmd)->run->stdout,
+             qr/^KEYS: x quit$/m, 'NUP_LESSKEY is for --lateral');
+    }
     {
         # The keys go after the LESSKEY_CONTENT of the user, in a
         # #command section, so that they win over the same keys there

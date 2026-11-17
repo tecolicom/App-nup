@@ -123,7 +123,9 @@ C<h> and C<l>, C<,> and C<.>, and ESC-( and ESC-), move by one page
 as the arrow keys, C<H> and C<L> go to the left and the right end,
 and so do C<g> and C<G>, C<E<lt>> and C<E<gt>>, and space and C<b>
 move to the right and to the left by the panes on the screen, as do
-C<j> and C<k> and the down and up arrows.  With less 710 or
+C<j> and C<k>, the down and up arrows, C<d> and C<u>, C<^D> and
+C<^U>, and the return key, and C<J> and C<K> go to the right and the
+left end.  With less 710 or
 later, C<l>, C<.>, the right arrow and ESC-) stop at the right end.
 The build of less in tecolicom/tap does more; see
 L<nup/"LESS INTEGRATION">.
@@ -137,6 +139,12 @@ makes a column of each line.
 
 It cannot be used with rows (C<-R>, C<-C2,2>, C<-G>) or PDF output,
 and C<--auto-paginate> is ignored.
+
+Without this option, when the output has pages and the pager is
+C<less>, C<j> and C<k>, the down and up arrows, C<d> and C<u>, C<^D>
+and C<^U>, and the return key are put in C<LESSKEY_CONTENT> to move by the screen as space and C<b> do, and
+C<J> and C<K> to go to the last and the first page, unless
+C<NUP_LESSKEY> is set.
 
 =item B<--pager>=I<COMMAND>
 
@@ -350,6 +358,16 @@ our $LATERAL_PANES = 10000;
 # --align-shift option of the build in tecolicom/tap.  Both are told by
 # one run with --version, since an unknown option does not make less
 # fail, but only gives a message.
+# Add the keys to LESSKEY_CONTENT.  They go after those of the user,
+# in a #command section of their own: the later of the same keys wins,
+# and the keys of ~/.lesskey are read before LESSKEY_CONTENT.
+sub add_lesskey {
+    my $keys = shift;
+    return if $keys eq '';
+    my $user = $ENV{LESSKEY_CONTENT} // '';
+    $ENV{LESSKEY_CONTENT} = $user eq '' ? $keys : "$user\n#command\n$keys";
+}
+
 sub less_features {
     my $less = shift;
     my $pid = open(my $fh, '-|') // return (0, 0);
@@ -569,6 +587,12 @@ sub finalize {
                 "\\  noaction $fwd;b noaction $back",
                 "j noaction $fwd;k noaction $back",
                 "\\kd noaction $fwd;\\ku noaction $back",
+                "d noaction $fwd;u noaction $back",
+                "^D noaction $fwd;^U noaction $back",
+                "\\r noaction $fwd;\\n noaction $fwd",
+
+                # the ends, in the direction of j and k
+                "J $end;K no-scroll",
 
             ) : (
 
@@ -579,13 +603,28 @@ sub finalize {
 
             );
 
-        # The keys go after those of the user, in a #command section
-        # of their own: the later of the same keys wins, and the keys
-        # of ~/.lesskey are read before LESSKEY_CONTENT.
-        if ($keys ne '') {
-            my $user = $ENV{LESSKEY_CONTENT} // '';
-            $ENV{LESSKEY_CONTENT} = $user eq '' ? $keys : "$user\n#command\n$keys";
-        }
+        add_lesskey($keys);
+    }
+
+    ##
+    ## Pages without --lateral, with less: keys
+    ##
+    ## The pages fill the screen and go on below.  The keys to go down
+    ## and up move by the screen, as space and b do: a line down would
+    ## show the pages cut in the middle.  NUP_LESSKEY is for --lateral,
+    ## and when it is set, these keys are not added.
+    ##
+
+    elsif (!$lateral and !$no_page and !defined $ENV{NUP_LESSKEY}
+           and $pager =~ m{^\s*(?:\S*/)?less(?:\s|$)}) {
+        add_lesskey(join ';',
+                    "j forw-screen;k back-screen",
+                    "\\kd forw-screen;\\ku back-screen",
+                    "d forw-screen;u back-screen",
+                    "^D forw-screen;^U back-screen",
+                    "\\r forw-screen;\\n forw-screen",
+                    # the last and the first page
+                    "J goto-end;K goto-line");
     }
 
     ##

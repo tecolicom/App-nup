@@ -175,13 +175,15 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
 
         h , left      left-scroll         one page to the left
         l . right     right-scroll        one page to the right
-        H g <         no-scroll           the left end of the row
-        L G >         end-scroll          the right end of the row
+        H g < K       no-scroll           the left end of the row
+        L G > J       end-scroll          the right end of the row
         space j down  noaction ESC-) x 3  the panes on the screen to the right
-        b k up        noaction ESC-( x 3  the panes on the screen to the left
+        d ^D return
+        b k up u ^U   noaction ESC-( x 3  the panes on the screen to the left
 
     The pages have the height of the screen, and there is nothing to
-    scroll down to: `j` and `k` and the down and up arrows go on to the
+    scroll down to: `j` and `k`, the down and up arrows, `d` and `u`,
+    `^D` and `^U`, and the return key go on to the
     next and the previous screen, as space and `b` do.
     `noaction` does nothing and then types the keys after it, here
     ESC-) three times.  It cannot type the arrow keys, so ESC-) and
@@ -468,6 +470,16 @@ variables for `less` (see ["ENVIRONMENT"](#environment)), and adds options to it
 for `-L`.  Some of them need a recent version, and a patched build
 of `less` does more for the pages of `nup`.
 
+The pages fill the screen and go on below, and a line down would show
+them cut in the middle.  So `j` and `k`, the down and up arrows,
+`d` and `u`, `^D` and `^U`, and the return key
+move by the screen, as space and `b` do, when the output has pages
+and the pager is `less` 661 or later, and `J` and `K` go to the
+last and the first page, as `G` and `g`.  The keys are put in
+`LESSKEY_CONTENT`, in the way `-L` does, and not when `NUP_LESSKEY`
+is set.  Without pages (`-F`, or the files side by side), they move
+by the line as usual.  `e` and `y` are left to move by the line.
+
 ## Versions
 
 - `less` 590
@@ -482,7 +494,10 @@ of `less` does more for the pages of `nup`.
 
     `LESSKEY_CONTENT` is read, which `-L` uses to put its keys:
     `h`, `l`, `,`, `.`, the arrow keys, ESC-( and ESC-), `H`, `L`, `g`, `G`,
-    `<`, `>`, space, `b`, `j` and `k`.
+    `<`, `>`, space, `b`, `j`, `k`, `d`, `u`, `^D`, `^U`,
+    the return key, `J` and `K`.
+    Without `-L`, the keys are `j`, `k`, the down and up arrows, `d`,
+    `u`, `^D`, `^U`, the return key, `J` and `K`.
     An older `less` ignores it.
 
 - `less` 710
@@ -563,7 +578,8 @@ With either, use `--align-record` for the pages:
 - `NUP_LESSKEY`
 
     The keys that `-L` gives to `less`, in place of those of `nup`.
-    Empty for no keys.  See `-L` in ["General Options"](#general-options).
+    Empty for no keys.  See `-L` in ["General Options"](#general-options).  When it is
+    set, the keys of the pages without `-L` are not added either.
 
 - `COLUMNS`, `LINES`
 
