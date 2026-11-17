@@ -2,6 +2,19 @@ Revision history for Perl extension App-nup
 
 {{$NEXT}}
 
+1.19 2026-11-17T07:30:29Z
+
+    - The page number on the bottom border has the number of all the
+      pages, as 3/12
+    - With --lateral, the page number has a triangle on each side which
+      tells that the row can be scrolled in that direction
+    - j, k, the down and up arrows, d, u, ^D, ^U and the return key
+      move by the screen as space and b do when the output has pages,
+      without --lateral as well
+    - J and K go to the last and the first page, or to the right and
+      the left end with --lateral
+    - Requires App::ansicolumn 1.66
+
 1.18 2026-11-17T02:36:34Z
 
     - Files are shown with syntax highlight, when the command of the

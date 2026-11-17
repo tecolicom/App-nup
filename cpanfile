@@ -1,6 +1,6 @@
 requires 'perl', '5.016';
 requires 'App::optex', '1.05';
-requires 'App::ansicolumn', '1.65';
+requires 'App::ansicolumn', '1.66';
 requires 'IO::Factotum', '0.04';
 requires 'App::optex::textconv', '1.07';
 requires 'Getopt::EX', '3.02';

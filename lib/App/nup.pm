@@ -1,6 +1,6 @@
 package App::nup;
 
-our $VERSION = "1.18";
+our $VERSION = "1.19";
 
 1;
 =encoding utf-8
@@ -54,7 +54,7 @@ nup - n-up, multi-column paged output for commands and files
 
 =head1 VERSION
 
-Version 1.18
+Version 1.19
 
 =cut
 =head1 DESCRIPTION
@@ -171,6 +171,13 @@ The screen shows the same number of panes as without this option:
 as many as fit, or the number given by C<-C>.  With C<-C4>, four
 pages are on the screen at a time, each a quarter of it wide.
 
+The page number has a triangle on each side, as C<◂ 2/12 ▸>, which
+tells that the row can be scrolled in that direction: the triangle is
+filled when there is a page there, and open at the end of the row
+(C<◃ 1/12 ▸>).  They are the C<%L> and C<%R> of the C<--label> option
+of C<ansicolumn>; give other marks by C<--mark>, after the file names
+(C<--mark RIGHT=E<gt>E<gt> --mark RIGHT_END=>).
+
 When the pager is C<less>, C<nup> adds
 C<< -S --shift=I<N> --rscroll=- >> to it, where I<N> is the width of
 a pane: the lines are not wrapped, and the right and left arrow keys
@@ -182,13 +189,15 @@ screen and a C<less> older than 710, they are:
 
     h , left      left-scroll         one page to the left
     l . right     right-scroll        one page to the right
-    H g <         no-scroll           the left end of the row
-    L G >         end-scroll          the right end of the row
+    H g < K       no-scroll           the left end of the row
+    L G > J       end-scroll          the right end of the row
     space j down  noaction ESC-) x 3  the panes on the screen to the right
-    b k up        noaction ESC-( x 3  the panes on the screen to the left
+    d ^D return
+    b k up u ^U   noaction ESC-( x 3  the panes on the screen to the left
 
 The pages have the height of the screen, and there is nothing to
-scroll down to: C<j> and C<k> and the down and up arrows go on to the
+scroll down to: C<j> and C<k>, the down and up arrows, C<d> and C<u>,
+C<^D> and C<^U>, and the return key go on to the
 next and the previous screen, as space and C<b> do.
 C<noaction> does nothing and then types the keys after it, here
 ESC-) three times.  It cannot type the arrow keys, so ESC-) and
@@ -318,7 +327,8 @@ Available labels: C<TEXT>, C<BORDER>.
 
 =item B<-->[B<no->]B<page-number>
 
-Show page number on the bottom border of each column.  With the
+Show page number on the bottom border of each column, with the number
+of all the pages, as C<3/12>.  With the
 files side by side (more than one file, or C<-V>), which can be long,
 it is shown on the top border as well, at the left, under the file
 name.  Enabled by default.  Use
@@ -496,6 +506,16 @@ variables for C<less> (see L</ENVIRONMENT>), and adds options to it
 for C<-L>.  Some of them need a recent version, and a patched build
 of C<less> does more for the pages of C<nup>.
 
+The pages fill the screen and go on below, and a line down would show
+them cut in the middle.  So C<j> and C<k>, the down and up arrows,
+C<d> and C<u>, C<^D> and C<^U>, and the return key
+move by the screen, as space and C<b> do, when the output has pages
+and the pager is C<less> 661 or later, and C<J> and C<K> go to the
+last and the first page, as C<G> and C<g>.  The keys are put in
+C<LESSKEY_CONTENT>, in the way C<-L> does, and not when C<NUP_LESSKEY>
+is set.  Without pages (C<-F>, or the files side by side), they move
+by the line as usual.  C<e> and C<y> are left to move by the line.
+
 =head2 Versions
 
 =over 4
@@ -512,7 +532,10 @@ have it, so C<+Gg> is the default.  Set C<NUP_PAGER> to use it:
 
 C<LESSKEY_CONTENT> is read, which C<-L> uses to put its keys:
 C<h>, C<l>, C<,>, C<.>, the arrow keys, ESC-( and ESC-), C<H>, C<L>, C<g>, C<G>,
-C<E<lt>>, C<E<gt>>, space, C<b>, C<j> and C<k>.
+C<E<lt>>, C<E<gt>>, space, C<b>, C<j>, C<k>, C<d>, C<u>, C<^D>, C<^U>,
+the return key, C<J> and C<K>.
+Without C<-L>, the keys are C<j>, C<k>, the down and up arrows, C<d>,
+C<u>, C<^D>, C<^U>, the return key, C<J> and C<K>.
 An older C<less> ignores it.
 
 =item C<less> 710
@@ -601,7 +624,8 @@ C<--pager> in L</"Pager Options">.
 =item C<NUP_LESSKEY>
 
 The keys that C<-L> gives to C<less>, in place of those of C<nup>.
-Empty for no keys.  See C<-L> in L</"General Options">.
+Empty for no keys.  See C<-L> in L</"General Options">.  When it is
+set, the keys of the pages without C<-L> are not added either.
 
 =item C<COLUMNS>, C<LINES>
 
