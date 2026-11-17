@@ -157,11 +157,12 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
     as many as fit, or the number given by `-C`.  With `-C4`, four
     pages are on the screen at a time, each a quarter of it wide.
 
-    The top border of a page has `>` at the right when there is a
-    page on the right of it, and `<` at the left when there is one on
-    the left: the row goes on out of the screen in that direction.  They
-    are the `%R` and `%L` of the `--label` option of `ansicolumn`; give
-    the marks by `--mark`, after the file names (`--mark RIGHT=>>`).
+    The page number has a triangle on each side, as `◂ 2/12 ▸`, which
+    tells that the row can be scrolled in that direction: the triangle is
+    filled when there is a page there, and open at the end of the row
+    (`◃ 1/12 ▸`).  They are the `%L` and `%R` of the `--label` option
+    of `ansicolumn`; give other marks by `--mark`, after the file names
+    (`--mark RIGHT=>> --mark RIGHT_END=`).
 
     When the pager is `less`, `nup` adds
     `-S --shift=_N_ --rscroll=-` to it, where _N_ is the width of
@@ -302,7 +303,8 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
 
 - **--**\[**no-**\]**page-number**
 
-    Show page number on the bottom border of each column.  With the
+    Show page number on the bottom border of each column, with the number
+    of all the pages, as `3/12`.  With the
     files side by side (more than one file, or `-V`), which can be long,
     it is shown on the top border as well, at the left, under the file
     name.  Enabled by default.  Use

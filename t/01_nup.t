@@ -238,9 +238,9 @@ subtest 'geometry option' => sub {
 };
 
 subtest 'page number at the top' => sub {
-    like nup('script/nup'), qr/--label S= %n /, 'one file: at the bottom';
+    like nup('script/nup'), qr{--label S= %n/%N }, 'one file: at the bottom, with the number of all';
     unlike nup('script/nup'), qr/--label NW=/, 'one file: not at the top';
-    like nup('script/nup cpanfile'), qr/--label S= %n .*--label NW= %n @1/,
+    like nup('script/nup cpanfile'), qr{--label S= %n/%N .*--label NW= %n \@1},
         'two files: at the top as well';
     like nup('-V script/nup'), qr/--label NW= %n @1/, '-V: at the top as well';
     like nup('-V date'), qr/--label NW= %n @1/, '-V with a command';
@@ -250,17 +250,21 @@ subtest 'page number at the top' => sub {
 };
 
 subtest 'marks of --lateral' => sub {
-    like nup('-L script/nup'), qr/--label NW= %L  --label NE= %R /,
-        'pages in a row: marks on the left and the right';
-    my $out = nup('-L script/nup cpanfile');
-    like $out, qr/--label NE= %R /, 'files side by side: mark on the right';
-    unlike $out, qr/%L/, 'files side by side: the number is on the left';
-    like nup('-L -V script/nup'), qr/--label NE= %R /, '-L -V';
-    unlike nup('script/nup'), qr/%[LR]/, 'no mark without -L';
-    unlike nup('script/nup cpanfile'), qr/%[LR]/, 'no mark without -L, two files';
-    unlike nup('-L -F script/nup'), qr/%[LR]/, 'no mark when -L is turned off';
-    like nup('-L --no-page-number script/nup'), qr/--label NW= %L  --label NE= %R /,
-        'the marks do not depend on --page-number';
+    my $mark = qr/--mark LEFT=◂  --mark LEFT_END=◃  --mark RIGHT= ▸ --mark RIGHT_END= ▹ -/;
+    my $out = nup('-L script/nup');
+    like $out, qr{--label S= %L%n/%N%R  --mark}, 'pages in a row: beside the page number';
+    like $out, $mark, 'pages in a row: the marks';
+    $out = nup('-L script/nup cpanfile');
+    like $out, qr/--label NW= %L%n%R \@1 --mark/, 'files side by side: beside the number at the top';
+    like $out, $mark, 'files side by side: the marks';
+    like nup('-L -V script/nup'), qr/--label NW= %L%n%R \@1 --mark/, '-L -V';
+    unlike nup('script/nup'), qr/%[LR]|--mark/, 'no mark without -L';
+    unlike nup('script/nup cpanfile'), qr/%[LR]|--mark/, 'no mark without -L, two files';
+    unlike nup('-L -F script/nup'), qr/%[LR]|--mark/, 'no mark when -L is turned off';
+    like nup('-L --no-page-number script/nup'), qr/--label S= %L%R  --mark/,
+        'the marks without the page number';
+    like nup('-L --no-page-number script/nup cpanfile'), qr/--label NW= %L%R \@1 --mark/,
+        'the marks without the number, files side by side';
 };
 
 subtest 'highlight' => sub {
@@ -310,9 +314,9 @@ subtest 'highlight' => sub {
         like nup_highlight('--hi=sourcehighlight script/nup'),
             qr/--highlight=sourcehighlight /, '--hi=sourcehighlight';
         like nup_highlight('--no-hi script/nup'),
-            qr/-Mup --filename --label S= %n  -- ansicolumn script\/nup$/, '--no-hi';
+            qr{-Mup --filename --label S= %n/%N  -- ansicolumn script/nup$}, '--no-hi';
         like nup_highlight('--hi=sourcehighlight --no-hi script/nup'),
-            qr/-Mup --filename --label S= %n  -- ansicolumn script\/nup$/,
+            qr{-Mup --filename --label S= %n/%N  -- ansicolumn script/nup$},
             '--no-hi after --hi=NAME';
         # sky and gnu are the short names of the highlighters, given as they are
         like nup_highlight('--hi=sky script/nup'), qr/--highlight=sky /, '--hi=sky';

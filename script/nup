@@ -216,7 +216,7 @@ lateral=
 [[ ${parallel:-} ]] && up_opts+=(-V)
 
 # --page-number: show page number on border
-[[ ${page_number:-} ]] && up_opts+=(--label S=" %n ")
+[[ ${page_number:-} ]] && up_opts+=(--label S=" %n/%N ")
 
 # Set defaults for less environment
 export LESS="${LESS:--R}"
@@ -316,14 +316,18 @@ fi
 # there is nothing to put on the right: --lateral is turned off
 [[ $lateral && -z ${paginate:-} && -z $side_by_side ]] && up_opts+=(--no-lateral)
 
-# --lateral: the row goes on out of the screen, so the top border has
-# a mark where there is a pane on the right (%R) and on the left (%L).
-# The files side by side have the number on the left.
+# --lateral: the row goes on out of the screen, so the number has a
+# mark on each side: a filled triangle where there is a pane in that
+# direction (%L, %R), and an open one at the end of the row
 if [[ $lateral ]]; then
     if [[ $side_by_side ]]; then
-        up_opts+=(--label NE=" %R ")
+        up_opts+=(--label NW=" %L${page_number:+%n}%R @1")
     elif [[ ${paginate:-} ]]; then
-        up_opts+=(--label NW=" %L " --label NE=" %R ")
+        up_opts+=(--label S=" %L${page_number:+%n/%N}%R ")
+    fi
+    if [[ $side_by_side || ${paginate:-} ]]; then
+        up_opts+=(--mark "LEFT=◂ " --mark "LEFT_END=◃ ")
+        up_opts+=(--mark "RIGHT= ▸" --mark "RIGHT_END= ▹")
     fi
 fi
 
@@ -455,11 +459,12 @@ The screen shows the same number of panes as without this option:
 as many as fit, or the number given by C<-C>.  With C<-C4>, four
 pages are on the screen at a time, each a quarter of it wide.
 
-The top border of a page has C<E<gt>> at the right when there is a
-page on the right of it, and C<E<lt>> at the left when there is one on
-the left: the row goes on out of the screen in that direction.  They
-are the C<%R> and C<%L> of the C<--label> option of C<ansicolumn>; give
-the marks by C<--mark>, after the file names (C<--mark RIGHT=E<gt>E<gt>>).
+The page number has a triangle on each side, as C<◂ 2/12 ▸>, which
+tells that the row can be scrolled in that direction: the triangle is
+filled when there is a page there, and open at the end of the row
+(C<◃ 1/12 ▸>).  They are the C<%L> and C<%R> of the C<--label> option
+of C<ansicolumn>; give other marks by C<--mark>, after the file names
+(C<--mark RIGHT=E<gt>E<gt> --mark RIGHT_END=>).
 
 When the pager is C<less>, C<nup> adds
 C<< -S --shift=I<N> --rscroll=- >> to it, where I<N> is the width of
@@ -608,7 +613,8 @@ Available labels: C<TEXT>, C<BORDER>.
 
 =item B<-->[B<no->]B<page-number>
 
-Show page number on the bottom border of each column.  With the
+Show page number on the bottom border of each column, with the number
+of all the pages, as C<3/12>.  With the
 files side by side (more than one file, or C<-V>), which can be long,
 it is shown on the top border as well, at the left, under the file
 name.  Enabled by default.  Use
