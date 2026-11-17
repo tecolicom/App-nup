@@ -157,6 +157,12 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
     as many as fit, or the number given by `-C`.  With `-C4`, four
     pages are on the screen at a time, each a quarter of it wide.
 
+    The top border of a page has `>` at the right when there is a
+    page on the right of it, and `<` at the left when there is one on
+    the left: the row goes on out of the screen in that direction.  They
+    are the `%R` and `%L` of the `--label` option of `ansicolumn`; give
+    the marks by `--mark`, after the file names (`--mark RIGHT=>>`).
+
     When the pager is `less`, `nup` adds
     `-S --shift=_N_ --rscroll=-` to it, where _N_ is the width of
     a pane: the lines are not wrapped, and the right and left arrow keys

@@ -316,6 +316,17 @@ fi
 # there is nothing to put on the right: --lateral is turned off
 [[ $lateral && -z ${paginate:-} && -z $side_by_side ]] && up_opts+=(--no-lateral)
 
+# --lateral: the row goes on out of the screen, so the top border has
+# a mark where there is a pane on the right (%R) and on the left (%L).
+# The files side by side have the number on the left.
+if [[ $lateral ]]; then
+    if [[ $side_by_side ]]; then
+        up_opts+=(--label NE=" %R ")
+    elif [[ ${paginate:-} ]]; then
+        up_opts+=(--label NW=" %L " --label NE=" %R ")
+    fi
+fi
+
 # Disable page mode for --no-paginate/-F, or for parallel layout
 # (-V or multiple files) which has no page structure
 [[ -z ${paginate:-} ]] && up_opts+=(--no-paginate)
@@ -443,6 +454,12 @@ sideways in the pager.
 The screen shows the same number of panes as without this option:
 as many as fit, or the number given by C<-C>.  With C<-C4>, four
 pages are on the screen at a time, each a quarter of it wide.
+
+The top border of a page has C<E<gt>> at the right when there is a
+page on the right of it, and C<E<lt>> at the left when there is one on
+the left: the row goes on out of the screen in that direction.  They
+are the C<%R> and C<%L> of the C<--label> option of C<ansicolumn>; give
+the marks by C<--mark>, after the file names (C<--mark RIGHT=E<gt>E<gt>>).
 
 When the pager is C<less>, C<nup> adds
 C<< -S --shift=I<N> --rscroll=- >> to it, where I<N> is the width of

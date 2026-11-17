@@ -249,6 +249,20 @@ subtest 'page number at the top' => sub {
         '--no-page-number: no label';
 };
 
+subtest 'marks of --lateral' => sub {
+    like nup('-L script/nup'), qr/--label NW= %L  --label NE= %R /,
+        'pages in a row: marks on the left and the right';
+    my $out = nup('-L script/nup cpanfile');
+    like $out, qr/--label NE= %R /, 'files side by side: mark on the right';
+    unlike $out, qr/%L/, 'files side by side: the number is on the left';
+    like nup('-L -V script/nup'), qr/--label NE= %R /, '-L -V';
+    unlike nup('script/nup'), qr/%[LR]/, 'no mark without -L';
+    unlike nup('script/nup cpanfile'), qr/%[LR]/, 'no mark without -L, two files';
+    unlike nup('-L -F script/nup'), qr/%[LR]/, 'no mark when -L is turned off';
+    like nup('-L --no-page-number script/nup'), qr/--label NW= %L  --label NE= %R /,
+        'the marks do not depend on --page-number';
+};
+
 subtest 'highlight' => sub {
     use File::Temp qw(tempdir);
     my $dir = tempdir(CLEANUP => 1);
