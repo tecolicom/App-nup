@@ -1,6 +1,6 @@
 package App::nup;
 
-our $VERSION = "1.17";
+our $VERSION = "1.18";
 
 1;
 =encoding utf-8
@@ -38,6 +38,8 @@ nup - n-up, multi-column paged output for commands and files
     --cm --colormap=#       color mapping (LABEL=COLOR)
          --[no-]page-number page number on border (default: on)
          --textconv[=EXT]   textconv for non-text files
+    --hi --highlight[=#]    syntax highlight of files (default: on)
+         --no-highlight     disable syntax highlight (--no-hi)
          --pager=#          pager command (empty to disable)
          --no-pager         disable pager
      -T  --device=#         output device: tty, pdf, or a paper for PDF
@@ -52,7 +54,7 @@ nup - n-up, multi-column paged output for commands and files
 
 =head1 VERSION
 
-Version 1.17
+Version 1.18
 
 =cut
 =head1 DESCRIPTION
@@ -178,13 +180,16 @@ C<nup> also puts the following keys in the C<LESSKEY_CONTENT>
 environment variable, which C<less> 661 or later reads.  With three panes on the
 screen and a C<less> older than 710, they are:
 
-    h , left    left-scroll         one page to the left
-    l . right   right-scroll        one page to the right
-    H g <       no-scroll           the left end of the row
-    L G >       end-scroll          the right end of the row
-    space       noaction ESC-) x 3  the panes on the screen to the right
-    b           noaction ESC-( x 3  the panes on the screen to the left
+    h , left      left-scroll         one page to the left
+    l . right     right-scroll        one page to the right
+    H g <         no-scroll           the left end of the row
+    L G >         end-scroll          the right end of the row
+    space j down  noaction ESC-) x 3  the panes on the screen to the right
+    b k up        noaction ESC-( x 3  the panes on the screen to the left
 
+The pages have the height of the screen, and there is nothing to
+scroll down to: C<j> and C<k> and the down and up arrows go on to the
+next and the previous screen, as space and C<b> do.
 C<noaction> does nothing and then types the keys after it, here
 ESC-) three times.  It cannot type the arrow keys, so ESC-) and
 ESC-( are given the same actions as the right and left arrow.  In
@@ -313,8 +318,11 @@ Available labels: C<TEXT>, C<BORDER>.
 
 =item B<-->[B<no->]B<page-number>
 
-Show page number on the bottom border of each column.  Enabled by
-default.  Use C<--no-page-number> to disable.
+Show page number on the bottom border of each column.  With the
+files side by side (more than one file, or C<-V>), which can be long,
+it is shown on the top border as well, at the left, under the file
+name.  Enabled by default.  Use
+C<--no-page-number> to disable.
 
 =item B<--white-board>, B<--black-board>, B<--green-board>, B<--slate-board>
 
@@ -337,6 +345,33 @@ Default extensions:
 C<pdf,docx,docm,pptx,pptm,xlsx,xlsm,jpg,jpeg>.
 
 Use C<--textconv=none> to disable.
+
+=item B<--hi>, B<--highlight>[=I<NAME>], B<--no-highlight>
+
+Color the source files by their syntax in file view mode.  Enabled
+by default, and done when the command of the highlighter and
+L<IO::Factotum> are installed; nothing changes without them.
+C<ansicolumn> reads each file through the command, with the language
+told from the name of the file, or from the first line of a script.
+A file whose language is not known is shown as it is, and so is a
+file which has ANSI sequences already.  The file names in the headers
+are not changed.
+
+I<NAME> is the highlighter:
+
+    skylighting, sky       skylighting, the highlighter of pandoc (default)
+    sourcehighlight, gnu   source-highlight of GNU Source-highlight
+
+    brew install skylighting
+    brew install source-highlight
+
+Set the one to use in C<NUP_OPTS>:
+
+    export NUP_OPTS=--highlight=sourcehighlight
+
+Use C<--no-highlight> to disable.  C<--hi> is the short name of the
+option, and C<sky> and C<gnu> are those of the highlighters:
+C<--hi=gnu>, C<--no-hi>.
 
 =back
 
@@ -477,7 +512,7 @@ have it, so C<+Gg> is the default.  Set C<NUP_PAGER> to use it:
 
 C<LESSKEY_CONTENT> is read, which C<-L> uses to put its keys:
 C<h>, C<l>, C<,>, C<.>, the arrow keys, ESC-( and ESC-), C<H>, C<L>, C<g>, C<G>,
-C<E<lt>>, C<E<gt>>, space and C<b>.
+C<E<lt>>, C<E<gt>>, space, C<b>, C<j> and C<k>.
 An older C<less> ignores it.
 
 =item C<less> 710
@@ -519,18 +554,22 @@ and the rest of it is blank, and C<n> and C<N> skip the matches on
 the screen and move by the screens to the next page that has one.
 C<l>, C<.> and the right arrow go on until the last page is at the left
 edge.  For this, the keys of C<-L> are given a count instead of being repeated:
-with three panes, space and C<b> are C<3> ESC-) and C<3> ESC-(, and
+with three panes, space and C<b>, and the keys which do the same, are
+C<3> ESC-) and C<3> ESC-(, and
 C<G> and C<E<gt>> are C<3L>, while C<L> shows the end of the row at
 the right edge of the screen.
 
 =back
 
-Install it with Homebrew.  It cannot be installed together with the
-C<less> of Homebrew itself, which has the same command name:
+C<app-nup> of the tap has it inside, and C<nup> of C<app-nup> runs it.
+It is put apart from the commands of Homebrew, so the C<less> of
+Homebrew itself stays as it is.  To use it as C<less> outside of
+C<nup>, install it on its own; it cannot be installed together with
+the C<less> of Homebrew, which has the same command name:
 
     brew install tecolicom/tap/less
 
-Then use C<--align-record> for the pages:
+With either, use C<--align-record> for the pages:
 
     export NUP_PAGER="less --file-size"
     export NUP_PAGE_PAGER="less --file-size --align-record=-1"
@@ -623,7 +662,8 @@ Use L<tecolicom/tap|https://github.com/tecolicom/homebrew-tap>:
     brew tap tecolicom/tap
     brew install app-nup
 
-See L</"LESS INTEGRATION"> for the build of C<less> in the same tap.
+It comes with the build of C<less> in the same tap, which C<nup> runs;
+see L</"LESS INTEGRATION">.
 
 =head2 CPAN
 
