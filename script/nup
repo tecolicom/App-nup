@@ -114,7 +114,7 @@ declare -A highlighter=(
 )
 
 declare -A OPTS=(
-    [&REQUIRE]=1.2.0 [&USAGE]="$USAGE" [&PERMUTE]= [&DELIM]=
+    [&REQUIRE]=1.3.0 [&USAGE]="$USAGE" [&PERMUTE]= [&DELIM]=
     [         help | h   !        # show help         ]=
     [      version |     !        # show version      ]=
     [        debug | d            # debug mode        ]=
@@ -122,7 +122,7 @@ declare -A OPTS=(
     [         exec | e            # execute command   ]=
     [        alias | %            # command aliases   ]=
     [     textconv |    :         # textconv          ]=pdf,docx,docm,pptx,pptm,xlsx,xlsm,jpg,jpeg
-    [    highlight | hi ?         # syntax highlight  ]=
+    [    highlight | hi ?         # syntax highlight  ]=skylighting
     [        pager |    :!        # pager command     ]=
     [       device | T  :>up_opts # output device     ]=
     [       output | o  :>up_opts # output file       ]=
@@ -199,11 +199,6 @@ if [[ ${NUP_OPTS:-} ]]; then
     read -ra nup_opts <<< "$NUP_OPTS"
     (( ${#nup_opts[@]} )) && set -- "${nup_opts[@]}" "$@"
 fi
-
-# --highlight[=NAME] takes an optional value, which can not have an
-# initial value: the value given here stays when the option is not
-# given, and --no-highlight unsets it
-highlight=skylighting
 
 . getoptlong.sh OPTS "$@"
 
@@ -297,8 +292,9 @@ else
     # Syntax highlight, when the command of the highlighter is there:
     # up.pm gives the name to ansicolumn, which reads the files
     # through it (IO::Factotum::Highlight).
-    # $highlight is unset by --no-highlight, and empty by --highlight
-    # without a name.
+    # $highlight has the name, skylighting when the option is not given
+    # (the initial value); it is empty by --highlight without a name,
+    # and unset by --no-highlight.
     if [[ -v highlight ]]; then
         : ${highlight:=skylighting}
         [[ -v highlighter[$highlight] ]] \
