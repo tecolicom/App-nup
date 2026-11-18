@@ -33,6 +33,10 @@ BEGIN {
     }
 }
 
+# The settings of the user are not those of the tests: with NUP_OPTS=-L,
+# every command would have -L and its labels
+delete @ENV{qw(NUP_OPTS NUP_PAGER NUP_PAGE_PAGER NUP_LESSKEY)};
+
 my $script = File::Spec->rel2abs('script/nup');
 
 # The command line by the dry-run.  The syntax highlight depends on the
