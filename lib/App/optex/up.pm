@@ -203,9 +203,9 @@ after the paper, so they take precedence.
 When the command is C<ansicolumn>, give it the option
 C<--highlight=>I<NAME>: the files are read through the highlighter of
 the name, and shown with syntax highlight.  The highlighters are the
-modules of L<IO::Factotum::Highlight>: C<skylighting> (C<sky>) and
-C<sourcehighlight> (C<gnu>).  Nothing is done when the module of the
-highlighter is not installed.
+modules of L<IO::Factotum::Highlight>: C<pandoc>, C<sourcehighlight>
+(C<gnu>) and C<skylighting> (C<sky>).  Nothing is done when the module
+of the highlighter is not installed.
 
 =item Other options
 

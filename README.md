@@ -335,19 +335,25 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
     Color the source files by their syntax in file view mode.  Enabled
     by default, and done when the command of the highlighter and
     [IO::Factotum](https://metacpan.org/pod/IO%3A%3AFactotum) are installed; nothing changes without them.
-    `ansicolumn` reads each file through the command, with the language
+    `ansicolumn` reads each file through the highlighter
+    ([Text::ANSI::Highlight](https://metacpan.org/pod/Text%3A%3AANSI%3A%3AHighlight)), with the language
     told from the name of the file, or from the first line of a script.
+    In a Markdown file, the code in a fence is colored by the language of
+    the fence.
     A file whose language is not known is shown as it is, and so is a
     file which has ANSI sequences already.  The file names in the headers
     are not changed.
 
     _NAME_ is the highlighter:
 
-        skylighting, sky       skylighting, the highlighter of pandoc (default)
-        sourcehighlight, gnu   source-highlight of GNU Source-highlight
+        pandoc                 pandoc, by its ansi writer (default)
+        sourcehighlight, gnu   source-highlight of GNU Source-highlight,
+                               the colors of less
+        skylighting, sky       the skylighting command
 
-        brew install skylighting
+        brew install pandoc
         brew install source-highlight
+        brew install skylighting
 
     Set the one to use in `NUP_OPTS`:
 

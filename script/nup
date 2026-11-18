@@ -109,8 +109,9 @@ declare -A alias=(
 # Highlighters (--highlight=NAME): the module of
 # IO::Factotum::Highlight, with its short name, and the command it runs
 declare -A highlighter=(
-    [skylighting]=skylighting           [sky]=skylighting
+    [pandoc]=pandoc
     [sourcehighlight]=source-highlight  [gnu]=source-highlight
+    [skylighting]=skylighting           [sky]=skylighting
 )
 
 declare -A OPTS=(
@@ -122,7 +123,7 @@ declare -A OPTS=(
     [         exec | e            # execute command   ]=
     [        alias | %            # command aliases   ]=
     [     textconv |    :         # textconv          ]=pdf,docx,docm,pptx,pptm,xlsx,xlsm,jpg,jpeg
-    [    highlight | hi ?         # syntax highlight  ]=skylighting
+    [    highlight | hi ?         # syntax highlight  ]=pandoc
     [        pager |    :!        # pager command     ]=
     [       device | T  :>up_opts # output device     ]=
     [       output | o  :>up_opts # output file       ]=
@@ -292,11 +293,11 @@ else
     # Syntax highlight, when the command of the highlighter is there:
     # up.pm gives the name to ansicolumn, which reads the files
     # through it (IO::Factotum::Highlight).
-    # $highlight has the name, skylighting when the option is not given
+    # $highlight has the name, pandoc when the option is not given
     # (the initial value); it is empty by --highlight without a name,
     # and unset by --no-highlight.
     if [[ -v highlight ]]; then
-        : ${highlight:=skylighting}
+        : ${highlight:=pandoc}
         [[ -v highlighter[$highlight] ]] \
             || { echo "$myname: $highlight: unknown highlighter" >&2; exit 2; }
         if command -v "${highlighter[$highlight]}" >/dev/null 2>&1; then
@@ -649,19 +650,25 @@ Use C<--textconv=none> to disable.
 Color the source files by their syntax in file view mode.  Enabled
 by default, and done when the command of the highlighter and
 L<IO::Factotum> are installed; nothing changes without them.
-C<ansicolumn> reads each file through the command, with the language
+C<ansicolumn> reads each file through the highlighter
+(L<Text::ANSI::Highlight>), with the language
 told from the name of the file, or from the first line of a script.
+In a Markdown file, the code in a fence is colored by the language of
+the fence.
 A file whose language is not known is shown as it is, and so is a
 file which has ANSI sequences already.  The file names in the headers
 are not changed.
 
 I<NAME> is the highlighter:
 
-    skylighting, sky       skylighting, the highlighter of pandoc (default)
-    sourcehighlight, gnu   source-highlight of GNU Source-highlight
+    pandoc                 pandoc, by its ansi writer (default)
+    sourcehighlight, gnu   source-highlight of GNU Source-highlight,
+                           the colors of less
+    skylighting, sky       the skylighting command
 
-    brew install skylighting
+    brew install pandoc
     brew install source-highlight
+    brew install skylighting
 
 Set the one to use in C<NUP_OPTS>:
 
