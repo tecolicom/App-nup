@@ -663,7 +663,7 @@ Kazumasa Utashiro
 
 # LICENSE
 
-Copyright 2025-2026 Kazumasa Utashiro.
+Copyright © 2025-2026 Kazumasa Utashiro.
 
 This software is released under the MIT License.
 [https://opensource.org/licenses/MIT](https://opensource.org/licenses/MIT)
