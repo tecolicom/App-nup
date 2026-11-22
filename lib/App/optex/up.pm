@@ -548,6 +548,10 @@ sub finalize {
     if ($lateral and $pager =~ m{^\s*((?:\S*/)?less)(?:\s|$)}) {
         my($version, $align_shift) = less_features($1);
 
+        # +Gg is not for the row: g and G are its keys below, and G,
+        # the key of noaction with --align-shift, would come after g
+        # and leave less at the right end.
+        $pager =~ s/\s\+Gg(?=\s|$)//;
         $pager .= " -S --shift=$lateral_width --rscroll=-";
         $pager .= " --align-shift" if $align_shift;
 
