@@ -42,8 +42,8 @@
       },
       "runtime" : {
          "requires" : {
-            "App::ansicolumn" : "1.68",
-            "App::optex" : "1.05",
+            "App::ansicolumn" : "1.70",
+            "App::optex" : "1.07",
             "App::optex::textconv" : "1.07",
             "Getopt::EX" : "3.02",
             "Getopt::EX::Config" : "1.01",
@@ -73,7 +73,8 @@
    },
    "version" : "1.23",
    "x_contributors" : [
-      "Kazumasa Utashiro <kaz@utashiro.com>"
+      "Kazumasa Utashiro <kaz@utashiro.com>",
+      "renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>"
    ],
    "x_serialization_backend" : "JSON::PP version 4.16",
    "x_static_install" : 0
