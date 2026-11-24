@@ -9,5 +9,5 @@ requires 'Getopt::Long::Bash', '2.0.0';
 requires 'Term::ReadKey';
 
 on 'test' => sub {
-    requires 'Test::More', '0.98';
+    requires 'Test::More', '1.302226';
 };
