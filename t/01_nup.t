@@ -371,14 +371,22 @@ subtest 'options after the files' => sub {
     is nup('cpanfile -C2'), nup('-C2 cpanfile'), 'the same as before the file';
     like nup('cpanfile -C2 Changes'), qr/-C 2 .*-- ansicolumn cpanfile Changes$/,
         'between the files';
-    my $out = nup('cpanfile -w 100');
-    like $out, qr/illegal option -- w|-- w/, 'an option of ansicolumn is an error';
+    my $out = nup('cpanfile --tabstop 4');
+    like $out, qr/no such option -- --tabstop/, 'an option of ansicolumn is an error';
     unlike $out, qr/optex/, 'and nothing is run';
     like nup('-- -C2'), qr/-- ansicolumn -C2$/, '-- ends the options';
     like nup('cpanfile -- -C2'), qr/-- ansicolumn cpanfile -C2$/,
         '-- after the file ends the options';
     like nup('date -C2'), qr/-- date -C2$/, 'the arguments of a command are its own';
     like nup('cpanfile -e'), qr/-- ansicolumn cpanfile$/, '-e after the file does not change the mode';
+};
+
+subtest 'width option' => sub {
+    like nup('-w 100 cpanfile'), qr/-Mup .*-w 100 .*-- ansicolumn cpanfile$/, '-w';
+    is nup('cpanfile -w 100'), nup('-w 100 cpanfile'), 'after the file';
+    like nup('--width=100 cpanfile'), qr/--width 100 /, '--width';
+    like nup('-w 100 man nup'), qr/-w 100 .*-- man nup$/, 'command mode';
+    like nup('-T a4 -w 300 --geometry'), qr/-T a4 -w 300 --geometry /, 'with --geometry';
 };
 
 subtest 'column-opts option' => sub {
