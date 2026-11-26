@@ -91,11 +91,11 @@ subtest 'page mode disabled for parallel layout' => sub {
     like $out, qr/--no-paginate/, 'multiple files disable page mode';
     $out = nup('script/nup');
     unlike $out, qr/--no-paginate/, 'single file keeps page mode';
-    $out = nup('script/nup -w 100');
+    $out = nup('script/nup --column-opts -w 100 --');
     unlike $out, qr/--no-paginate/, 'options after the file are not files';
     $out = nup('- --boundary=word');
     unlike $out, qr/--no-paginate/, 'options after - are not files';
-    $out = nup('script/nup cpanfile -w 100');
+    $out = nup('script/nup cpanfile --column-opts -w 100 --');
     like $out, qr/--no-paginate/, 'two files and options disable page mode';
     $out = nup('date');
     unlike $out, qr/--no-paginate/, 'command mode keeps page mode';
@@ -202,7 +202,7 @@ subtest 'lateral option' => sub {
     like nup('-L -V cpanfile'), qr/-Mup .* -L -V .*--no-paginate -- ansicolumn cpanfile$/,
         '-L with -V';
     like nup('-L -V date'), qr/-Mup .* -L .*--no-paginate -- date$/, '-L with -V, command';
-    unlike nup('-L cpanfile -w 100'), qr/--no-paginate/, 'an option after the file is not a file';
+    unlike nup('-L cpanfile --column-opts -w 100 --'), qr/--no-paginate/, 'an option after the file is not a file';
     # one input without pages has nothing to put on the right
     my $out = nup('-L -F cpanfile');
     like $out, qr/ -L .*--no-lateral .*--no-paginate -- ansicolumn cpanfile$/,
@@ -235,8 +235,8 @@ subtest 'device and output options' => sub {
 
 subtest 'geometry option' => sub {
     like nup('--geometry'), qr/-Mup .*--geometry .*-- ansicolumn$/, 'no file is needed';
-    like nup('-T a4 --geometry - -w 300'), qr/-T a4 .*--geometry .*-- ansicolumn - -w 300$/,
-        'options for ansicolumn are kept';
+    like nup('-T a4 --geometry --column-opts -w 300 -- -'), qr/-T a4 --geometry .* -w 300 -- ansicolumn -$/,
+        '--column-opts is given to up.pm';
     like nup('--geometry date'), qr/-- ansicolumn date$/, 'a command is not run';
     like `$script --geometry 2>&1 </dev/null`, qr/\A\d+ \d+ tty\n\z/, 'size of the terminal';
 };
@@ -296,9 +296,9 @@ subtest 'highlight' => sub {
             qr/--highlight=pandoc /, '--highlight without a name';
         like nup_highlight('--highlight=sourcehighlight script/nup'),
             qr/--highlight=sourcehighlight /, '--highlight=sourcehighlight';
-        like nup_highlight('script/nup cpanfile -w 100'),
-            qr/-Mup .*--highlight=pandoc .*-- ansicolumn script\/nup cpanfile -w 100$/,
-            'the arguments of ansicolumn are as they were';
+        like nup_highlight('script/nup cpanfile --column-opts -w 100 --'),
+            qr/-Mup .*--highlight=pandoc .* -w 100 -- ansicolumn script\/nup cpanfile$/,
+            '--column-opts goes to up.pm, and the files to ansicolumn';
         unlike nup_highlight('--no-highlight script/nup'), qr/highlight/, '--no-highlight';
         like nup_highlight('--no-highlight script/nup'), qr/-- ansicolumn script\/nup$/,
             '--no-highlight leaves the command as it was';
@@ -365,6 +365,40 @@ subtest 'highlight' => sub {
         like $out, qr/-- ansicolumn script\/nup$/, 'as it was without the highlighter';
         unlike $out, qr/highlight/, 'no --highlight';
     }
+};
+
+subtest 'options after the files' => sub {
+    is nup('cpanfile -C2'), nup('-C2 cpanfile'), 'the same as before the file';
+    like nup('cpanfile -C2 Changes'), qr/-C 2 .*-- ansicolumn cpanfile Changes$/,
+        'between the files';
+    my $out = nup('cpanfile -w 100');
+    like $out, qr/illegal option -- w|-- w/, 'an option of ansicolumn is an error';
+    unlike $out, qr/optex/, 'and nothing is run';
+    like nup('-- -C2'), qr/-- ansicolumn -C2$/, '-- ends the options';
+    like nup('cpanfile -- -C2'), qr/-- ansicolumn cpanfile -C2$/,
+        '-- after the file ends the options';
+    like nup('date -C2'), qr/-- date -C2$/, 'the arguments of a command are its own';
+    like nup('cpanfile -e'), qr/-- ansicolumn cpanfile$/, '-e after the file does not change the mode';
+};
+
+subtest 'column-opts option' => sub {
+    like nup('--column-opts -w 100 -s : -- cpanfile'),
+        qr/-Mup .* -w 100 -s : .*-- ansicolumn cpanfile$/, 'given to up.pm';
+    like nup('cpanfile --column-opts -w 100 -- -C2'),
+        qr/-C 2 .*-w 100 .*-- ansicolumn cpanfile$/, 'options after its --';
+    like nup('--column-opts -w 100 -- -- -C2'),
+        qr/-w 100 .*-- ansicolumn -C2$/, 'another -- ends the options';
+    like nup('--column-opts -w 100 -- date -C2'),
+        qr/-w 100 .*-- date -C2$/, 'command mode';
+    like nup('--column-opts=-w100 cpanfile'),
+        qr/ -w100 .*-- ansicolumn cpanfile$/, 'a value with =';
+    like nup('--column-opts -w 100 cpanfile'), qr/terminating --/, '-- is required';
+    like nup('--ac -w 100 -- cpanfile -C2'),
+        qr/-C 2 .* -w 100 -- ansicolumn cpanfile$/, '--ac is --column-opts';
+    like nup('--ac -w 100 -- -- -C2'), qr/ -w 100 -- ansicolumn -C2$/, '--ac and another --';
+    like nup('-L cpanfile --column-opts --mark LEFT=x --'),
+        qr/--mark LEFT_END=.* --mark LEFT=x -- ansicolumn cpanfile$/, 'after the marks of nup';
+    unlike nup('--column-opts -L -- cpanfile'), qr/--label NW/, '-L in it is not --lateral of nup';
 };
 
 done_testing;
