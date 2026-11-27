@@ -156,7 +156,7 @@ declare -A OPTS=(
     [  black-board |     >up_opts # white on black    ]=
     [  green-board |     >up_opts # white on green    ]=
     [  slate-board |     >up_opts # white on slate    ]=
-    [  column-opts | ac *!        # ansicolumn options]=
+    [  column-opts | ac *         # ansicolumn options]=
 )
 
 ##############################################################################
@@ -185,12 +185,6 @@ fold() {
     [[ ${fold:-} ]] && paginate= || paginate=1
 }
 
-# --column-opts callback: remember where its arguments end, so that its
-# -- is not taken for the one which ends the options
-column_opts() {
-    column_opts_end=$OPTIND
-}
-
 # --pager callback: handle pager option
 pager() {
     if [[ -z $2 ]]; then
@@ -211,44 +205,17 @@ if [[ ${NUP_OPTS:-} ]]; then
     (( ${#nup_opts[@]} )) && set -- "${nup_opts[@]}" "$@"
 fi
 
-# Parsing stops at the first argument which is not an option: in
-# command mode, it is the command, and the arguments after it are its
-# own.  In file view mode, the arguments are parsed again to the end,
-# so that the options can be given after the file names as well,
-# unless the parsing was stopped by --.
-declare -a nup_args=("$@")
 . getoptlong.sh OPTS "$@"
-
-# Determine mode: command or file view
-# Command mode if: -e specified, OR ($1 is not a file AND $1 is a command)
-is_command_mode() {
-    [[ ${exec:-} ]] && return 0
-    [[ -f ${1:-} ]] && return 1
-    command -v "${1:-}" >/dev/null 2>&1
-}
-
-# The mode is decided here, once: an option after the files, as -e,
-# does not change it
-command_mode=
-is_command_mode "$@" && command_mode=1
-nup_parsed=$(( ${#nup_args[@]} - $# ))
-if (( nup_parsed > 0 )) && [[ ${nup_args[nup_parsed-1]} == -- ]] &&
-   (( nup_parsed + 1 != ${column_opts_end:-0} )); then
-    :   # stopped by --: the rest are files as they are
-elif [[ ! $command_mode ]]; then
-    getoptlong configure PERMUTE=GOL_ARGV
-    getoptlong parse "$@" && eval "$(getoptlong set)"
-fi
-
-##############################################################################
-# Main
-##############################################################################
 
 # --column-opts: up.pm gives the options it does not know to ansicolumn.
 # They are put at the end of up_opts, when the command is run, so that
 # they win over the options nup gives (--mark), and are not taken for
 # the options of nup looked for in up_opts (-L, --geometry).
 declare -a column_args=(${column_opts[@]+"${column_opts[@]}"})
+
+##############################################################################
+# Main
+##############################################################################
 
 # --lateral puts on the right what does not fit the screen: the pages
 # of one input, or the files side by side (the option only goes to
@@ -267,8 +234,8 @@ export LESS="${LESS:--R}"
 export LESSANSIENDCHARS="${LESSANSIENDCHARS:-mK}"
 
 # --geometry: up.pm prints the size of the device and exits.  Nothing
-# is read or run; -w of ansicolumn counts when it is given by
-# -w (nup --geometry -w 100).
+# is read or run; the arguments are taken as those of file view mode,
+# so that the options for ansicolumn count (nup --geometry - --tabstop 4).
 if [[ " ${up_opts[*]} " == *" --geometry "* ]]; then
     declare -a cmd=(optex -Mup "${up_opts[@]}" ${column_args[@]+"${column_args[@]}"} -- ansicolumn "$@")
     debug "command: ${cmd[*]}"
@@ -280,6 +247,14 @@ fi
 if (( $# == 0 )) && [[ -t 0 ]]; then
     help
 fi
+
+# Determine mode: command or file view
+# Command mode if: -e specified, OR ($1 is not a file AND $1 is a command)
+is_command_mode() {
+    [[ ${exec:-} ]] && return 0
+    [[ -f ${1:-} ]] && return 1
+    command -v "${1:-}" >/dev/null 2>&1
+}
 
 # Expand command alias (command name + options)
 expand_alias() {
@@ -311,16 +286,19 @@ if [[ -n $textconv && $textconv != none ]] && match_ext "$textconv" "$@"; then
 fi
 
 side_by_side=${parallel:-}
-if [[ $command_mode ]]; then
+if is_command_mode "$@"; then
     # Command mode: use optex -Mup
     local_cmd="$1"; shift
     declare -a expanded_cmd
     read -ra expanded_cmd <<< "$(expand_alias "$local_cmd")"
     declare -a target=("${expanded_cmd[@]}" "$@")
 else
-    # File view mode: use ansicolumn via optex -Mup.  The options are
-    # parsed to the end, and the arguments are the files.
-    (( $# > 1 )) && side_by_side=1
+    # File view mode: use ansicolumn via optex -Mup.  Only the
+    # arguments before the first option are files; the options after
+    # them are for ansicolumn (nup FILE --tabstop 4).
+    nfiles=0
+    for arg; do [[ $arg == -?* ]] && break; (( ++nfiles )); done
+    (( nfiles > 1 )) && side_by_side=1
     declare -a target=(ansicolumn "$@")
     # Syntax highlight, when the command of the highlighter is there:
     # up.pm gives the name to ansicolumn, which reads the files
@@ -396,22 +374,17 @@ if it is an existing file, n-up file view mode is used; if it is an
 executable command, n-up command mode is used.  Use C<-e> option to
 force command mode when needed.
 
-In file view mode, the options can be given before or after the file
-names: C<nup -C2 file> and C<nup file -C2> are the same.  An option
-which C<nup> does not know is an error.  Give C<--> to take the
-arguments after it as files, even one starting with C<->.
+In file view mode, C<nup> stops parsing its own options at the first
+file name and hands the file names and everything after them to
+L<ansicolumn> unchanged.  Options of C<ansicolumn> that C<nup> does
+not provide can therefore be given after the file names:
 
-In command mode, C<nup> stops parsing its own options at the command
-name: the arguments after it are those of the command.
+    nup -C2 file1.txt file2.txt --tabstop 4
 
-Options of L<ansicolumn> that C<nup> does not provide are given by
-C<--column-opts>, in both modes:
+They can be given by C<--column-opts> as well, which works in command
+mode too:
 
     nup -C2 --column-opts --tabstop 4 -- file1.txt file2.txt
-
-To set the
-width when no terminal is available, the C<COLUMNS> environment
-variable works in both modes; see L</Terminal Size>.
 
 =head1 OPTIONS
 
@@ -503,8 +476,8 @@ The page number has a triangle on each side, as C<◂ 2/12 ▸>, which
 tells that the row can be scrolled in that direction: the triangle is
 filled when there is a page there, and open at the end of the row
 (C<◃ 1/12 ▸>).  They are the C<%L> and C<%R> of the C<--label> option
-of C<ansicolumn>; give other marks by C<--mark> in C<--column-opts>
-(C<--column-opts --mark RIGHT=E<gt>E<gt> --mark RIGHT_END= -->).
+of C<ansicolumn>; give other marks by C<--mark>, after the file names
+(C<--mark RIGHT=E<gt>E<gt> --mark RIGHT_END=>).
 
 When the pager is C<less>, C<nup> adds
 C<< -S --shift=I<N> --rscroll=- >> to it, where I<N> is the width of
@@ -834,9 +807,9 @@ they take precedence.
 =back
 
 The C<-P> option sets the number of lines of a page for PDF as well:
-a sheet has that many lines for each row.  The C<-w> option sets
-the number of columns of a sheet.  The font size follows them, and the one that
-is not given is decided to fill the sheet.  With neither of them, a
+a sheet has that many lines for each row.  The C<-w> option sets the
+number of columns of a sheet.  The font size follows them, and the one
+that is not given is decided to fill the sheet.  With neither of them, a
 sheet has 60 lines.
 
     nup -o nup.pdf -P 80 man nup         # 80 lines on a sheet

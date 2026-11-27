@@ -67,22 +67,17 @@ if it is an existing file, n-up file view mode is used; if it is an
 executable command, n-up command mode is used.  Use `-e` option to
 force command mode when needed.
 
-In file view mode, the options can be given before or after the file
-names: `nup -C2 file` and `nup file -C2` are the same.  An option
-which `nup` does not know is an error.  Give `--` to take the
-arguments after it as files, even one starting with `-`.
+In file view mode, `nup` stops parsing its own options at the first
+file name and hands the file names and everything after them to
+[ansicolumn](https://metacpan.org/pod/ansicolumn) unchanged.  Options of `ansicolumn` that `nup` does
+not provide can therefore be given after the file names:
 
-In command mode, `nup` stops parsing its own options at the command
-name: the arguments after it are those of the command.
+    nup -C2 file1.txt file2.txt --tabstop 4
 
-Options of [ansicolumn](https://metacpan.org/pod/ansicolumn) that `nup` does not provide are given by
-`--column-opts`, in both modes:
+They can be given by `--column-opts` as well, which works in command
+mode too:
 
     nup -C2 --column-opts --tabstop 4 -- file1.txt file2.txt
-
-To set the
-width when no terminal is available, the `COLUMNS` environment
-variable works in both modes; see ["Terminal Size"](#terminal-size).
 
 # OPTIONS
 
@@ -169,8 +164,8 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
     tells that the row can be scrolled in that direction: the triangle is
     filled when there is a page there, and open at the end of the row
     (`◃ 1/12 ▸`).  They are the `%L` and `%R` of the `--label` option
-    of `ansicolumn`; give other marks by `--mark` in `--column-opts`
-    (`--column-opts --mark RIGHT=>> --mark RIGHT_END= --`).
+    of `ansicolumn`; give other marks by `--mark`, after the file names
+    (`--mark RIGHT=>> --mark RIGHT_END=`).
 
     When the pager is `less`, `nup` adds
     `-S --shift=_N_ --rscroll=-` to it, where _N_ is the width of
@@ -478,9 +473,9 @@ variable works in both modes; see ["Terminal Size"](#terminal-size).
         nup -o nup.pdf --pdf-opts='-l 80 -m 15' man nup
 
 The `-P` option sets the number of lines of a page for PDF as well:
-a sheet has that many lines for each row.  The `-w` option sets
-the number of columns of a sheet.  The font size follows them, and the one that
-is not given is decided to fill the sheet.  With neither of them, a
+a sheet has that many lines for each row.  The `-w` option sets the
+number of columns of a sheet.  The font size follows them, and the one
+that is not given is decided to fill the sheet.  With neither of them, a
 sheet has 60 lines.
 
     nup -o nup.pdf -P 80 man nup         # 80 lines on a sheet
